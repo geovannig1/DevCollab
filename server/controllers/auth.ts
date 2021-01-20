@@ -1,22 +1,15 @@
 import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 
 import User, { IUser } from '../models/User';
+import jwt from '../services/jwt';
 
 //Google OAuth callback
 export const googleCallback = (req: Request, res: Response) => {
   try {
-    const payload = {
-      user: {
-        id: (<IUser>req.user).id,
-      },
-    };
+    const token = jwt(<IUser>req.user);
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET!, {
-      expiresIn: '24h',
-    });
     res
       .cookie('access_token', token, { maxAge: 24 * 60 * 60 * 1000 })
       .redirect('/');
@@ -35,7 +28,7 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    let { firstName, lastName, email, password, confirmPassword } = req.body;
+    const { firstName, lastName, email, password, confirmPassword } = req.body;
 
     //Check if the password not match
     if (password !== confirmPassword) {
@@ -50,9 +43,6 @@ export const register = async (req: Request, res: Response) => {
         .json({ errors: [{ msg: 'Email already in use' }] });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    password = await bcrypt.hash(password, salt);
-
     const user = await User.create({
       firstName,
       lastName,
@@ -60,14 +50,8 @@ export const register = async (req: Request, res: Response) => {
       password,
     });
 
-    const payload = {
-      user: {
-        id: user.id,
-      },
-    };
-    const token = jwt.sign(payload, process.env.JWT_SECRET!, {
-      expiresIn: '24h',
-    });
+    //Generate jwt token
+    const token = jwt(user);
 
     res
       .status(201)
@@ -90,7 +74,7 @@ export const login = async (req: Request, res: Response) => {
 
     const { email, password } = req.body;
 
-    const user: IUser = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
     //Check if user not exist
     if (!user) {
@@ -107,14 +91,8 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });
     }
 
-    const payload = {
-      user: {
-        id: user.id,
-      },
-    };
-    const token = jwt.sign(payload, process.env.JWT_SECRET!, {
-      expiresIn: '24h',
-    });
+    //Generate jwt token
+    const token = jwt(user);
 
     res
       .status(200)
@@ -129,6 +107,10 @@ export const login = async (req: Request, res: Response) => {
 //User logout
 export const logout = (req: Request, res: Response) => {
   try {
+    res
+      .status(200)
+      .clearCookie('access_token')
+      .json({ msg: 'User signed out' });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');

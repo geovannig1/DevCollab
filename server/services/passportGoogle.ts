@@ -21,9 +21,9 @@ passport.use(
 
         const user = await User.create({
           googleId: profile.id,
-          firstName: profile.name?.givenName,
-          lastName: profile.name?.familyName,
-          email: profile.emails?.[0].value,
+          firstName: profile.name?.givenName!,
+          lastName: profile.name?.familyName!,
+          email: profile.emails?.[0].value!,
           avatar: profile.photos?.[0].value,
         });
 

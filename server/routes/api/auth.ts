@@ -59,7 +59,7 @@ router.post(
 );
 
 /**
- *  @route POST api/auth/signup
+ *  @route POST api/auth/signin
  *  @desc Login user
  *  @access Public
  */
@@ -73,7 +73,7 @@ router.post(
 );
 
 /**
- *  @route POST api/auth/signou
+ *  @route POST api/auth/signout
  *  @desc logout user
  *  @access Private
  */

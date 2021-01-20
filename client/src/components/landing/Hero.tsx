@@ -38,7 +38,7 @@ const LeftContainer = styled.div`
     padding-right: 100px;
     font-size: ${setRem(20)};
   }
-  button:last-child {
+  a:last-child {
     margin: 0 10px;
   }
 `;
@@ -56,8 +56,12 @@ const Hero: React.FC = () => {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
             finibus eros diam, lacinia dignissim lacus sagittis eget.
           </p>
-          <Button>Sign Up</Button>
-          <Button outline>Sign In</Button>
+          <Button as={Link} to='/signup'>
+            Sign Up
+          </Button>
+          <Button outline={'outline' ? 1 : 0} as={Link} to='signin'>
+            Sign In
+          </Button>
         </LeftContainer>
         <StyledVector />
       </Container>
