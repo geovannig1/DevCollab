@@ -7,6 +7,32 @@ import { ReactComponent as Logo } from './logo.svg';
 import { ReactComponent as CollabVector } from './collab-vector.svg';
 import { Button } from '../global/Button';
 
+const Hero: React.FC = () => {
+  return (
+    <Fragment>
+      <Link to='/'>
+        <StyledLogo />
+      </Link>
+      <Container>
+        <LeftContainer>
+          <h1>DevCollab</h1>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
+            finibus eros diam, lacinia dignissim lacus sagittis eget.
+          </p>
+          <Button as={Link} to='/signup'>
+            Sign Up
+          </Button>
+          <Button outline={'outline' ? 1 : 0} as={Link} to='signin'>
+            Sign In
+          </Button>
+        </LeftContainer>
+        <StyledVector />
+      </Container>
+    </Fragment>
+  );
+};
+
 const StyledLogo = styled(Logo)`
   width: 150px;
   margin: 10px 20px;
@@ -42,31 +68,5 @@ const LeftContainer = styled.div`
     margin: 0 10px;
   }
 `;
-
-const Hero: React.FC = () => {
-  return (
-    <Fragment>
-      <Link to='/'>
-        <StyledLogo />
-      </Link>
-      <Container>
-        <LeftContainer>
-          <h1>DevCollab</h1>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-            finibus eros diam, lacinia dignissim lacus sagittis eget.
-          </p>
-          <Button as={Link} to='/signup'>
-            Sign Up
-          </Button>
-          <Button outline={'outline' ? 1 : 0} as={Link} to='signin'>
-            Sign In
-          </Button>
-        </LeftContainer>
-        <StyledVector />
-      </Container>
-    </Fragment>
-  );
-};
 
 export default Hero;

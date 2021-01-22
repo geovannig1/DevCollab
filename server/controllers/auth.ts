@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 
 import User, { IUser } from '../models/User';
@@ -12,7 +11,7 @@ export const googleCallback = (req: Request, res: Response) => {
 
     res
       .cookie('access_token', token, { maxAge: 24 * 60 * 60 * 1000 })
-      .redirect('/');
+      .redirect('/project');
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
@@ -22,12 +21,6 @@ export const googleCallback = (req: Request, res: Response) => {
 //Register new user to the app
 export const register = async (req: Request, res: Response) => {
   try {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { firstName, lastName, email, password, confirmPassword } = req.body;
 
     //Check if the password not match
@@ -66,12 +59,6 @@ export const register = async (req: Request, res: Response) => {
 //User login
 export const login = async (req: Request, res: Response) => {
   try {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });

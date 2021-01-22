@@ -9,7 +9,8 @@ import {
   login,
   logout,
 } from '../../controllers/auth';
-import auth from '../../middleware/auth';
+import auth from '../../middlewares/auth';
+import validateInput from '../../middlewares/validateInput';
 
 /**
  *  @route GET api/auth/google
@@ -48,13 +49,14 @@ router.post(
     check('email', 'Please include a valid email').isEmail(),
     check(
       'password',
-      'Please enter password with 6 or more characters'
-    ).isLength({ min: 6 }),
+      'Please enter password with 8 or more characters'
+    ).isLength({ min: 8 }),
     check(
       'confirmPassword',
-      'Please enter password with 6 or more characters'
-    ).isLength({ min: 6 }),
+      'Please enter password with 8 or more characters'
+    ).isLength({ min: 8 }),
   ],
+  validateInput,
   register
 );
 
@@ -69,6 +71,7 @@ router.post(
     check('email', 'Please include a valid email').isEmail(),
     check('password', 'Please enter the password').notEmpty(),
   ],
+  validateInput,
   login
 );
 

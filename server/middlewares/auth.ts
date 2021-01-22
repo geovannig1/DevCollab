@@ -11,7 +11,8 @@ export default (req: Request, res: Response, next: NextFunction) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!);
 
-    req.user = decoded;
+    req.user = decoded.user;
+
     next();
   } catch (err) {
     console.error(err.message);

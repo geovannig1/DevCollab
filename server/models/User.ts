@@ -32,6 +32,10 @@ const userSchema = new Schema<IUser>({
   avatar: {
     type: String,
   },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 userSchema.pre<IUser>('save', async function () {

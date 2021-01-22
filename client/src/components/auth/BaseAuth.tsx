@@ -8,6 +8,53 @@ import { ReactComponent as CollaborationVector } from './collaboration.svg';
 import ScrollToTop from '../global/ScrollToTop';
 import { Button } from '../global/Button';
 
+interface BaseAuthProps {
+  title: string;
+  googleButtonText: string;
+  otherAuth: 'SIGNUP' | 'SIGNIN';
+}
+
+const BaseAuth: React.FC<BaseAuthProps> = ({
+  children,
+  title,
+  googleButtonText,
+  otherAuth,
+}) => {
+  return (
+    <Fragment>
+      <ScrollToTop />
+      <Container>
+        <Aside>
+          <Link to='/'>
+            <StyledLogo />
+          </Link>
+          <StyledVector />
+        </Aside>
+        <Content>
+          <h1>{title}</h1>
+          {children}
+          <SeparatorContainer>
+            <div />
+            <span>OR</span>
+            <div />
+          </SeparatorContainer>
+          <GoogleButton>
+            <Button as='a' href='/api/auth/google' small outline>
+              <i className='fab fa-google' />
+              {googleButtonText}
+            </Button>
+          </GoogleButton>
+          <StyledLink to={`/${otherAuth === 'SIGNIN' ? 'signin' : 'signup'}`}>
+            {otherAuth === 'SIGNUP'
+              ? "Don't have an account yet? Sign Up"
+              : 'Already have an account? Login'}
+          </StyledLink>
+        </Content>
+      </Container>
+    </Fragment>
+  );
+};
+
 const Container = styled.div`
   display: flex;
   min-height: 100vh;
@@ -75,53 +122,9 @@ const StyledLink = styled(Link)`
   font-weight: 500;
   margin: 10px 0;
   font-size: ${setRem(14)};
+  &:hover {
+    color: ${setColor.primaryDark};
+  }
 `;
-
-interface BaseAuthProps {
-  title: string;
-  googleButtonText: string;
-  otherAuth: 'SIGNUP' | 'SIGNIN';
-}
-
-const BaseAuth: React.FC<BaseAuthProps> = ({
-  children,
-  title,
-  googleButtonText,
-  otherAuth,
-}) => {
-  return (
-    <Fragment>
-      <ScrollToTop />
-      <Container>
-        <Aside>
-          <Link to='/'>
-            <StyledLogo />
-          </Link>
-          <StyledVector />
-        </Aside>
-        <Content>
-          <h1>{title}</h1>
-          {children}
-          <SeparatorContainer>
-            <div />
-            <span>OR</span>
-            <div />
-          </SeparatorContainer>
-          <GoogleButton>
-            <Button small outline>
-              <i className='fab fa-google' />
-              {googleButtonText}
-            </Button>
-          </GoogleButton>
-          <StyledLink to={`/${otherAuth === 'SIGNIN' ? 'signin' : 'signup'}`}>
-            {otherAuth === 'SIGNUP'
-              ? "Don't have an account yet? Sign Up"
-              : 'Already have an account? Login'}
-          </StyledLink>
-        </Content>
-      </Container>
-    </Fragment>
-  );
-};
 
 export default BaseAuth;
