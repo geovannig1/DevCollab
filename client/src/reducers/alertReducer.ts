@@ -5,12 +5,14 @@ import {
   MessageType,
 } from '../actions/alertTypes';
 
-export interface AlertInitialState extends Array<object> {
-  [index: number]: {
-    message: string;
-    messageType: MessageType;
-    location: string;
-  };
+export interface AlertType {
+  message: string;
+  messageType: MessageType;
+  location: string;
+}
+
+export interface AlertInitialState extends Array<AlertType> {
+  [index: number]: AlertType;
 }
 
 const alertInitialState: AlertInitialState = [];
@@ -23,7 +25,9 @@ const alertReducer = (
     case SET_ALERT:
       return [...state, action.payload];
     case REMOVE_ALERT:
-      return (state = []);
+      return action.payload === 'all'
+        ? []
+        : state.filter((alert) => alert.location !== action.payload);
     default:
       return state;
   }

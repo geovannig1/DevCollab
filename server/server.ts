@@ -22,5 +22,5 @@ import user from './routes/api/user';
 app.use('/api/auth', auth);
 app.use('/api/user', user);
 
-const PORT = process.env.PORT || '5000';
+const PORT = process.env.PORT ?? '5000';
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

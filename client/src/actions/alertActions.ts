@@ -14,6 +14,8 @@ export const setAlert = (
   dispatch({ type: SET_ALERT, payload: { message, messageType, location } });
 };
 
-export const removeAlert = () => (dispatch: Dispatch<AlertDispatchType>) => {
-  dispatch({ type: REMOVE_ALERT });
+export const removeAlert = (location = 'all') => (
+  dispatch: Dispatch<AlertDispatchType>
+) => {
+  dispatch({ type: REMOVE_ALERT, payload: location });
 };

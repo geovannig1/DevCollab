@@ -12,6 +12,7 @@ import { signUp } from '../actions/authActions';
 import { SignUpData } from '../actions/authTypes';
 import { Store } from '../store';
 import { AuthInitialState } from '../reducers/authReducer';
+import Alert from '../components/global/Alert';
 
 interface SignupProps {
   signUp: (signUpData: SignUpData) => void;
@@ -56,7 +57,7 @@ const Signup: React.FC<SignupProps> = ({
       googleButtonText='Sign Up with Google'
       otherAuth='SIGNIN'
     >
-      <form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <Container>
           <InputContainer>
             <Item>
@@ -123,7 +124,9 @@ const Signup: React.FC<SignupProps> = ({
         </Container>
 
         <Button small>Create Account</Button>
-      </form>
+      </Form>
+
+      <Alert />
     </BaseAuth>
   );
 };
@@ -163,6 +166,10 @@ const Item = styled.div`
   display: flex;
   flex-direction: column;
   margin-right: 40px;
+`;
+
+const Form = styled.form`
+  margin-bottom: 10px;
 `;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Signup);

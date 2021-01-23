@@ -12,29 +12,20 @@ import { Store } from '../store';
 import { signIn } from '../actions/authActions';
 import { SignInData } from '../actions/authTypes';
 import { AuthInitialState } from '../reducers/authReducer';
-import { AlertInitialState } from '../reducers/alertReducer';
-import { removeAlert } from '../actions/alertActions';
 import Alert from '../components/global/Alert';
 
 interface SigninProps {
   signIn: (signInData: SignInData) => void;
   auth: AuthInitialState;
-  alerts: AlertInitialState;
-  removeAlert: () => void;
 }
 
 const Signin: React.FC<SigninProps> = ({
   signIn,
-  removeAlert,
   auth: { isAuthenticated, loading },
-  alerts,
 }) => {
   useEffect(() => {
     document.title = 'Sign In | DevCollab';
-    return () => {
-      removeAlert();
-    };
-  }, [removeAlert]);
+  }, []);
 
   const [signInData, setSignInData] = useState<SignInData>({
     email: '',
@@ -52,23 +43,6 @@ const Signin: React.FC<SigninProps> = ({
       [e.target.name]: e.target.value,
     }));
   };
-
-  const [results, setResults] = useState<AlertInitialState>([]);
-  useEffect(() => {
-    const result = [];
-    const map = new Map();
-    for (const item of alerts) {
-      if (!map.has(item.location)) {
-        map.set(item.location, false);
-        result.push({
-          location: item.location,
-          message: item.message,
-          messageType: item.messageType,
-        });
-      }
-      setResults(result);
-    }
-  }, [alerts]);
 
   if (!loading && isAuthenticated) {
     return <Redirect to='/project' />;
@@ -106,25 +80,17 @@ const Signin: React.FC<SigninProps> = ({
         <Button small>Sign In</Button>
       </Form>
 
-      {results.map((result: any, index) => (
-        <Alert
-          key={index}
-          message={result.message}
-          messageType={result.messageType}
-        />
-      ))}
+      <Alert />
     </BaseAuth>
   );
 };
 
 const mapStateToProps = (state: Store) => ({
   auth: state.auth,
-  alerts: state.alert,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   signIn: (signInData: SignInData) => dispatch(signIn(signInData)),
-  removeAlert: () => dispatch(removeAlert()),
 });
 
 const Container = styled.div`

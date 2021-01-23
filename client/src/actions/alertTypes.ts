@@ -18,6 +18,7 @@ export interface SetAlert {
 }
 export interface RemoveAlert {
   type: typeof REMOVE_ALERT;
+  payload: string;
 }
 
 export type AlertDispatchType = SetAlert | RemoveAlert;
