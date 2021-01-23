@@ -13,3 +13,8 @@ export const setFont = {
 export const setRem = (number = 16) => {
   return `${number / 16}rem`;
 };
+
+export const setShadow = {
+  main: '2px 2px 3px 0px rgba(126, 126, 126, 0.50)',
+  hover: '3px 5px 3px 0px rgba(126, 126, 126, 0.40)',
+};

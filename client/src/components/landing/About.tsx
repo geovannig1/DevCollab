@@ -2,11 +2,11 @@ import React from 'react';
 
 import styled from 'styled-components';
 import { setRem, setColor } from '../../styles';
-import { ReactComponent as Monitoring } from './monitoring.svg';
-import { ReactComponent as Task } from './task.svg';
-import { ReactComponent as Meeting } from './meeting.svg';
-import { ReactComponent as Github } from './github.svg';
-import { ReactComponent as Discussion } from './discussion.svg';
+import { ReactComponent as Monitoring } from '../../assets/monitoring.svg';
+import { ReactComponent as Task } from '../../assets/task.svg';
+import { ReactComponent as Meeting } from '../../assets/meeting.svg';
+import { ReactComponent as Github } from '../../assets/github.svg';
+import { ReactComponent as Discussion } from '../../assets/discussion.svg';
 
 const About: React.FC = () => {
   return (

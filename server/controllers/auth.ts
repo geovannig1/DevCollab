@@ -11,7 +11,7 @@ export const googleCallback = (req: Request, res: Response) => {
 
     res
       .cookie('access_token', token, { maxAge: 24 * 60 * 60 * 1000 })
-      .redirect('/project');
+      .redirect('/projects');
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');

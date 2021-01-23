@@ -48,7 +48,7 @@ const Signup: React.FC<SignupProps> = ({
   };
 
   if (!loading && isAuthenticated) {
-    return <Redirect to='/project' />;
+    return <Redirect to='/projects' />;
   }
 
   return (

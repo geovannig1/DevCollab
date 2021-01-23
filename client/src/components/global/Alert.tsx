@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import AlertComponent from '@material-ui/lab/Alert';
 import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/Collapse';
@@ -10,7 +10,8 @@ import { AnyAction } from 'redux';
 
 import { Store } from '../../store';
 import { removeAlert } from '../../actions/alertActions';
-import { AlertInitialState, AlertType } from '../../reducers/alertReducer';
+import { AlertInitialState } from '../../reducers/alertReducer';
+import { MessageType } from '../../actions/alertTypes';
 
 interface AlertProps {
   alerts: AlertInitialState;
@@ -46,10 +47,15 @@ const Alert: React.FC<AlertProps> = ({ alerts, removeAlert }) => {
   return (
     <div className={classes.root}>
       {alerts.length > 0 &&
-        results.map((result: AlertType, index) => (
+        results.map((result, index) => (
           <Collapse in={true} key={index}>
             <AlertComponent
-              color={result.messageType ? 'success' : 'error'}
+              severity={
+                result.messageType === MessageType.Success ? 'success' : 'error'
+              }
+              color={
+                result.messageType === MessageType.Success ? 'success' : 'error'
+              }
               action={
                 <IconButton
                   aria-label='close'

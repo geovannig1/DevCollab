@@ -6,8 +6,12 @@ import {
   USER_LOADED,
   USER_LOAD_FAIL,
   USER_LOAD_LOADING,
+  LOGOUT_FAIL,
+  LOGOUT_LOADING,
+  LOGOUT_SUCCESS,
   LoginDispatchTypes,
   RegisterDispacthTypes,
+  LogoutDispatchTypes,
   UserLoadDispatchTypes,
   UserType,
 } from '../actions/authTypes';
@@ -25,9 +29,14 @@ const authInitialState: AuthInitialState = {
 
 const authReducers = (
   state = authInitialState,
-  action: RegisterDispacthTypes | LoginDispatchTypes | UserLoadDispatchTypes
+  action:
+    | RegisterDispacthTypes
+    | LoginDispatchTypes
+    | UserLoadDispatchTypes
+    | LogoutDispatchTypes
 ): AuthInitialState => {
   switch (action.type) {
+    case LOGOUT_LOADING:
     case USER_LOAD_LOADING:
       return {
         ...state,
@@ -35,6 +44,7 @@ const authReducers = (
       };
     case REGISTER_SUCCESS:
     case LOGIN_SUCCESS:
+    case LOGOUT_FAIL:
       return {
         ...state,
         loading: false,
@@ -54,6 +64,13 @@ const authReducers = (
         loading: false,
         isAuthenticated: true,
         user: action.payload,
+      };
+    case LOGOUT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        isAuthenticated: false,
+        user: undefined,
       };
     default:
       return state;

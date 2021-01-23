@@ -8,7 +8,7 @@ interface ButtonProps {
 
 export const Button = styled.button<ButtonProps>`
   display: inline-flex;
-  background-color: ${({ outline, small }) =>
+  background-color: ${({ outline }) =>
     outline ? setColor.mainWhite : setColor.primary};
   color: ${({ outline }) => (outline ? setColor.primary : setColor.mainWhite)};
   min-width: 135px;
@@ -21,6 +21,7 @@ export const Button = styled.button<ButtonProps>`
   font-weight: 500;
   text-decoration: none;
   align-items: center;
+  text-align: center;
   justify-content: center;
   font-size: ${({ small }) => (small ? setRem(14) : setRem(20))};
   &:hover {

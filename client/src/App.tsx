@@ -7,7 +7,6 @@ import { AnyAction } from 'redux';
 import { loadUser } from './actions/authActions';
 import PrivateRoute from './components/routing/PrivateRoute';
 import Route from './components/routing/PublicRoute';
-import Footer from './components/global/Footer';
 import GlobalStyle from './components/global/GlobalStyle';
 import Landing from './pages/Landing';
 import Signin from './pages/Signin';
@@ -31,10 +30,9 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
           <Route exact path='/' component={Landing} />
           <Route exact path='/signup' component={Signup} />
           <Route exact path='/signin' component={Signin} />
-          <PrivateRoute exact path='/project' component={Project} />
+          <PrivateRoute exact path='/projects' component={Project} />
         </Switch>
       </Router>
-      <Footer />
     </Fragment>
   );
 };

@@ -13,6 +13,7 @@ import { signIn } from '../actions/authActions';
 import { SignInData } from '../actions/authTypes';
 import { AuthInitialState } from '../reducers/authReducer';
 import Alert from '../components/global/Alert';
+import AlertSnackbar from '../components/global/AlertSnackbar';
 
 interface SigninProps {
   signIn: (signInData: SignInData) => void;
@@ -45,7 +46,7 @@ const Signin: React.FC<SigninProps> = ({
   };
 
   if (!loading && isAuthenticated) {
-    return <Redirect to='/project' />;
+    return <Redirect to='/projects' />;
   }
 
   return (

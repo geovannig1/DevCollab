@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 import { setColor, setRem } from '../../styles';
-import { ReactComponent as Logo } from './logo.svg';
-import { ReactComponent as CollabVector } from './collab-vector.svg';
+import { ReactComponent as Logo } from '../../assets/logo.svg';
+import { ReactComponent as CollabVector } from '../../assets/collab-vector.svg';
 import { Button } from '../global/Button';
 
 const Hero: React.FC = () => {

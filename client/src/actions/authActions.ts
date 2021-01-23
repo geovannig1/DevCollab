@@ -1,7 +1,7 @@
 import { ThunkDispatch } from 'redux-thunk';
 
 import api from '../api/api';
-import { setAlert } from './alertActions';
+import { removeAlert, setAlert } from './alertActions';
 import { MessageType } from './alertTypes';
 import {
   REGISTER_FAIL,
@@ -11,9 +11,13 @@ import {
   USER_LOADED,
   USER_LOAD_FAIL,
   USER_LOAD_LOADING,
+  LOGOUT_FAIL,
+  LOGOUT_SUCCESS,
+  LOGOUT_LOADING,
   RegisterDispacthTypes,
   LoginDispatchTypes,
   UserLoadDispatchTypes,
+  LogoutDispatchTypes,
   SignInData,
   SignUpData,
 } from './authTypes';
@@ -37,7 +41,10 @@ export const signUp = (signUpData: SignUpData) => async (
   dispatch: ThunkDispatch<{}, {}, RegisterDispacthTypes>
 ) => {
   try {
+    dispatch(removeAlert());
+
     await api.post('/auth/signup', signUpData);
+
     dispatch({ type: REGISTER_SUCCESS });
     dispatch(loadUser());
   } catch (err) {
@@ -45,7 +52,7 @@ export const signUp = (signUpData: SignUpData) => async (
 
     if (errors) {
       errors.forEach((error: any) =>
-        dispatch(setAlert(error.msg, MessageType.fail, error.param))
+        dispatch(setAlert(error.msg, MessageType.Fail, error.param))
       );
     }
     dispatch({ type: REGISTER_FAIL });
@@ -57,6 +64,8 @@ export const signIn = (signInData: SignInData) => async (
   dispatch: ThunkDispatch<{}, {}, LoginDispatchTypes>
 ) => {
   try {
+    dispatch(removeAlert());
+
     await api.post('/auth/signin', signInData);
     dispatch({ type: LOGIN_SUCCESS });
     dispatch(loadUser());
@@ -65,9 +74,23 @@ export const signIn = (signInData: SignInData) => async (
 
     if (errors) {
       errors.forEach((error: any) => {
-        dispatch(setAlert(error.msg, MessageType.fail, error.param));
+        dispatch(setAlert(error.msg, MessageType.Fail, error.param));
       });
     }
     dispatch({ type: LOGIN_FAIL });
+  }
+};
+
+//Sign out user
+export const signOut = () => async (
+  dispatch: ThunkDispatch<{}, {}, LogoutDispatchTypes>
+) => {
+  try {
+    dispatch({ type: LOGOUT_LOADING });
+
+    await api.get('/auth/signout');
+    dispatch({ type: LOGOUT_SUCCESS });
+  } catch (err) {
+    dispatch({ type: LOGOUT_FAIL });
   }
 };

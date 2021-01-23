@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
-import { ReactComponent as Logo } from '../landing/logo.svg';
+import { ReactComponent as Logo } from '../../assets/logo.svg';
 import { setColor } from '../../styles';
 
 const Spinner: React.FC = () => {

@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 import { setColor, setRem } from '../../styles';
-import { ReactComponent as Logo } from './logo-white.svg';
-import { ReactComponent as CollaborationVector } from './collaboration.svg';
+import { ReactComponent as Logo } from '../../assets/logo-white.svg';
+import { ReactComponent as CollaborationVector } from '../../assets/collaboration.svg';
 import ScrollToTop from '../global/ScrollToTop';
 import { Button } from '../global/Button';
 
@@ -57,16 +57,15 @@ const BaseAuth: React.FC<BaseAuthProps> = ({
 
 const Container = styled.div`
   display: flex;
-  min-height: 100vh;
   position: relative;
 `;
 
 const Aside = styled.aside`
   top: 0;
   min-width: 40vw;
-  min-height: 100vh;
   background-color: ${setColor.primary};
   display: grid;
+  position: relative;
 `;
 
 const StyledLogo = styled(Logo)`
@@ -78,12 +77,14 @@ const StyledLogo = styled(Logo)`
 const StyledVector = styled(CollaborationVector)`
   width: 500px;
   justify-self: center;
+  position: absolute;
+  top: 200px;
 `;
 
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  margin-top: 6%;
   margin-left: 5%;
   min-height: 100vh;
   color: ${setColor.primary};

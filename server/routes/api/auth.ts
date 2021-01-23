@@ -51,10 +51,7 @@ router.post(
       'password',
       'Please enter password with 8 or more characters'
     ).isLength({ min: 8 }),
-    check(
-      'confirmPassword',
-      'Please enter password with 8 or more characters'
-    ).isLength({ min: 8 }),
+    check('confirmPassword', 'Cofirm password is required').notEmpty(),
   ],
   validateInput,
   register

@@ -7,6 +7,7 @@ import About from '../components/landing/About';
 import ScrollToTop from '../components/global/ScrollToTop';
 import { Store } from '../store';
 import { AuthInitialState } from '../reducers/authReducer';
+import Footer from '../components/global/Footer';
 
 interface LandingProps {
   auth: AuthInitialState;
@@ -20,7 +21,7 @@ const Landing: React.FC<LandingProps> = ({
   });
 
   if (!loading && isAuthenticated) {
-    return <Redirect to='/project' />;
+    return <Redirect to='/projects' />;
   }
 
   return (
@@ -28,6 +29,7 @@ const Landing: React.FC<LandingProps> = ({
       <ScrollToTop />
       <Hero />
       <About />
+      <Footer />
     </Fragment>
   );
 };
