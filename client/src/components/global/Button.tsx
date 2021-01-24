@@ -3,7 +3,7 @@ import { setColor, setRem } from '../../styles';
 
 interface ButtonProps {
   outline?: boolean | number;
-  small?: boolean;
+  small?: boolean | number;
 }
 
 export const Button = styled.button<ButtonProps>`

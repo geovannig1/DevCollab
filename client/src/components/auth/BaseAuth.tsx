@@ -84,7 +84,7 @@ const StyledVector = styled(CollaborationVector)`
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 6%;
+  margin-top: 10%;
   margin-left: 5%;
   min-height: 100vh;
   color: ${setColor.primary};

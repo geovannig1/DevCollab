@@ -8,7 +8,7 @@ import { AnyAction } from 'redux';
 
 import { Store } from '../../store';
 import { removeAlert } from '../../actions/alertActions';
-import { AlertInitialState, AlertType } from '../../reducers/alertReducer';
+import { AlertInitialState } from '../../reducers/alertReducer';
 
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;

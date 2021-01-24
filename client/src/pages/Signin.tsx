@@ -13,10 +13,9 @@ import { signIn } from '../actions/authActions';
 import { SignInData } from '../actions/authTypes';
 import { AuthInitialState } from '../reducers/authReducer';
 import Alert from '../components/global/Alert';
-import AlertSnackbar from '../components/global/AlertSnackbar';
 
 interface SigninProps {
-  signIn: (signInData: SignInData) => void;
+  signIn: (signInData: SignInData) => Promise<void>;
   auth: AuthInitialState;
 }
 

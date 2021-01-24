@@ -2,14 +2,8 @@ import {
   AlertDispatchType,
   REMOVE_ALERT,
   SET_ALERT,
-  MessageType,
+  AlertType,
 } from '../actions/alertTypes';
-
-export interface AlertType {
-  message: string;
-  messageType: MessageType;
-  location: string;
-}
 
 export interface AlertInitialState extends Array<AlertType> {
   [index: number]: AlertType;

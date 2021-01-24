@@ -5,12 +5,13 @@ import {
   LOGIN_SUCCESS,
   USER_LOADED,
   USER_LOAD_FAIL,
-  USER_LOAD_LOADING,
+  SET_LOADING,
+  REMOVE_LOADING,
   LOGOUT_FAIL,
-  LOGOUT_LOADING,
   LOGOUT_SUCCESS,
+  LoadingDispatch,
   LoginDispatchTypes,
-  RegisterDispacthTypes,
+  RegisterDispatchTypes,
   LogoutDispatchTypes,
   UserLoadDispatchTypes,
   UserType,
@@ -27,27 +28,31 @@ const authInitialState: AuthInitialState = {
   loading: false,
 };
 
-const authReducers = (
+const authReducer = (
   state = authInitialState,
   action:
-    | RegisterDispacthTypes
+    | RegisterDispatchTypes
     | LoginDispatchTypes
     | UserLoadDispatchTypes
     | LogoutDispatchTypes
+    | LoadingDispatch
 ): AuthInitialState => {
   switch (action.type) {
-    case LOGOUT_LOADING:
-    case USER_LOAD_LOADING:
+    case SET_LOADING:
       return {
         ...state,
         loading: true,
+      };
+    case REMOVE_LOADING:
+      return {
+        ...state,
+        loading: false,
       };
     case REGISTER_SUCCESS:
     case LOGIN_SUCCESS:
     case LOGOUT_FAIL:
       return {
         ...state,
-        loading: false,
         isAuthenticated: true,
       };
     case REGISTER_FAIL:
@@ -56,19 +61,16 @@ const authReducers = (
       return {
         ...state,
         isAuthenticated: false,
-        loading: false,
       };
     case USER_LOADED:
       return {
         ...state,
-        loading: false,
         isAuthenticated: true,
         user: action.payload,
       };
     case LOGOUT_SUCCESS:
       return {
         ...state,
-        loading: false,
         isAuthenticated: false,
         user: undefined,
       };
@@ -77,4 +79,4 @@ const authReducers = (
   }
 };
 
-export default authReducers;
+export default authReducer;

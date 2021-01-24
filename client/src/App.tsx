@@ -12,9 +12,11 @@ import Landing from './pages/Landing';
 import Signin from './pages/Signin';
 import Signup from './pages/Signup';
 import Project from './pages/Project';
+import CreateProject from './pages/CreateProject';
+import BaseComponent from './components/global/BaseComponent';
 
 interface AppProps {
-  loadUser: () => void;
+  loadUser: () => Promise<void>;
 }
 
 const App: React.FC<AppProps> = ({ loadUser }) => {
@@ -30,7 +32,14 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
           <Route exact path='/' component={Landing} />
           <Route exact path='/signup' component={Signup} />
           <Route exact path='/signin' component={Signin} />
-          <PrivateRoute exact path='/projects' component={Project} />
+          <BaseComponent>
+            <PrivateRoute exact path='/projects' component={Project} />
+            <PrivateRoute
+              exact
+              path='/create-project'
+              component={CreateProject}
+            />
+          </BaseComponent>
         </Switch>
       </Router>
     </Fragment>

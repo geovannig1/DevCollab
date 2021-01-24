@@ -1,22 +1,20 @@
 import { Schema, model, Document } from 'mongoose';
 
-import { IUser } from './User';
-
 export enum AccessPermission {
   Admin,
-  Read,
+  ReadOnly,
   ReadWriteDelete,
+}
+
+export interface Member {
+  user: string;
+  accessPermission: AccessPermission;
 }
 
 export interface IProject extends Document {
   name: string;
-  description: string;
-  members: {
-    [index: number]: {
-      user: IUser;
-      accessPermisson: AccessPermission;
-    };
-  };
+  description?: string;
+  members: Member[];
 }
 
 const projectSchema = new Schema<IProject>({
@@ -33,7 +31,7 @@ const projectSchema = new Schema<IProject>({
         type: Schema.Types.ObjectId,
         ref: 'User',
       },
-      accessPersmision: {
+      accessPermission: {
         type: AccessPermission,
         required: true,
       },

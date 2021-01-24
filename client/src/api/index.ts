@@ -1,10 +1,8 @@
 import axios from 'axios';
 
-const api = axios.create({
+export default axios.create({
   baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
 });
-
-export default api;

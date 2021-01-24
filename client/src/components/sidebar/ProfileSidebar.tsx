@@ -86,8 +86,12 @@ const UserInformation = styled.div`
 const StyledMoreVertIcon = styled(MoreVertIcon)`
   align-self: flex-start;
   color: ${setColor.mainWhite};
+  transition: 0.2s ease-in-out;
   &:hover {
     color: ${setColor.mainGrey};
+  }
+  &:active {
+    color: ${setColor.mainWhite};
   }
   height: 20px;
   cursor: pointer;

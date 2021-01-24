@@ -15,7 +15,7 @@ import { AuthInitialState } from '../reducers/authReducer';
 import Alert from '../components/global/Alert';
 
 interface SignupProps {
-  signUp: (signUpData: SignUpData) => void;
+  signUp: (signUpData: SignUpData) => Promise<void>;
   auth: AuthInitialState;
 }
 

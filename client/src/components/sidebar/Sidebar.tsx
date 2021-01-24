@@ -21,7 +21,8 @@ const Sidebar: React.FC<SidebarProps> = () => {
 
 const Container = styled.aside`
   height: 100vh;
-  width: 30vw;
+  width: 22vw;
+  position: fixed;
   background-color: ${setColor.mainWhite};
 `;
 

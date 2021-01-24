@@ -17,8 +17,8 @@ const Spinner: React.FC = () => {
         setProgress(0);
         setBuffer(10);
       } else {
-        const diff = Math.random() * 40;
-        const diff2 = Math.random() * 40;
+        const diff = Math.random() * 25;
+        const diff2 = Math.random() * 25;
         setProgress(progress + diff);
         setBuffer(progress + diff + diff2);
       }
@@ -28,7 +28,7 @@ const Spinner: React.FC = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       progressRef.current();
-    }, 500);
+    }, 100);
 
     return () => {
       clearInterval(timer);
@@ -63,7 +63,11 @@ const Spinner: React.FC = () => {
 const Container = styled.div`
   background-color: ${setColor.mainGrey};
   height: 100vh;
-  width: 100%;
+  width: 100vw;
+  position: absolute;
+  z-index: 99;
+  top: 0;
+  left: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;

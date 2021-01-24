@@ -49,9 +49,9 @@ router.post(
     check('email', 'Please include a valid email').isEmail(),
     check(
       'password',
-      'Please enter password with 8 or more characters'
+      'Please enter the password with 8 or more characters'
     ).isLength({ min: 8 }),
-    check('confirmPassword', 'Cofirm password is required').notEmpty(),
+    check('confirmPassword', 'Confirm password is required').notEmpty(),
   ],
   validateInput,
   register

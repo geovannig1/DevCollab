@@ -1,6 +1,7 @@
 export const setColor = {
   mainWhite: '#FFFFFF',
   mainGrey: '#F0F0F0',
+  mainBlack: '#272727',
   primary: '#4A58B2',
   primaryDark: '#2E397B',
   secondary: '#99A1D8',
@@ -16,5 +17,5 @@ export const setRem = (number = 16) => {
 
 export const setShadow = {
   main: '2px 2px 3px 0px rgba(126, 126, 126, 0.50)',
-  hover: '3px 5px 3px 0px rgba(126, 126, 126, 0.40)',
+  hover: '3px 6px 3px 0px rgba(126, 126, 126, 0.25)',
 };

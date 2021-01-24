@@ -1,20 +1,21 @@
 import { ThunkDispatch } from 'redux-thunk';
 
-import api from '../api/api';
+import api from '../api';
 import { removeAlert, setAlert } from './alertActions';
 import { MessageType } from './alertTypes';
 import {
   REGISTER_FAIL,
   REGISTER_SUCCESS,
+  SET_LOADING,
+  REMOVE_LOADING,
   LOGIN_FAIL,
   LOGIN_SUCCESS,
   USER_LOADED,
   USER_LOAD_FAIL,
-  USER_LOAD_LOADING,
   LOGOUT_FAIL,
   LOGOUT_SUCCESS,
-  LOGOUT_LOADING,
-  RegisterDispacthTypes,
+  LoadingDispatch,
+  RegisterDispatchTypes,
   LoginDispatchTypes,
   UserLoadDispatchTypes,
   LogoutDispatchTypes,
@@ -24,21 +25,23 @@ import {
 
 //Load User
 export const loadUser = () => async (
-  dispatch: ThunkDispatch<{}, {}, UserLoadDispatchTypes>
+  dispatch: ThunkDispatch<{}, {}, UserLoadDispatchTypes | LoadingDispatch>
 ) => {
   try {
-    dispatch({ type: USER_LOAD_LOADING });
+    dispatch({ type: SET_LOADING });
 
     const res = await api.get('/user');
     dispatch({ type: USER_LOADED, payload: res.data });
+    dispatch({ type: REMOVE_LOADING });
   } catch (err) {
     dispatch({ type: USER_LOAD_FAIL });
+    dispatch({ type: REMOVE_LOADING });
   }
 };
 
 //Register User
 export const signUp = (signUpData: SignUpData) => async (
-  dispatch: ThunkDispatch<{}, {}, RegisterDispacthTypes>
+  dispatch: ThunkDispatch<{}, {}, RegisterDispatchTypes>
 ) => {
   try {
     dispatch(removeAlert());
@@ -83,14 +86,16 @@ export const signIn = (signInData: SignInData) => async (
 
 //Sign out user
 export const signOut = () => async (
-  dispatch: ThunkDispatch<{}, {}, LogoutDispatchTypes>
+  dispatch: ThunkDispatch<{}, {}, LogoutDispatchTypes | LoadingDispatch>
 ) => {
   try {
-    dispatch({ type: LOGOUT_LOADING });
+    dispatch({ type: SET_LOADING });
 
     await api.get('/auth/signout');
+    dispatch({ type: REMOVE_LOADING });
     dispatch({ type: LOGOUT_SUCCESS });
   } catch (err) {
     dispatch({ type: LOGOUT_FAIL });
+    dispatch({ type: REMOVE_LOADING });
   }
 };
