@@ -1,7 +1,7 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { setRem, setColor } from '../../styles';
+import { setRem, setColor, setGradient } from '../../styles';
 import { ReactComponent as Monitoring } from '../../assets/monitoring.svg';
 import { ReactComponent as Task } from '../../assets/task.svg';
 import { ReactComponent as Meeting } from '../../assets/meeting.svg';
@@ -63,7 +63,7 @@ const About: React.FC = () => {
 
 const Container = styled.div`
   min-height: 110vh;
-  background-color: ${setColor.primary};
+  background: ${setGradient(['right', 'bottom'])};
 `;
 
 const Header = styled.div`

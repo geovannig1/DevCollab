@@ -23,7 +23,7 @@ const Hero: React.FC = () => {
           <Button as={Link} to='/signup'>
             Sign Up
           </Button>
-          <Button outline={'outline' ? 1 : 0} as={Link} to='signin'>
+          <Button outline={'outline' && 1} as={Link} to='signin'>
             Sign In
           </Button>
         </LeftContainer>
@@ -37,6 +37,7 @@ const StyledLogo = styled(Logo)`
   width: 150px;
   margin: 10px 20px;
   position: absolute;
+  user-select: none;
 `;
 
 const StyledVector = styled(CollabVector)`
@@ -58,7 +59,7 @@ const LeftContainer = styled.div`
     font-size: ${setRem(60)};
   }
   p {
-    color: ${setColor.secondary};
+    color: ${setColor.primaryLight};
     font-weight: 500;
     margin: 20px 0;
     padding-right: 100px;

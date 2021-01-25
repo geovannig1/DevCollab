@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-import { setColor, setRem } from '../../styles';
+import { setColor, setRem, setGradient } from '../../styles';
 import { ReactComponent as Logo } from '../../assets/logo-white.svg';
 import { ReactComponent as CollaborationVector } from '../../assets/collaboration.svg';
 import ScrollToTop from '../global/ScrollToTop';
@@ -63,7 +63,8 @@ const Container = styled.div`
 const Aside = styled.aside`
   top: 0;
   min-width: 40vw;
-  background-color: ${setColor.primary};
+  min-height: 100vh;
+  background: ${setGradient(['left', ''])};
   display: grid;
   position: relative;
 `;
@@ -86,7 +87,6 @@ const Content = styled.div`
   flex-direction: column;
   margin-top: 10%;
   margin-left: 5%;
-  min-height: 100vh;
   color: ${setColor.primary};
   h1 {
     font-weight: 600;

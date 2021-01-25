@@ -38,8 +38,8 @@ const Signin: React.FC<SigninProps> = ({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSignInData((prevSignInData) => ({
-      ...prevSignInData,
+    setSignInData((prevData) => ({
+      ...prevData,
       [e.target.name]: e.target.value,
     }));
   };
@@ -101,9 +101,11 @@ const Container = styled.div`
     height: 40px;
     padding: 15px;
     margin-bottom: 20px;
-    border: solid ${setColor.secondary} 2px;
+    border: solid ${setColor.primaryLight} 2px;
+    border-radius: 5px;
+    outline: none;
     &:focus {
-      outline: ${setColor.primary} 1px solid;
+      border-color: ${setColor.primary};
     }
   }
   label {

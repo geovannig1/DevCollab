@@ -29,6 +29,7 @@ const Container = styled.aside`
 const StyledLogo = styled(Logo)`
   width: 180px;
   margin: 10px 20px;
+  user-select: none;
 `;
 
 export default Sidebar;

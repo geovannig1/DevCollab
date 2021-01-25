@@ -11,6 +11,12 @@ const GlobalStyle = createGlobalStyle`
         ${setFont.main};
         background-color: ${setColor.mainWhite};
     }
+    textarea, 
+    input, 
+    button, 
+    select { 
+        font-family: inherit; 
+    }
 `;
 
 export default GlobalStyle;

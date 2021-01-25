@@ -4,6 +4,7 @@ import { setColor, setRem } from '../../styles';
 interface ButtonProps {
   outline?: boolean | number;
   small?: boolean | number;
+  extrasmall?: boolean | number;
 }
 
 export const Button = styled.button<ButtonProps>`
@@ -11,9 +12,9 @@ export const Button = styled.button<ButtonProps>`
   background-color: ${({ outline }) =>
     outline ? setColor.mainWhite : setColor.primary};
   color: ${({ outline }) => (outline ? setColor.primary : setColor.mainWhite)};
-  min-width: 135px;
-  padding: 10px;
-  border: ${({ outline }) => (outline ? `solid ${setColor.primary}` : 'none')};
+  min-width: ${({ extrasmall }) => (extrasmall ? '100px' : '135px')};
+  padding: ${({ extrasmall }) => (extrasmall ? '8px' : '10px')};
+  border: solid ${setColor.primary};
   border-radius: 10px;
   cursor: pointer;
   outline: none;
@@ -23,7 +24,8 @@ export const Button = styled.button<ButtonProps>`
   align-items: center;
   text-align: center;
   justify-content: center;
-  font-size: ${({ small }) => (small ? setRem(14) : setRem(20))};
+  font-size: ${({ small, extrasmall }) =>
+    (extrasmall && setRem(13)) ?? (small ? setRem(14) : setRem(20))};
   &:hover {
     background-color: ${({ outline }) => !outline && setColor.primaryDark};
     border: ${({ outline }) => outline && `solid ${setColor.primaryDark}`};

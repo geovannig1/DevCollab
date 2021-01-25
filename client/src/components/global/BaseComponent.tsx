@@ -1,29 +1,51 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { match } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { useLocation, Link } from 'react-router-dom';
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
 
+import { clearProject } from '../../actions/projectActions';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import { setColor } from '../../styles';
 import Sidebar from '../sidebar/Sidebar';
 
 interface BaseComponentProps {
-  match?: match;
+  clearProject: () => void;
 }
 
-const BaseComponent: React.FC<BaseComponentProps> = ({ children, match }) => {
-  console.log(match);
+const BaseComponent: React.FC<BaseComponentProps> = ({
+  children,
+  clearProject,
+}) => {
+  useEffect(() => {
+    return () => clearProject();
+  }, [clearProject]);
+
+  const { pathname } = useLocation();
 
   return (
     <Container>
       <Sidebar />
       <ChildrenContainer>
-        <ArrowBackIosIcon />
-        <Title>Projects</Title>
+        <Header>
+          {pathname !== '/projects' && (
+            <Previous to='/projects' pathname={pathname}>
+              <ArrowBackIosIcon />
+              <span>Projects</span>
+            </Previous>
+          )}
+          <h2>Projects</h2>
+        </Header>
         {children}
       </ChildrenContainer>
     </Container>
   );
 };
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
+  clearProject: () => dispatch(clearProject()),
+});
 
 const Container = styled.div`
   background-color: ${setColor.mainGrey};
@@ -37,9 +59,37 @@ const ChildrenContainer = styled.div`
   width: 100%;
 `;
 
-const Title = styled.h2`
+const Header = styled.div`
   color: ${setColor.primary};
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  h2 {
+    font-weight: 500;
+  }
 `;
 
-export default BaseComponent;
+interface PreviousProps {
+  pathname: string;
+}
+
+const Previous = styled(Link)<PreviousProps>`
+  color: ${({ pathname }) =>
+    pathname === '/projects' ? setColor.primary : setColor.primaryLight};
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+  text-decoration: none;
+  transition: 0.2s ease-in-out;
+  span {
+    font-weight: 600;
+  }
+  &:hover {
+    color: ${setColor.primary};
+  }
+  &:active {
+    color: ${setColor.primaryLight};
+  }
+`;
+
+export default connect(null, mapDispatchToProps)(BaseComponent);

@@ -12,7 +12,7 @@ export const createProject = async (req: Request, res: Response) => {
 
     //Add signed in user as member
     let userMember: Member[] = [];
-    if (user?.id) {
+    if (user?.id && members.length === 0) {
       userMember = [
         { user: user.id, accessPermission: AccessPermission.Admin },
       ];

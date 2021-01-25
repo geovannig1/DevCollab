@@ -6,21 +6,19 @@ import { AnyAction } from 'redux';
 import { Link } from 'react-router-dom';
 
 import { Store } from '../store';
-import { loadProjects, clearProject } from '../actions/projectActions';
+import { loadProjects } from '../actions/projectActions';
 import { ProjectInitialState } from '../reducers/projectReducer';
 import AddIcon from '@material-ui/icons/Add';
 import { Button } from '../components/global/Button';
-import Paper from '../components/global/Paper';
+import Card from '../components/global/Card';
 
 interface ProjectProps {
   loadProjects: () => Promise<void>;
-  clearProject: () => void;
   project: ProjectInitialState;
 }
 
 const Project: React.FC<ProjectProps> = ({
   loadProjects,
-  clearProject,
   project: { shownProject },
 }) => {
   useEffect(() => {
@@ -28,9 +26,7 @@ const Project: React.FC<ProjectProps> = ({
 
     //Only load if project undefined
     !shownProject && loadProjects();
-
-    return () => clearProject();
-  }, [shownProject, loadProjects, clearProject]);
+  }, [shownProject, loadProjects]);
 
   return (
     <Fragment>
@@ -39,7 +35,7 @@ const Project: React.FC<ProjectProps> = ({
       </StyledButton>
       <ProjectContainer>
         {shownProject?.map((project) => (
-          <Paper
+          <Card
             key={project._id}
             title={project.name}
             description={project.description}
@@ -56,11 +52,10 @@ const mapStateToProps = (state: Store) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProjects: () => dispatch(loadProjects()),
-  clearProject: () => dispatch(clearProject()),
 });
 
 const StyledButton = styled(Button)`
-  margin: 20px 0;
+  margin-bottom: 20px;
 `;
 
 const ProjectContainer = styled.div`

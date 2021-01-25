@@ -25,7 +25,7 @@ export interface AuthInitialState {
 
 const authInitialState: AuthInitialState = {
   isAuthenticated: false,
-  loading: false,
+  loading: true,
 };
 
 const authReducer = (

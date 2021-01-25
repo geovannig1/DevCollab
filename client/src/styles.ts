@@ -2,9 +2,17 @@ export const setColor = {
   mainWhite: '#FFFFFF',
   mainGrey: '#F0F0F0',
   mainBlack: '#272727',
-  primary: '#4A58B2',
-  primaryDark: '#2E397B',
-  secondary: '#99A1D8',
+  mainRed: '#FF1B1B',
+  primary: '#4463CC',
+  primaryDark: '#374FA1',
+  primaryLight: '#8797D0',
+  secondary: '#4091E3',
+};
+
+export const setGradient = (directions: [string, string] = ['right', '']) => {
+  return `linear-gradient(to ${directions.join(
+    ' '
+  )}, #4463c6, #406fce, #3e7ad6, #3e86dd, #4091e3)`;
 };
 
 export const setFont = {

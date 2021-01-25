@@ -14,7 +14,10 @@ import { createProject, getProjects } from '../../controllers/project';
 router.post(
   '/',
   auth,
-  check('name', 'Project name is required').notEmpty(),
+  [
+    check('name', 'Project name is required').notEmpty(),
+    check('members', 'Project members is required'),
+  ],
   validateInput,
   createProject
 );

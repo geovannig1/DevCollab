@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 
 import { Store } from '../../store';
-import { setColor } from '../../styles';
+import { setColor, setGradient } from '../../styles';
 import dummyImage from '../../assets/pexels-photo-220453.jpeg';
 import { AuthInitialState } from '../../reducers/authReducer';
-import UserMenu from '../global/UserMenu';
+import UserMenu from './UserMenu';
 
 interface ProfileSidebarProps {
   auth: AuthInitialState;
@@ -29,7 +29,9 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ auth: { user } }) => {
         </UserInformation>
       </ProfileContainer>
       <UserMenu>
-        <StyledMoreVertIcon className={classes.fontSizeLarge} />
+        <StyledMoreVertIcon
+          className={`${classes.root} ${classes.fontSizeLarge}`}
+        />
       </UserMenu>
     </Container>
   );
@@ -41,6 +43,9 @@ const mapStateToProps = (state: Store) => ({
 
 const useStyles = makeStyles(() =>
   createStyles({
+    root: {
+      transition: '0.2s ease-in-out',
+    },
     fontSizeLarge: {
       fontSize: '30px',
     },
@@ -50,11 +55,12 @@ const useStyles = makeStyles(() =>
 const Container = styled.div`
   width: 100%;
   height: 100px;
-  background-color: ${setColor.primary};
+  background: ${setGradient()};
   color: ${setColor.mainWhite};
   display: flex;
   align-items: center;
   justify-content: space-around;
+  user-select: none;
 `;
 
 const Img = styled.img`

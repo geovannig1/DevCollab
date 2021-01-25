@@ -17,7 +17,8 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
 };
 
 export default styled(Footer)`
-  background-color: ${setColor.secondary};
+  background-color: ${setColor.primary};
+  color: ${setColor.mainGrey};
   height: 30px;
   text-align: center;
   display: flex;

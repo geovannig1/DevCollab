@@ -30,3 +30,8 @@ export interface ProjectClear {
 }
 
 export type ProjectDispatchTypes = ProjectLoaded | ProjectClear;
+
+export interface CreateProjectData {
+  name: string;
+  description: string;
+}
