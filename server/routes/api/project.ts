@@ -4,7 +4,11 @@ import { check } from 'express-validator';
 
 import auth from '../../middlewares/auth';
 import validateInput from '../../middlewares/validateInput';
-import { createProject, getProjects } from '../../controllers/project';
+import {
+  createProject,
+  getProjects,
+  confirmInvitation,
+} from '../../controllers/project';
 
 /**
  *  @route POST api/projects
@@ -28,5 +32,12 @@ router.post(
  *  @access Private
  */
 router.get('/', auth, getProjects);
+
+/**
+ *  @route GET api/projects/invitation/token
+ *  @desc Get signed in user projects
+ *  @access Private
+ */
+router.get('/invitation/:token', confirmInvitation);
 
 export default router;

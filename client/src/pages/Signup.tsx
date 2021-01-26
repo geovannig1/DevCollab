@@ -147,7 +147,7 @@ const Container = styled.div`
     height: 40px;
     padding: 15px;
     margin-bottom: 20px;
-    border: solid ${setColor.primaryLight} 2px;
+    border: solid ${setColor.lightBlack} 1px;
     border-radius: 5px;
     outline: none;
     &:focus {

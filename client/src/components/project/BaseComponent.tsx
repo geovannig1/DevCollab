@@ -35,7 +35,6 @@ const BaseComponent: React.FC<BaseComponentProps> = ({
               <span>Projects</span>
             </Previous>
           )}
-          <h2>Projects</h2>
         </Header>
         {children}
       </ChildrenContainer>
@@ -63,10 +62,6 @@ const Header = styled.div`
   color: ${setColor.primary};
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
-  h2 {
-    font-weight: 500;
-  }
 `;
 
 interface PreviousProps {
@@ -74,8 +69,7 @@ interface PreviousProps {
 }
 
 const Previous = styled(Link)<PreviousProps>`
-  color: ${({ pathname }) =>
-    pathname === '/projects' ? setColor.primary : setColor.primaryLight};
+  color: ${setColor.lightBlack};
   display: flex;
   align-items: center;
   margin-right: 20px;
@@ -85,10 +79,10 @@ const Previous = styled(Link)<PreviousProps>`
     font-weight: 600;
   }
   &:hover {
-    color: ${setColor.primary};
+    color: ${setColor.mainBlack};
   }
   &:active {
-    color: ${setColor.primaryLight};
+    color: ${setColor.lightBlack};
   }
 `;
 

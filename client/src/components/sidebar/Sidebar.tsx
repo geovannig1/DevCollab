@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-import { setColor } from '../../styles';
+import { setColor, setShadow } from '../../styles';
 import ProfileSidebar from '../sidebar/ProfileSidebar';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 
@@ -24,6 +24,7 @@ const Container = styled.aside`
   width: 22vw;
   position: fixed;
   background-color: ${setColor.mainWhite};
+  box-shadow: ${setShadow.main};
 `;
 
 const StyledLogo = styled(Logo)`

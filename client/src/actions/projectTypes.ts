@@ -3,13 +3,14 @@ export const PROJECT_CLEAR = 'PROJECT_CLEAR';
 
 export enum AccessPermission {
   Admin,
-  ReadOnly,
   ReadWriteDelete,
+  ReadOnly,
 }
 
 export type Member = {
   user: {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     accessPermission: AccessPermission;
   };
@@ -31,7 +32,13 @@ export interface ProjectClear {
 
 export type ProjectDispatchTypes = ProjectLoaded | ProjectClear;
 
+export interface MembersData {
+  email: string;
+  accessPermission: AccessPermission;
+}
+
 export interface CreateProjectData {
   name: string;
   description: string;
+  members: MembersData[];
 }

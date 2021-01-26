@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 
-import User, { IUser } from '../models/User';
 import jwt from '../services/jwt';
+import User, { IUser } from '../models/User';
 
 //Google OAuth callback
 export const googleCallback = (req: Request, res: Response) => {
@@ -21,7 +21,12 @@ export const googleCallback = (req: Request, res: Response) => {
 //Register new user to the app
 export const register = async (req: Request, res: Response) => {
   try {
-    const { firstName, lastName, email, password, confirmPassword } = req.body;
+    let { firstName, lastName, email, password, confirmPassword } = req.body;
+
+    //Remove white space
+    firstName = firstName.trim();
+    lastName = lastName.trim();
+    email = email.trim();
 
     //Check if the password not match
     if (password !== confirmPassword) {

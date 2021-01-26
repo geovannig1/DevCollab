@@ -2,6 +2,7 @@ export const setColor = {
   mainWhite: '#FFFFFF',
   mainGrey: '#F0F0F0',
   mainBlack: '#272727',
+  lightBlack: '#9F9F9F',
   mainRed: '#FF1B1B',
   primary: '#4463CC',
   primaryDark: '#374FA1',

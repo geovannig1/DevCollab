@@ -20,11 +20,6 @@ import ALert from '../components/global/Alert';
 import validateEmail from '../utils/validateEmail';
 import { MessageType } from '../actions/alertTypes';
 
-interface MembersData {
-  name: string;
-  accessPermission: AccessPermission;
-}
-
 interface CreateProjectProps {
   auth: AuthInitialState;
   createProject: (
@@ -49,17 +44,19 @@ const CreateProject: React.FC<CreateProjectProps> = ({
     document.title = 'Create new project | DevCollab';
   }, []);
 
+  //Form state
   const [createProjectData, setCreateProjectData] = useState<CreateProjectData>(
     {
       name: '',
       description: '',
+      members: [],
     }
   );
 
+  //Members state
   const [members, setMembers] = useState<string>('');
 
-  const [addMembers, setAddMembers] = useState<MembersData[]>([]);
-
+  //Handle form input change
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -70,26 +67,37 @@ const CreateProject: React.FC<CreateProjectProps> = ({
   };
 
   const history = useHistory();
+
+  //Submit form data
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     createProject(createProjectData, history);
   };
 
-  const handleMembersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMembers(e.target.value);
-  };
-
+  //Handle member that will be added to project
   const handleAddMembers = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
     const emailValidated = validateEmail(members);
 
-    if (members !== '' && emailValidated) {
-      setAddMembers((prevData) => [
+    //Check if email already added
+    const emailExist = createProjectData.members.filter(
+      (member) => member.email === members
+    );
+
+    if (emailExist.length !== 0) {
+      setAlert('Email already on the list', MessageType.Fail, 'members');
+    } else if (members !== '' && emailValidated) {
+      setCreateProjectData((prevData) => ({
         ...prevData,
-        { name: members, accessPermission: AccessPermission.ReadOnly },
-      ]);
+        members: [
+          ...prevData.members,
+          { email: members, accessPermission: AccessPermission.ReadOnly },
+        ],
+      }));
+
       removeAlert('members');
       setMembers('');
     } else {
@@ -97,93 +105,131 @@ const CreateProject: React.FC<CreateProjectProps> = ({
     }
   };
 
+  //Handle member permission
+  const handleChangeEditPermission = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const value: AccessPermission = parseInt(e.target.value);
+
+    let changePermission = createProjectData.members.find(
+      (data) => data.email === e.target.name
+    );
+
+    if (changePermission) {
+      changePermission.accessPermission = value;
+    }
+
+    //Find the index of member
+    const index = createProjectData.members
+      .map((member) => member.accessPermission)
+      .indexOf(value);
+
+    if (changePermission !== undefined) {
+      const newData = changePermission;
+      setCreateProjectData((prevData) => ({
+        ...prevData,
+        members: [
+          ...prevData.members,
+          ...prevData.members.splice(index, 0, newData),
+        ],
+      }));
+    }
+  };
+
   return (
-    <Paper>
-      <Form onSubmit={handleSubmit}>
-        <Item>
-          <label htmlFor='name'>
-            Project Name <span>*</span>
-          </label>
-          <input
-            name='name'
-            autoComplete='off'
-            spellCheck='false'
-            id='name'
-            type='text'
-            placeholder='Enter the name of the project'
-            onChange={handleChange}
-            value={createProjectData.name}
-          />
-        </Item>
-
-        <Item>
-          <label htmlFor='description'>Description</label>
-          <textarea
-            name='description'
-            id='description'
-            rows={8}
-            placeholder='Describe the project'
-            onChange={handleChange}
-            value={createProjectData.description}
-          />
-        </Item>
-
-        <Item>
-          <label htmlFor='members'>Invite Members</label>
-          <AddMemberContainer>
+    <Fragment>
+      <Title>{createProjectData.name.trim() || 'Project Name'}</Title>
+      <Paper>
+        <Form onSubmit={handleSubmit}>
+          <Item>
+            <label htmlFor='name'>
+              Project Name <span>*</span>
+            </label>
             <input
-              type='email'
-              id='members'
-              name='members'
-              placeholder='Enter member email'
-              onChange={handleMembersChange}
-              value={members}
+              name='name'
+              autoComplete='off'
+              spellCheck='false'
+              id='name'
+              type='text'
+              placeholder='Enter the name of the project'
+              onChange={handleChange}
+              value={createProjectData.name}
             />
-            <button onClick={handleAddMembers}>
-              <AddIcon fontSize='small' />
-            </button>
-          </AddMemberContainer>
-        </Item>
+          </Item>
 
-        <label htmlFor='members'>
-          Project Access Permission
-          <HelpIcon fontSize='small' />
-        </label>
+          <Item>
+            <label htmlFor='description'>Description</label>
+            <textarea
+              name='description'
+              id='description'
+              rows={8}
+              placeholder='Describe the project'
+              onChange={handleChange}
+              value={createProjectData.description}
+            />
+          </Item>
 
-        <Item id='members'>
-          <MemberName>{user?.email}</MemberName>
-          <Select disabled>
-            <option value='0'>Admin</option>
-          </Select>
-          {addMembers.map((member, index) => (
-            <Fragment key={index}>
-              <MemberName>{member.name}</MemberName>
-              <Select name='accessPermission'>
-                <option value='0'>Admin</option>
-                <option value='2'>Read/Write/Delete</option>
-                <option value='1' selected>
-                  Read Only
-                </option>
-              </Select>
-            </Fragment>
-          ))}
-        </Item>
+          <Item>
+            <label htmlFor='members'>Invite Members</label>
+            <AddMemberContainer>
+              <input
+                type='email'
+                id='members'
+                name='members'
+                placeholder='Enter member email'
+                onChange={(e) => setMembers(e.target.value)}
+                value={members}
+              />
+              <button onClick={handleAddMembers}>
+                <AddIcon fontSize='small' />
+              </button>
+            </AddMemberContainer>
+          </Item>
 
-        <ALert />
+          <label htmlFor='members'>
+            Project Access Permission
+            <HelpIcon fontSize='small' />
+          </label>
 
-        <StyledButton extrasmall={'extrasmall' && 1}>
-          Create Project
-        </StyledButton>
-        <StyledButton
-          extrasmall={'extrasmall' && 1}
-          outline={'outline' && 1}
-          as={Link}
-          to='/projects'
-        >
-          Cancel
-        </StyledButton>
-      </Form>
-    </Paper>
+          <Item id='members'>
+            <MemberName>{user?.email}</MemberName>
+            <Select disabled style={{ cursor: 'not-allowed' }}>
+              <option value={AccessPermission.Admin}>Admin</option>
+            </Select>
+            {createProjectData.members.map((member, index) => (
+              <Fragment key={index}>
+                <MemberName>{member.email}</MemberName>
+                <Select
+                  name={member.email}
+                  defaultValue={AccessPermission.ReadOnly}
+                  onChange={handleChangeEditPermission}
+                >
+                  <option value={AccessPermission.Admin}>Admin</option>
+                  <option value={AccessPermission.ReadWriteDelete}>
+                    Read/Write/Delete
+                  </option>
+                  <option value={AccessPermission.ReadOnly}>Read Only</option>
+                </Select>
+              </Fragment>
+            ))}
+          </Item>
+
+          <ALert />
+
+          <StyledButton extrasmall={'extrasmall' && 1}>
+            Create Project
+          </StyledButton>
+          <StyledButton
+            extrasmall={'extrasmall' && 1}
+            outline={'outline' && 1}
+            as={Link}
+            to='/projects'
+          >
+            Cancel
+          </StyledButton>
+        </Form>
+      </Paper>
+    </Fragment>
   );
 };
 
@@ -199,6 +245,13 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
     dispatch(createProject(createProjectData, history)),
 });
 
+const Title = styled.h2`
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: ${setColor.mainBlack};
+  font-weight: 500;
+`;
+
 const Form = styled.form`
   word-wrap: break-word;
   span {
@@ -207,14 +260,15 @@ const Form = styled.form`
   label {
     margin-bottom: 5px;
     margin-top: 10px;
-    color: ${setColor.primary};
+    color: ${setColor.mainBlack};
     font-weight: 600;
     font-size: ${setRem(15)};
   }
 `;
 
 const StyledButton = styled(Button)`
-  margin-top: 30px;
+  margin-top: 15px;
+  margin-bottom: 10px;
   margin-right: 10px;
 `;
 
@@ -223,7 +277,7 @@ const Select = styled.select`
   padding: 5px;
   height: 30px;
   border-radius: 5px;
-  border: solid ${setColor.primaryLight} 2px;
+  border: solid ${setColor.lightBlack} 2px;
   outline: none;
 `;
 
@@ -264,7 +318,7 @@ const Item = styled.div`
     border-radius: 5px;
     height: 20px;
     padding: 15px;
-    border: solid ${setColor.primaryLight} 2px;
+    border: solid ${setColor.lightBlack} 1px;
     outline: none;
     &:focus {
       border-color: ${setColor.primary};
@@ -274,7 +328,7 @@ const Item = styled.div`
     border-radius: 5px;
     padding: 10px;
     resize: none;
-    border: solid ${setColor.primaryLight} 2px;
+    border: solid ${setColor.lightBlack} 1px;
     outline: none;
     &:focus {
       border-color: ${setColor.primary};
@@ -283,7 +337,7 @@ const Item = styled.div`
 `;
 
 const MemberName = styled.div`
-  color: ${setColor.primary};
+  color: ${setColor.mainBlack};
   font-weight: 500;
   font-size: ${setRem(14)};
   margin-top: 10px;

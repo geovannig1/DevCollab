@@ -85,13 +85,13 @@ const StyledVector = styled(CollaborationVector)`
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 10%;
+  margin-top: 8%;
   margin-left: 5%;
-  color: ${setColor.primary};
   h1 {
+    color: ${setColor.primary};
     font-weight: 600;
     font-size: ${setRem(30)};
-    margin: 20px 0;
+    margin: 25px 0;
   }
 `;
 

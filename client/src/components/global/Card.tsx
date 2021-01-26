@@ -50,18 +50,18 @@ const Header = styled.div`
 `;
 
 const Title = styled.h4`
-  color: ${setColor.primary};
+  color: ${setColor.mainBlack};
   font-weight: 600;
 `;
 
 const StyledIcon = styled(MoreHorizIcon)`
-  color: ${setColor.primaryLight};
+  color: ${setColor.lightBlack};
   transition: 0.2s ease-in-out;
   &:hover {
-    color: ${setColor.primary};
+    color: ${setColor.mainBlack};
   }
   &:active {
-    color: ${setColor.primaryLight};
+    color: ${setColor.lightBlack};
   }
 `;
 

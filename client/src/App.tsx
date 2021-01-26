@@ -13,7 +13,7 @@ import Signin from './pages/Signin';
 import Signup from './pages/Signup';
 import Project from './pages/Project';
 import CreateProject from './pages/CreateProject';
-import BaseComponent from './components/global/BaseComponent';
+import BaseComponent from './components/project/BaseComponent';
 
 interface AppProps {
   loadUser: () => Promise<void>;

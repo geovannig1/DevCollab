@@ -22,7 +22,7 @@ export const getUser = async (req: Request, res: Response) => {
 //Edit signed in user data
 export const editUser = async (req: Request, res: Response) => {
   try {
-    const {
+    let {
       firstName,
       lastName,
       newPassword,
@@ -30,6 +30,10 @@ export const editUser = async (req: Request, res: Response) => {
       currentPassword,
       email,
     } = req.body;
+
+    //Remove white space
+    firstName = firstName.trim();
+    lastName = lastName.trim();
 
     const user = await User.findById(req.user);
 

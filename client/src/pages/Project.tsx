@@ -11,6 +11,7 @@ import { ProjectInitialState } from '../reducers/projectReducer';
 import AddIcon from '@material-ui/icons/Add';
 import { Button } from '../components/global/Button';
 import Card from '../components/global/Card';
+import { setColor } from '../styles';
 
 interface ProjectProps {
   loadProjects: () => Promise<void>;
@@ -30,6 +31,7 @@ const Project: React.FC<ProjectProps> = ({
 
   return (
     <Fragment>
+      <H1>Projects.</H1>
       <StyledButton small={'small' ? 1 : 0} as={Link} to='/create-project'>
         <AddIcon fontSize='small' /> Start New Project
       </StyledButton>
@@ -53,6 +55,12 @@ const mapStateToProps = (state: Store) => ({
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProjects: () => dispatch(loadProjects()),
 });
+
+const H1 = styled.h1`
+  font-weight: 500;
+  color: ${setColor.mainBlack};
+  margin-bottom: 25px;
+`;
 
 const StyledButton = styled(Button)`
   margin-bottom: 20px;
