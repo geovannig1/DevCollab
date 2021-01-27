@@ -8,6 +8,7 @@ import {
   createProject,
   getProjects,
   confirmInvitation,
+  deleteProject,
 } from '../../controllers/project';
 
 /**
@@ -34,9 +35,16 @@ router.post(
 router.get('/', auth, getProjects);
 
 /**
- *  @route GET api/projects/invitation/token
- *  @desc Get signed in user projects
+ *  @route DELETE api/projects/:projectId
+ *  @desc Delete a project
  *  @access Private
+ */
+router.delete('/:projectId', auth, deleteProject);
+
+/**
+ *  @route GET api/projects/invitation/token
+ *  @desc Confirm project invitation
+ *  @access Public
  */
 router.get('/invitation/:token', confirmInvitation);
 

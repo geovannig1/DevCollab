@@ -4,16 +4,14 @@ import api from '../api';
 import { removeAlert, setAlert } from './alertActions';
 import { MessageType } from './alertTypes';
 import {
-  REGISTER_FAIL,
   REGISTER_SUCCESS,
   SET_LOADING,
   REMOVE_LOADING,
-  LOGIN_FAIL,
   LOGIN_SUCCESS,
   USER_LOADED,
-  USER_LOAD_FAIL,
-  LOGOUT_FAIL,
+  AUTH_ERROR,
   LOGOUT_SUCCESS,
+  LOGOUT_FAIL,
   LoadingDispatch,
   RegisterDispatchTypes,
   LoginDispatchTypes,
@@ -31,10 +29,15 @@ export const loadUser = () => async (
     dispatch({ type: SET_LOADING });
 
     const res = await api.get('/user');
+
     dispatch({ type: USER_LOADED, payload: res.data });
     dispatch({ type: REMOVE_LOADING });
   } catch (err) {
-    dispatch({ type: USER_LOAD_FAIL });
+    dispatch({
+      type: AUTH_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+
     dispatch({ type: REMOVE_LOADING });
   }
 };
@@ -52,13 +55,16 @@ export const signUp = (signUpData: SignUpData) => async (
     dispatch(loadUser());
   } catch (err) {
     const errors = err.response.data.errors;
-
     if (errors) {
       errors.forEach((error: any) =>
         dispatch(setAlert(error.msg, MessageType.Fail, error.param))
       );
     }
-    dispatch({ type: REGISTER_FAIL });
+
+    dispatch({
+      type: AUTH_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
   }
 };
 
@@ -74,13 +80,15 @@ export const signIn = (signInData: SignInData) => async (
     dispatch(loadUser());
   } catch (err) {
     const errors = err.response.data.errors;
-
     if (errors) {
       errors.forEach((error: any) => {
         dispatch(setAlert(error.msg, MessageType.Fail, error.param));
       });
     }
-    dispatch({ type: LOGIN_FAIL });
+    dispatch({
+      type: AUTH_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
   }
 };
 
@@ -92,6 +100,7 @@ export const signOut = () => async (
     dispatch({ type: SET_LOADING });
 
     await api.get('/auth/signout');
+
     dispatch({ type: REMOVE_LOADING });
     dispatch({ type: LOGOUT_SUCCESS });
   } catch (err) {

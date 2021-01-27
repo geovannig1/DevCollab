@@ -1,14 +1,12 @@
 import {
-  REGISTER_FAIL,
   REGISTER_SUCCESS,
-  LOGIN_FAIL,
   LOGIN_SUCCESS,
   USER_LOADED,
-  USER_LOAD_FAIL,
   SET_LOADING,
   REMOVE_LOADING,
-  LOGOUT_FAIL,
   LOGOUT_SUCCESS,
+  LOGOUT_FAIL,
+  AUTH_ERROR,
   LoadingDispatch,
   LoginDispatchTypes,
   RegisterDispatchTypes,
@@ -21,6 +19,7 @@ export interface AuthInitialState {
   loading: boolean;
   isAuthenticated: boolean;
   user?: UserType;
+  authError?: object;
 }
 
 const authInitialState: AuthInitialState = {
@@ -55,13 +54,6 @@ const authReducer = (
         ...state,
         isAuthenticated: true,
       };
-    case REGISTER_FAIL:
-    case LOGIN_FAIL:
-    case USER_LOAD_FAIL:
-      return {
-        ...state,
-        isAuthenticated: false,
-      };
     case USER_LOADED:
       return {
         ...state,
@@ -73,6 +65,12 @@ const authReducer = (
         ...state,
         isAuthenticated: false,
         user: undefined,
+      };
+    case AUTH_ERROR:
+      return {
+        ...state,
+        isAuthenticated: false,
+        authError: action.payload,
       };
     default:
       return state;

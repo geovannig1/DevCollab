@@ -8,9 +8,12 @@ import { MessageType } from './alertTypes';
 import { LoadingDispatch, SET_LOADING, REMOVE_LOADING } from './authTypes';
 import {
   PROJECT_LOADED,
+  PROJECT_CREATED,
   PROJECT_CLEAR,
+  PROJECT_DELETED,
   ProjectDispatchTypes,
-  CreateProjectData,
+  ProjectData,
+  PROJECT_ERROR,
 } from './projectTypes';
 
 //Load user projects
@@ -25,8 +28,54 @@ export const loadProjects = () => async (
     dispatch({ type: PROJECT_LOADED, payload: res.data });
     dispatch({ type: REMOVE_LOADING });
   } catch (err) {
+    dispatch({
+      type: PROJECT_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+
     dispatch({ type: PROJECT_CLEAR });
     dispatch({ type: REMOVE_LOADING });
+  }
+};
+
+//Create new project
+export const createProject = (
+  projectData: ProjectData,
+  history: History
+) => async (dispatch: ThunkDispatch<{}, {}, ProjectDispatchTypes>) => {
+  try {
+    const res = await api.post('/projects', projectData);
+
+    dispatch({ type: PROJECT_CREATED, payload: res.data });
+
+    history.push('/projects');
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error: any) =>
+        dispatch(setAlert(error.msg, MessageType.Fail, error.params))
+      );
+    }
+
+    dispatch({
+      type: PROJECT_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
+//Delete project
+export const deleteProject = (projectId: number) => async (
+  dispatch: ThunkDispatch<{}, {}, ProjectDispatchTypes>
+) => {
+  try {
+    await api.delete(`/projects/${projectId}`);
+    dispatch({ type: PROJECT_DELETED, payload: projectId });
+  } catch (err) {
+    dispatch({
+      type: PROJECT_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
   }
 };
 
@@ -35,25 +84,4 @@ export const clearProject = () => (
   dispatch: Dispatch<ProjectDispatchTypes>
 ) => {
   dispatch({ type: PROJECT_CLEAR });
-};
-
-//Create new project
-export const createProject = (
-  createProjectData: CreateProjectData,
-  history: History
-) => async (dispatch: ThunkDispatch<{}, {}, ProjectDispatchTypes>) => {
-  try {
-    await api.post('/projects', createProjectData);
-
-    dispatch(loadProjects());
-    history.push('/projects');
-  } catch (err) {
-    const errors = err.response.data.errors;
-
-    if (errors) {
-      errors.forEach((error: any) =>
-        dispatch(setAlert(error.msg, MessageType.Fail, error.params))
-      );
-    }
-  }
 };

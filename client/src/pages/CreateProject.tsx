@@ -1,31 +1,32 @@
 import React, { useEffect, useState, Fragment } from 'react';
 import styled from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
-import AddIcon from '@material-ui/icons/Add';
 import { connect } from 'react-redux';
-import HelpIcon from '@material-ui/icons/Help';
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
 import { History } from 'history';
 
+import { setColor, setRem } from '../styles';
 import { Store } from '../store';
 import { setAlert, removeAlert } from '../actions/alertActions';
 import { AuthInitialState } from '../reducers/authReducer';
-import { setColor, setRem } from '../styles';
+import { ProjectInitialState } from '../reducers/projectReducer';
+import { MessageType } from '../actions/alertTypes';
+import { ProjectData, AccessPermission } from '../actions/projectTypes';
+import { createProject, loadProjects } from '../actions/projectActions';
+import validateEmail from '../utils/validateEmail';
+import HelpIcon from '@material-ui/icons/Help';
+import AddIcon from '@material-ui/icons/Add';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import Paper from '../components/global/Paper';
 import { Button } from '../components/global/Button';
-import { CreateProjectData, AccessPermission } from '../actions/projectTypes';
-import { createProject } from '../actions/projectActions';
 import ALert from '../components/global/Alert';
-import validateEmail from '../utils/validateEmail';
-import { MessageType } from '../actions/alertTypes';
 
 interface CreateProjectProps {
   auth: AuthInitialState;
-  createProject: (
-    createProjectData: CreateProjectData,
-    history: History
-  ) => Promise<void>;
+  project: ProjectInitialState;
+  createProject: (projectData: ProjectData, history: History) => Promise<void>;
+  loadProjects: () => Promise<void>;
   setAlert: (
     message: string,
     messageType: MessageType,
@@ -36,22 +37,23 @@ interface CreateProjectProps {
 
 const CreateProject: React.FC<CreateProjectProps> = ({
   auth: { user },
+  project: { shownProject },
   createProject,
+  loadProjects,
   setAlert,
   removeAlert,
 }) => {
   useEffect(() => {
     document.title = 'Create new project | DevCollab';
-  }, []);
+    !shownProject && loadProjects();
+  }, [shownProject, loadProjects]);
 
   //Form state
-  const [createProjectData, setCreateProjectData] = useState<CreateProjectData>(
-    {
-      name: '',
-      description: '',
-      members: [],
-    }
-  );
+  const [projectData, setProjectData] = useState<ProjectData>({
+    name: '',
+    description: '',
+    members: [],
+  });
 
   //Members state
   const [members, setMembers] = useState<string>('');
@@ -60,7 +62,7 @@ const CreateProject: React.FC<CreateProjectProps> = ({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setCreateProjectData((prevData) => ({
+    setProjectData((prevData) => ({
       ...prevData,
       [e.target.name]: e.target.value,
     }));
@@ -72,7 +74,7 @@ const CreateProject: React.FC<CreateProjectProps> = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    createProject(createProjectData, history);
+    createProject(projectData, history);
   };
 
   //Handle member that will be added to project
@@ -83,14 +85,14 @@ const CreateProject: React.FC<CreateProjectProps> = ({
     const emailValidated = validateEmail(members);
 
     //Check if email already added
-    const emailExist = createProjectData.members.filter(
+    const emailExist = projectData.members.filter(
       (member) => member.email === members
     );
 
-    if (emailExist.length !== 0) {
+    if (emailExist.length !== 0 || members === user?.email) {
       setAlert('Email already on the list', MessageType.Fail, 'members');
     } else if (members !== '' && emailValidated) {
-      setCreateProjectData((prevData) => ({
+      setProjectData((prevData) => ({
         ...prevData,
         members: [
           ...prevData.members,
@@ -111,7 +113,7 @@ const CreateProject: React.FC<CreateProjectProps> = ({
   ) => {
     const value: AccessPermission = parseInt(e.target.value);
 
-    let changePermission = createProjectData.members.find(
+    let changePermission = projectData.members.find(
       (data) => data.email === e.target.name
     );
 
@@ -120,13 +122,13 @@ const CreateProject: React.FC<CreateProjectProps> = ({
     }
 
     //Find the index of member
-    const index = createProjectData.members
+    const index = projectData.members
       .map((member) => member.accessPermission)
       .indexOf(value);
 
     if (changePermission !== undefined) {
       const newData = changePermission;
-      setCreateProjectData((prevData) => ({
+      setProjectData((prevData) => ({
         ...prevData,
         members: [
           ...prevData.members,
@@ -138,7 +140,13 @@ const CreateProject: React.FC<CreateProjectProps> = ({
 
   return (
     <Fragment>
-      <Title>{createProjectData.name.trim() || 'Project Name'}</Title>
+      <Header>
+        <Previous to='/projects'>
+          <ArrowBackIosIcon />
+          <span>Projects</span>
+        </Previous>
+        <Title>{projectData.name.trim() || 'Project Name'}</Title>
+      </Header>
       <Paper>
         <Form onSubmit={handleSubmit}>
           <Item>
@@ -153,7 +161,7 @@ const CreateProject: React.FC<CreateProjectProps> = ({
               type='text'
               placeholder='Enter the name of the project'
               onChange={handleChange}
-              value={createProjectData.name}
+              value={projectData.name}
             />
           </Item>
 
@@ -165,7 +173,7 @@ const CreateProject: React.FC<CreateProjectProps> = ({
               rows={8}
               placeholder='Describe the project'
               onChange={handleChange}
-              value={createProjectData.description}
+              value={projectData.description}
             />
           </Item>
 
@@ -196,7 +204,7 @@ const CreateProject: React.FC<CreateProjectProps> = ({
             <Select disabled style={{ cursor: 'not-allowed' }}>
               <option value={AccessPermission.Admin}>Admin</option>
             </Select>
-            {createProjectData.members.map((member, index) => (
+            {projectData.members.map((member, index) => (
               <Fragment key={index}>
                 <MemberName>{member.email}</MemberName>
                 <Select
@@ -235,19 +243,42 @@ const CreateProject: React.FC<CreateProjectProps> = ({
 
 const mapStateToProps = (state: Store) => ({
   auth: state.auth,
+  project: state.project,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   setAlert: (message: string, messageType: MessageType, location: string) =>
     dispatch(setAlert(message, messageType, location)),
   removeAlert: (location: string) => dispatch(removeAlert(location)),
-  createProject: (createProjectData: CreateProjectData, history: History) =>
-    dispatch(createProject(createProjectData, history)),
+  createProject: (projectData: ProjectData, history: History) =>
+    dispatch(createProject(projectData, history)),
+  loadProjects: () => dispatch(loadProjects()),
 });
 
+const Header = styled.div`
+  display: flex;
+  margin-bottom: 20px;
+`;
+
+const Previous = styled(Link)`
+  color: ${setColor.lightBlack};
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: 0.2s ease-in-out;
+  span {
+    font-weight: 600;
+  }
+  &:hover {
+    color: ${setColor.mainBlack};
+  }
+  &:active {
+    color: ${setColor.lightBlack};
+  }
+`;
+
 const Title = styled.h2`
-  margin-top: 20px;
-  margin-bottom: 10px;
+  margin: 0 15px;
   color: ${setColor.mainBlack};
   font-weight: 500;
 `;

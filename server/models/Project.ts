@@ -16,7 +16,6 @@ export interface IProject extends Document {
   name: string;
   description?: string;
   members: Member[];
-  date?: Date;
 }
 
 const projectSchema = new Schema<IProject>({

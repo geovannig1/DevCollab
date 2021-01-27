@@ -29,7 +29,7 @@ const BaseComponent: React.FC<BaseComponentProps> = ({
       <Sidebar />
       <ChildrenContainer>
         <Header>
-          {pathname !== '/projects' && (
+          {pathname !== '/projects' && pathname !== '/create-project' && (
             <Previous to='/projects' pathname={pathname}>
               <ArrowBackIosIcon />
               <span>Projects</span>

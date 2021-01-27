@@ -1,5 +1,8 @@
 export const PROJECT_LOADED = 'PROJECT_LOADED';
+export const PROJECT_CREATED = 'PROJECT_CREATED';
 export const PROJECT_CLEAR = 'PROJECT_CLEAR';
+export const PROJECT_DELETED = 'PROJECT_DELETE';
+export const PROJECT_ERROR = 'PROJECT_ERROR';
 
 export enum AccessPermission {
   Admin,
@@ -26,18 +29,38 @@ export interface ProjectLoaded {
   type: typeof PROJECT_LOADED;
   payload: ProjectType;
 }
+export interface ProjcetCreated {
+  type: typeof PROJECT_CREATED;
+  payload: ProjectType;
+}
 export interface ProjectClear {
   type: typeof PROJECT_CLEAR;
 }
+export interface ProjectDeleted {
+  type: typeof PROJECT_DELETED;
+  payload: number;
+}
+export interface ProjectError {
+  type: typeof PROJECT_ERROR;
+  payload: {
+    msg: string;
+    status: string;
+  };
+}
 
-export type ProjectDispatchTypes = ProjectLoaded | ProjectClear;
+export type ProjectDispatchTypes =
+  | ProjectLoaded
+  | ProjcetCreated
+  | ProjectClear
+  | ProjectDeleted
+  | ProjectError;
 
 export interface MembersData {
   email: string;
   accessPermission: AccessPermission;
 }
 
-export interface CreateProjectData {
+export interface ProjectData {
   name: string;
   description: string;
   members: MembersData[];

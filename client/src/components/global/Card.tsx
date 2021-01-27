@@ -1,22 +1,41 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-
 import { setColor, setShadow } from '../../styles';
+import CardMenu from './CardMenu';
 
 interface CardProps {
   title: string;
   description?: string;
+  deleteTitle: string;
+  deleteText: string;
+  deleteItem: (id: number) => Promise<void>;
+  deleteId: number;
 }
 
-const Card: React.FC<CardProps> = ({ title, description }) => {
+const Card: React.FC<CardProps> = ({
+  title,
+  description,
+  deleteTitle,
+  deleteText,
+  deleteId,
+  deleteItem,
+}) => {
   const classes = useStyles();
   return (
     <Container>
       <Header>
         <Title>{title}</Title>
-        <StyledIcon className={classes.root} fontSize='large' />
+        <CardMenu
+          deleteItem={deleteItem}
+          deleteId={deleteId}
+          deleteTitle={deleteTitle}
+          deleteText={deleteText}
+        >
+          <StyledIcon className={classes.root} fontSize='large' />
+        </CardMenu>
       </Header>
       <Description>{description}</Description>
     </Container>

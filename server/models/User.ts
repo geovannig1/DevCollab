@@ -8,7 +8,6 @@ export interface IUser extends Document {
   password?: string;
   googleId?: string;
   avatar?: string;
-  date?: Date;
 }
 
 const userSchema = new Schema<IUser>({

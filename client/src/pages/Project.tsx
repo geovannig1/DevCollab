@@ -6,7 +6,7 @@ import { AnyAction } from 'redux';
 import { Link } from 'react-router-dom';
 
 import { Store } from '../store';
-import { loadProjects } from '../actions/projectActions';
+import { loadProjects, deleteProject } from '../actions/projectActions';
 import { ProjectInitialState } from '../reducers/projectReducer';
 import AddIcon from '@material-ui/icons/Add';
 import { Button } from '../components/global/Button';
@@ -15,11 +15,13 @@ import { setColor } from '../styles';
 
 interface ProjectProps {
   loadProjects: () => Promise<void>;
+  deleteProject: (projectId: number) => Promise<void>;
   project: ProjectInitialState;
 }
 
 const Project: React.FC<ProjectProps> = ({
   loadProjects,
+  deleteProject,
   project: { shownProject },
 }) => {
   useEffect(() => {
@@ -38,6 +40,10 @@ const Project: React.FC<ProjectProps> = ({
       <ProjectContainer>
         {shownProject?.map((project) => (
           <Card
+            deleteTitle={`Delete Project`}
+            deleteText={`Are you sure want to delete ${project.name}? this process can't be undone.`}
+            deleteItem={() => deleteProject(project._id)}
+            deleteId={project._id}
             key={project._id}
             title={project.name}
             description={project.description}
@@ -54,6 +60,7 @@ const mapStateToProps = (state: Store) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProjects: () => dispatch(loadProjects()),
+  deleteProject: (projectId: number) => dispatch(deleteProject(projectId)),
 });
 
 const H1 = styled.h1`

@@ -60,7 +60,7 @@ export const createProject = async (req: Request, res: Response) => {
             <p style='font-size: 15px; color: black; margin:0;'>${user?.email} has invited you to <b>${name}</b> project, <br/>
             click the button below to join the project: </p> 
             <a href="${url}">
-              <button style='background-color: #4463CC;color: white; height: 40px; width: 90px; border: none; cursor: pointer; margin: 10px 0;'>
+              <button style='background-color: #4463CC;color: white; height: 40px; width: 90px; border: none; margin: 10px 0; cursor: pointer;'>
               Join
               </button>
             </a> 
@@ -70,7 +70,7 @@ export const createProject = async (req: Request, res: Response) => {
       );
     });
 
-    res.status(201).json({ msg: 'Project successfully created' });
+    res.status(201).json(project);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
@@ -84,7 +84,62 @@ export const getProjects = async (req: Request, res: Response) => {
       members: { $elemMatch: { user: req.user } },
     }).populate('members.user', ['firstName', 'lastName', 'email']);
 
+    //If user added to project by email
+    const user = await User.findById(req.user);
+    const projectsEmail = await Project.find({
+      members: { $elemMatch: { email: user?.email } },
+    });
+    //Check if user with the email exist
+    if (projectsEmail.length > 0) {
+      for (const project of projectsEmail) {
+        //Save the current user as a member data
+        const userMember = project.members.filter(
+          (member) => member.email === user?.email
+        )[0];
+
+        //Remove the user data in the project members and replace it with a real account
+        project.members = project.members.filter(
+          (member) => member.email !== user?.email
+        );
+        project.members.push({
+          user: user?.id,
+          accessPermission: userMember.accessPermission,
+        });
+
+        await project.save();
+      }
+
+      //Load the newly updated project
+      const projects = await Project.find({
+        members: { $elemMatch: { user: req.user } },
+      }).populate('members.user', ['firstName', 'lastName', 'email']);
+
+      return res.status(200).json(projects);
+    }
+
     res.status(200).json(projects);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
+//Delete project
+export const deleteProject = async (req: Request, res: Response) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    //Check if delete request from admin project
+    const member = project?.members.find(
+      (member) => member.user?.toString() === req.user
+    );
+    if (member?.accessPermission !== AccessPermission.Admin) {
+      return res.status(401).json({ errors: { msg: 'Unauthorized user' } });
+    }
+
+    await project?.remove();
+
+    res.status(200).json({ msg: 'Project deleted' });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
@@ -117,16 +172,12 @@ export const confirmInvitation = async (req: Request, res: Response) => {
         user: user.id,
         accessPermission: member.accessPermission,
       });
+
+      await project?.save();
+      return res.status(200).redirect(`/projects/${member.projectId}`);
     }
 
     //When member doesn't have account
-    const userExist = project?.members.filter(
-      (projectMember) => projectMember.email === member.email
-    );
-    if (userExist && userExist.length > 0) {
-      return res.status(400).json({ msg: 'User already in the project' });
-    }
-
     project?.members.push({
       email: member.email,
       accessPermission: member.accessPermission,
@@ -135,6 +186,7 @@ export const confirmInvitation = async (req: Request, res: Response) => {
     await project?.save();
     res.status(200).redirect(`/projects/${member.projectId}`);
   } catch (err) {
+    console.error(err.message);
     res.status(500).send('Server error');
   }
 };
