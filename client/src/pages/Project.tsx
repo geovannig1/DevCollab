@@ -39,15 +39,17 @@ const Project: React.FC<ProjectProps> = ({
       </StyledButton>
       <ProjectContainer>
         {shownProject?.map((project) => (
-          <Card
-            deleteTitle={`Delete Project`}
-            deleteText={`Are you sure want to delete ${project.name}? this process can't be undone.`}
-            deleteItem={() => deleteProject(project._id)}
-            deleteId={project._id}
-            key={project._id}
-            title={project.name}
-            description={project.description}
-          />
+          <CardLink key={project._id}>
+            <Card
+              title={project.name}
+              description={project.description}
+              deleteTitle={`Delete Project`}
+              deleteText={`Are you sure want to delete ${project.name} project? this process can't be undone.`}
+              deleteItem={() => deleteProject(project._id)}
+              deleteId={project._id}
+              editLink={`/projects/${project._id}/edit`}
+            />
+          </CardLink>
         ))}
       </ProjectContainer>
     </Fragment>
@@ -77,6 +79,10 @@ const ProjectContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 50px 20px;
+`;
+
+const CardLink = styled.div`
+  position: relative;
 `;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Project);

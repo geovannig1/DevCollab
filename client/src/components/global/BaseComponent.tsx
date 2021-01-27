@@ -23,18 +23,21 @@ const BaseComponent: React.FC<BaseComponentProps> = ({
   }, [clearProject]);
 
   const { pathname } = useLocation();
+  const params = pathname.split('/')[2];
 
   return (
     <Container>
       <Sidebar />
       <ChildrenContainer>
         <Header>
-          {pathname !== '/projects' && pathname !== '/create-project' && (
-            <Previous to='/projects' pathname={pathname}>
-              <ArrowBackIosIcon />
-              <span>Projects</span>
-            </Previous>
-          )}
+          {pathname !== '/projects' &&
+            pathname !== '/create-project' &&
+            pathname !== `/projects/${params}/edit` && (
+              <Previous to='/projects' pathname={pathname}>
+                <ArrowBackIosIcon />
+                <span>Projects</span>
+              </Previous>
+            )}
         </Header>
         {children}
       </ChildrenContainer>

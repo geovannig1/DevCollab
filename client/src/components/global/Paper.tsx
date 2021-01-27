@@ -10,7 +10,6 @@ const Paper: React.FC = ({ children }) => {
 const Container = styled.div`
   background-color: ${setColor.mainWhite};
   padding: 20px;
-  min-height: 80%;
   box-shadow: ${setShadow.main};
   border-radius: 10px;
   position: relative;

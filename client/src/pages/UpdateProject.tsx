@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Fragment } from 'react';
 import styled from 'styled-components';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
@@ -10,38 +10,43 @@ import { setColor } from '../styles';
 import { Store } from '../store';
 import { AuthInitialState } from '../reducers/authReducer';
 import { ProjectInitialState } from '../reducers/projectReducer';
-import { ProjectData } from '../actions/projectTypes';
+import { AccessPermission, ProjectData } from '../actions/projectTypes';
 import { createProject, loadProjects } from '../actions/projectActions';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import Paper from '../components/global/Paper';
 import ProjectForm from '../components/project/ProjectForm';
 
-interface CreateProjectProps {
+interface UpdateProjectProps {
   auth: AuthInitialState;
   project: ProjectInitialState;
-  createProject: (projectData: ProjectData, history: History) => Promise<void>;
   loadProjects: () => Promise<void>;
 }
 
-const CreateProject: React.FC<CreateProjectProps> = ({
+const UpdateProject: React.FC<UpdateProjectProps> = ({
   auth: { user },
   project: { shownProject },
-  createProject,
   loadProjects,
 }) => {
   useEffect(() => {
-    document.title = 'Create new project | DevCollab';
+    document.title = 'Update project | DevCollab';
     !shownProject && loadProjects();
   }, [shownProject, loadProjects]);
 
+  const history = useHistory();
+  const { projectId } = useParams<{ projectId: string }>();
+
+  const updateProjectData = shownProject?.find(
+    (project) => project._id.toString() === projectId
+  );
+
+  console.log(updateProjectData);
+
   //Form state
   const [projectData, setProjectData] = useState<ProjectData>({
-    name: '',
-    description: '',
+    name: updateProjectData?.name ?? '',
+    description: updateProjectData?.description ?? '',
     members: [],
   });
-
-  const history = useHistory();
   //Submit form data
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -61,6 +66,7 @@ const CreateProject: React.FC<CreateProjectProps> = ({
       <Paper>
         {user && (
           <ProjectForm
+            update
             setProjectData={setProjectData}
             projectData={projectData}
             handleSubmit={handleSubmit}
@@ -76,10 +82,7 @@ const mapStateToProps = (state: Store) => ({
   auth: state.auth,
   project: state.project,
 });
-
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
-  createProject: (projectData: ProjectData, history: History) =>
-    dispatch(createProject(projectData, history)),
   loadProjects: () => dispatch(loadProjects()),
 });
 
@@ -111,4 +114,4 @@ const Title = styled.h2`
   font-weight: 500;
 `;
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateProject);
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateProject);

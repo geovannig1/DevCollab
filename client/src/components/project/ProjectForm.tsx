@@ -1,12 +1,16 @@
 import React, { Fragment, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
 
 import { setColor, setRem } from '../../styles';
 import { setAlert, removeAlert } from '../../actions/alertActions';
 import validateEmail from '../../utils/validateEmail';
 import HelpIcon from '@material-ui/icons/Help';
 import AddIcon from '@material-ui/icons/Add';
+import CloseIcon from '@material-ui/icons/Close';
 import { Button } from '../global/Button';
 import ALert from '../global/Alert';
 import { AccessPermission, ProjectData } from '../../actions/projectTypes';
@@ -15,26 +19,39 @@ import { MessageType } from '../../actions/alertTypes';
 
 interface ProjectFormProps {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  handleChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
   user: UserType;
+  projectData: ProjectData;
+  setProjectData: React.Dispatch<React.SetStateAction<ProjectData>>;
+  setAlert: (
+    message: string,
+    messageType: MessageType,
+    location: string
+  ) => void;
+  removeAlert: (location: string) => void;
+  update?: boolean;
 }
 
 const ProjectForm: React.FC<ProjectFormProps> = ({
   handleSubmit,
-  handleChange,
+  projectData,
+  setProjectData,
   user,
+  setAlert,
+  removeAlert,
+  update,
 }) => {
   //Members state
   const [members, setMembers] = useState<string>('');
 
-  //Form state
-  const [projectData, setProjectData] = useState<ProjectData>({
-    name: '',
-    description: '',
-    members: [],
-  });
+  //Handle form input change
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setProjectData((prevData) => ({
+      ...prevData,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   //Handle member that will be added to project
   const handleAddMembers = (
@@ -97,6 +114,25 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     }
   };
 
+  const [deleteMember, setDeleteMember] = useState('')
+  //Handle delete member value
+  const handleDeleteChange = (e: React.FormEvent<HTMLButtonElement>) => {
+    console.log(e.target.);
+    
+  };
+
+  //Handle delete member on the list
+  const handleDeleteMember = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    console.log(e);
+
+    // setProjectData((prevData=> ({
+    //   ...prevData,
+    //   members: prevData.members.filter(member=> member.email !== e.button.valueOf)
+    // })))
+  };
+
   return (
     <Form onSubmit={handleSubmit}>
       <Item>
@@ -127,55 +163,71 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         />
       </Item>
 
-      <Item>
-        <label htmlFor='members'>Invite Members</label>
-        <AddMemberContainer>
-          <input
-            type='email'
-            id='members'
-            name='members'
-            placeholder='Enter member email'
-            onChange={(e) => setMembers(e.target.value)}
-            value={members}
-          />
-          <button onClick={handleAddMembers}>
-            <AddIcon fontSize='small' />
-          </button>
-        </AddMemberContainer>
-      </Item>
+      {!update && (
+        <Fragment>
+          <Item>
+            <label htmlFor='members'>Invite Members</label>
+            <AddMemberContainer>
+              <input
+                type='email'
+                id='members'
+                name='members'
+                placeholder='Enter member email'
+                onChange={(e) => setMembers(e.target.value)}
+                value={members}
+              />
+              <MemberButton aria-label='add member' onClick={handleAddMembers}>
+                <AddIcon fontSize='small' />
+              </MemberButton>
+            </AddMemberContainer>
+          </Item>
+          <label htmlFor='members'>
+            Project Access Permission
+            <HelpIcon fontSize='small' />
+          </label>
 
-      <label htmlFor='members'>
-        Project Access Permission
-        <HelpIcon fontSize='small' />
-      </label>
-
-      <Item id='members'>
-        <MemberName>{user?.email}</MemberName>
-        <Select disabled style={{ cursor: 'not-allowed' }}>
-          <option value={AccessPermission.Admin}>Admin</option>
-        </Select>
-        {projectData.members.map((member, index) => (
-          <Fragment key={index}>
-            <MemberName>{member.email}</MemberName>
-            <Select
-              name={member.email}
-              defaultValue={AccessPermission.ReadOnly}
-              onChange={handleChangeEditPermission}
-            >
+          <Item id='members'>
+            <MemberName>{user?.email}</MemberName>
+            <Select disabled style={{ cursor: 'not-allowed' }}>
               <option value={AccessPermission.Admin}>Admin</option>
-              <option value={AccessPermission.ReadWriteDelete}>
-                Read/Write/Delete
-              </option>
-              <option value={AccessPermission.ReadOnly}>Read Only</option>
             </Select>
-          </Fragment>
-        ))}
-      </Item>
+            {projectData.members.map((member, index) => (
+              <Fragment key={index}>
+                <MemberName>{member.email}</MemberName>
+                <Permission>
+                  <Select
+                    name={member.email}
+                    defaultValue={AccessPermission.ReadOnly}
+                    onChange={handleChangeEditPermission}
+                  >
+                    <option value={AccessPermission.Admin}>Admin</option>
+                    <option value={AccessPermission.ReadWriteDelete}>
+                      Read/Write/Delete
+                    </option>
+                    <option value={AccessPermission.ReadOnly}>Read Only</option>
+                  </Select>
+                  <MemberButton
+                    value={member.email}
+                    onChange={handleDeleteChange}
+                    onClick={handleDeleteMember}
+                    danger
+                  >
+                    <CloseIcon fontSize='small' />
+                  </MemberButton>
+                </Permission>
+              </Fragment>
+            ))}
+          </Item>
+        </Fragment>
+      )}
 
       <ALert />
 
-      <StyledButton extrasmall={'extrasmall' && 1}>Create Project</StyledButton>
+      <StyledButton aria-label='create project' extrasmall={'extrasmall' && 1}>
+        Create Project
+      </StyledButton>
       <StyledButton
+        aria-label='cancel'
         extrasmall={'extrasmall' && 1}
         outline={'outline' && 1}
         as={Link}
@@ -186,6 +238,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     </Form>
   );
 };
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
+  setAlert: (message: string, messageType: MessageType, location: string) =>
+    dispatch(setAlert(message, messageType, location)),
+  removeAlert: (location: string) => dispatch(removeAlert(location)),
+});
 
 const Form = styled.form`
   word-wrap: break-word;
@@ -220,26 +278,30 @@ const AddMemberContainer = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 20px;
-  button {
-    background-color: ${setColor.primary};
-    color: ${setColor.mainWhite};
-    border: none;
-    height: 30px;
-    width: 30px;
-    margin-left: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 100%;
-    outline: none;
-    cursor: pointer;
-    transition: 0.2s ease-in-out;
-    &:hover {
-      background-color: ${setColor.primaryDark};
-    }
-    &:active {
-      background-color: ${setColor.primary};
-    }
+`;
+
+const MemberButton = styled.button<{ danger?: boolean }>`
+  background-color: ${({ danger }) =>
+    danger ? setColor.mainRed : setColor.primary};
+  color: ${setColor.mainWhite};
+  border: none;
+  height: 25px;
+  width: 25px;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100%;
+  outline: none;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  &:hover {
+    background-color: ${({ danger }) =>
+      danger ? setColor.darkRed : setColor.primaryDark};
+  }
+  &:active {
+    background-color: ${({ danger }) =>
+      danger ? setColor.mainRed : setColor.primary};
   }
 `;
 
@@ -271,6 +333,11 @@ const Item = styled.div`
   }
 `;
 
+const Permission = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const MemberName = styled.div`
   color: ${setColor.mainBlack};
   font-weight: 500;
@@ -279,4 +346,4 @@ const MemberName = styled.div`
   margin-bottom: 5px;
 `;
 
-export default ProjectForm;
+export default connect(null, mapDispatchToProps)(ProjectForm);

@@ -28,13 +28,15 @@ const projectReducer = (
         shownProject: [action.payload, ...state.shownProject!],
       };
     case PROJECT_CLEAR:
-      return { ...state, shownProject: undefined };
+      return { ...state };
     case PROJECT_DELETED:
       return {
         ...state,
-        shownProject: state.shownProject!.filter(
-          (project) => project._id !== action.payload
-        ),
+        shownProject:
+          state.shownProject &&
+          state.shownProject.filter(
+            (project) => project._id !== action.payload
+          ),
       };
     case PROJECT_ERROR:
       return { ...state, projectError: action.payload };

@@ -11,9 +11,10 @@ import GlobalStyle from './components/global/GlobalStyle';
 import Landing from './pages/Landing';
 import Signin from './pages/Signin';
 import Signup from './pages/Signup';
+import BaseComponent from './components/global/BaseComponent';
 import Project from './pages/Project';
 import CreateProject from './pages/CreateProject';
-import BaseComponent from './components/global/BaseComponent';
+import UpdateProject from './pages/UpdateProject';
 
 interface AppProps {
   loadUser: () => Promise<void>;
@@ -38,6 +39,11 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
               exact
               path='/create-project'
               component={CreateProject}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/edit'
+              component={UpdateProject}
             />
           </BaseComponent>
         </Switch>

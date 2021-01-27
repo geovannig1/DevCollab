@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
@@ -13,6 +14,7 @@ interface CardProps {
   deleteText: string;
   deleteItem: (id: number) => Promise<void>;
   deleteId: number;
+  editLink: string;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -22,28 +24,39 @@ const Card: React.FC<CardProps> = ({
   deleteText,
   deleteId,
   deleteItem,
+  editLink,
 }) => {
   const classes = useStyles();
   return (
-    <Container>
-      <Header>
-        <Title>{title}</Title>
+    <Fragment>
+      <StyledLink to='/'>
+        <Container>
+          <Title>{title}</Title>
+          <Description>{description}</Description>
+        </Container>
+      </StyledLink>
+      <MenuContainer>
         <CardMenu
           deleteItem={deleteItem}
           deleteId={deleteId}
           deleteTitle={deleteTitle}
           deleteText={deleteText}
+          editLink={editLink}
         >
           <StyledIcon className={classes.root} fontSize='large' />
         </CardMenu>
-      </Header>
-      <Description>{description}</Description>
-    </Container>
+      </MenuContainer>
+    </Fragment>
   );
 };
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+`;
+
 const Container = styled.div`
   background-color: ${setColor.mainWhite};
+  position: relative;
   width: 250px;
   height: 300px;
   cursor: pointer;
@@ -61,16 +74,19 @@ const Container = styled.div`
   }
 `;
 
-const Header = styled.div`
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
 const Title = styled.h4`
   color: ${setColor.mainBlack};
   font-weight: 600;
+  margin-bottom: 15px;
+`;
+
+const MenuContainer = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-right: 25px;
+  margin-top: 10px;
+  cursor: pointer;
 `;
 
 const StyledIcon = styled(MoreHorizIcon)`

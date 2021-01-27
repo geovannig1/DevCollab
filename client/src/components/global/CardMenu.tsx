@@ -2,6 +2,7 @@ import React from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 import AlertDialog from './AlertDialog';
 
@@ -10,6 +11,7 @@ interface CardMenuProps {
   deleteId: number;
   deleteTitle: string;
   deleteText: string;
+  editLink: string;
 }
 
 const CardMenu: React.FC<CardMenuProps> = ({
@@ -18,6 +20,7 @@ const CardMenu: React.FC<CardMenuProps> = ({
   deleteId,
   deleteTitle,
   deleteText,
+  editLink,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -46,7 +49,9 @@ const CardMenu: React.FC<CardMenuProps> = ({
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Edit</MenuItem>
+        <StyledLink to={editLink}>
+          <MenuItem onClick={handleClose}>Edit</MenuItem>
+        </StyledLink>
         <AlertDialog
           deleteItem={deleteItem}
           deleteId={deleteId}
@@ -68,6 +73,11 @@ const Button = styled.button`
   cursor: pointer;
   border: none;
   outline: none;
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
 `;
 
 export default CardMenu;
