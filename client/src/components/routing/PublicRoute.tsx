@@ -10,7 +10,7 @@ interface PublicRouteProps {
   component: React.FC<RouteProps>;
   auth: AuthInitialState;
   exact?: boolean;
-  path: string;
+  path?: string;
 }
 
 const PublicRoute: React.FC<PublicRouteProps> = ({

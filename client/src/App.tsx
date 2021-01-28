@@ -15,6 +15,7 @@ import BaseComponent from './components/global/BaseComponent';
 import Project from './pages/Project';
 import CreateProject from './pages/CreateProject';
 import UpdateProject from './pages/UpdateProject';
+import NotFound from './pages/NotFound';
 
 interface AppProps {
   loadUser: () => Promise<void>;
@@ -46,6 +47,7 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
               component={UpdateProject}
             />
           </BaseComponent>
+          <Route component={NotFound} />
         </Switch>
       </Router>
     </Fragment>

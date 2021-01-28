@@ -9,6 +9,7 @@ import { LoadingDispatch, SET_LOADING, REMOVE_LOADING } from './authTypes';
 import {
   PROJECT_LOADED,
   PROJECT_CREATED,
+  PROJECT_UPDATED,
   PROJECT_CLEAR,
   PROJECT_DELETED,
   ProjectDispatchTypes,
@@ -47,6 +48,36 @@ export const createProject = (
     const res = await api.post('/projects', projectData);
 
     dispatch({ type: PROJECT_CREATED, payload: res.data });
+
+    history.push('/projects');
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error: any) =>
+        dispatch(setAlert(error.msg, MessageType.Fail, error.params))
+      );
+    }
+
+    dispatch({
+      type: PROJECT_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
+//Update project
+export const updateProject = (
+  projectData: ProjectData,
+  projectId: string,
+  history: History
+) => async (dispatch: ThunkDispatch<{}, {}, ProjectDispatchTypes>) => {
+  try {
+    const res = await api.patch(`/projects/${projectId}`, projectData);
+
+    dispatch({
+      type: PROJECT_UPDATED,
+      payload: { project: res.data, id: projectId },
+    });
 
     history.push('/projects');
   } catch (err) {

@@ -10,8 +10,8 @@ import { setColor } from '../styles';
 import { Store } from '../store';
 import { AuthInitialState } from '../reducers/authReducer';
 import { ProjectInitialState } from '../reducers/projectReducer';
-import { AccessPermission, ProjectData } from '../actions/projectTypes';
-import { createProject, loadProjects } from '../actions/projectActions';
+import { ProjectData } from '../actions/projectTypes';
+import { loadProjects, updateProject } from '../actions/projectActions';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import Paper from '../components/global/Paper';
 import ProjectForm from '../components/project/ProjectForm';
@@ -20,12 +20,18 @@ interface UpdateProjectProps {
   auth: AuthInitialState;
   project: ProjectInitialState;
   loadProjects: () => Promise<void>;
+  updateProject: (
+    projectData: ProjectData,
+    projectId: string,
+    history: History
+  ) => Promise<void>;
 }
 
 const UpdateProject: React.FC<UpdateProjectProps> = ({
   auth: { user },
   project: { shownProject },
   loadProjects,
+  updateProject,
 }) => {
   useEffect(() => {
     document.title = 'Update project | DevCollab';
@@ -39,8 +45,6 @@ const UpdateProject: React.FC<UpdateProjectProps> = ({
     (project) => project._id.toString() === projectId
   );
 
-  console.log(updateProjectData);
-
   //Form state
   const [projectData, setProjectData] = useState<ProjectData>({
     name: updateProjectData?.name ?? '',
@@ -51,7 +55,7 @@ const UpdateProject: React.FC<UpdateProjectProps> = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    createProject(projectData, history);
+    updateProject(projectData, projectId, history);
   };
 
   return (
@@ -84,6 +88,11 @@ const mapStateToProps = (state: Store) => ({
 });
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProjects: () => dispatch(loadProjects()),
+  updateProject: (
+    projectData: ProjectData,
+    projectId: string,
+    history: History
+  ) => dispatch(updateProject(projectData, projectId, history)),
 });
 
 const Header = styled.div`

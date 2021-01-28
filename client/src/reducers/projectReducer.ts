@@ -2,6 +2,7 @@ import {
   PROJECT_LOADED,
   PROJECT_CLEAR,
   PROJECT_CREATED,
+  PROJECT_UPDATED,
   PROJECT_ERROR,
   PROJECT_DELETED,
   ProjectDispatchTypes,
@@ -21,14 +22,24 @@ const projectReducer = (
 ): ProjectInitialState => {
   switch (action.type) {
     case PROJECT_LOADED:
-      return { ...state, shownProject: action.payload };
+      return { ...state, shownProject: [...action.payload] };
     case PROJECT_CREATED:
       return {
         ...state,
-        shownProject: [action.payload, ...state.shownProject!],
+        shownProject: [action.payload, ...(state.shownProject ?? [])],
+      };
+    case PROJECT_UPDATED:
+      return {
+        ...state,
+        shownProject: [
+          action.payload.project,
+          ...(state.shownProject?.filter(
+            (project) => project._id.toString() !== action.payload.id
+          ) ?? []),
+        ],
       };
     case PROJECT_CLEAR:
-      return { ...state };
+      return {};
     case PROJECT_DELETED:
       return {
         ...state,

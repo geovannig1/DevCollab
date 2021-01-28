@@ -22,7 +22,7 @@ export const getUser = async (req: Request, res: Response) => {
 //Edit signed in user data
 export const editUser = async (req: Request, res: Response) => {
   try {
-    let {
+    const {
       firstName,
       lastName,
       newPassword,
@@ -31,16 +31,16 @@ export const editUser = async (req: Request, res: Response) => {
       email,
     } = req.body;
 
-    //Remove white space
-    firstName = firstName.trim();
-    lastName = lastName.trim();
-
     const user = await User.findById(req.user);
 
+    if (!user) {
+      return res.status(404).json({ errors: [{ msg: 'User not found' }] });
+    }
+
     //Edit user data
-    if (user && firstName) user.firstName = firstName;
-    if (user && lastName) user.lastName = lastName;
-    if (user && email) {
+    if (firstName) user.firstName = firstName.trim();
+    if (lastName) user.lastName = lastName.trim();
+    if (email) {
       const users = await User.findOne({ email });
       if (users && email !== user.email) {
         return res
@@ -50,15 +50,17 @@ export const editUser = async (req: Request, res: Response) => {
 
       user.email = email;
     }
-    if (user && newPassword) {
+    if (newPassword) {
       //Check if password match
       if (newPassword !== confirmNewPassowrd) {
-        return res.status(400).json({ msg: 'Password not match' });
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'Password not match' }] });
       }
 
       //Check if the password is correct or not
       let isMatch = false;
-      if (user?.password) {
+      if (user.password) {
         isMatch = await bcrypt.compare(currentPassword, user.password);
       }
 
@@ -71,8 +73,8 @@ export const editUser = async (req: Request, res: Response) => {
       user.password = newPassword;
     }
 
-    await user?.save();
-    res.status(200).json({ msg: 'User updated' });
+    const updatedUser = await user.save();
+    res.status(200).json(updatedUser);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');

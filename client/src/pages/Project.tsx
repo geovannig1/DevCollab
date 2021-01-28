@@ -12,17 +12,20 @@ import AddIcon from '@material-ui/icons/Add';
 import { Button } from '../components/global/Button';
 import Card from '../components/global/Card';
 import { setColor } from '../styles';
+import { AuthInitialState } from '../reducers/authReducer';
 
 interface ProjectProps {
   loadProjects: () => Promise<void>;
   deleteProject: (projectId: number) => Promise<void>;
   project: ProjectInitialState;
+  auth: AuthInitialState;
 }
 
 const Project: React.FC<ProjectProps> = ({
   loadProjects,
   deleteProject,
   project: { shownProject },
+  auth: { user },
 }) => {
   useEffect(() => {
     document.title = 'Projects | DevCollab';
@@ -41,12 +44,14 @@ const Project: React.FC<ProjectProps> = ({
         {shownProject?.map((project) => (
           <CardLink key={project._id}>
             <Card
+              projectId={project._id}
               title={project.name}
+              members={project.members}
+              user={user}
               description={project.description}
               deleteTitle={`Delete Project`}
               deleteText={`Are you sure want to delete ${project.name} project? this process can't be undone.`}
               deleteItem={() => deleteProject(project._id)}
-              deleteId={project._id}
               editLink={`/projects/${project._id}/edit`}
             />
           </CardLink>
@@ -58,6 +63,7 @@ const Project: React.FC<ProjectProps> = ({
 
 const mapStateToProps = (state: Store) => ({
   project: state.project,
+  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({

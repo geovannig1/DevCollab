@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Fragment } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { useLocation, Link } from 'react-router-dom';
@@ -33,10 +33,13 @@ const BaseComponent: React.FC<BaseComponentProps> = ({
           {pathname !== '/projects' &&
             pathname !== '/create-project' &&
             pathname !== `/projects/${params}/edit` && (
-              <Previous to='/projects' pathname={pathname}>
-                <ArrowBackIosIcon />
-                <span>Projects</span>
-              </Previous>
+              <Fragment>
+                <Previous to='/projects' pathname={pathname}>
+                  <ArrowBackIosIcon />
+                  <span>Projects</span>
+                </Previous>
+                <Title>Project Name</Title>
+              </Fragment>
             )}
         </Header>
         {children}
@@ -67,15 +70,10 @@ const Header = styled.div`
   align-items: center;
 `;
 
-interface PreviousProps {
-  pathname: string;
-}
-
-const Previous = styled(Link)<PreviousProps>`
+const Previous = styled(Link)<{ pathname: string }>`
   color: ${setColor.lightBlack};
   display: flex;
   align-items: center;
-  margin-right: 20px;
   text-decoration: none;
   transition: 0.2s ease-in-out;
   span {
@@ -87,6 +85,12 @@ const Previous = styled(Link)<PreviousProps>`
   &:active {
     color: ${setColor.lightBlack};
   }
+`;
+
+const Title = styled.h2`
+  margin: 0 15px;
+  color: ${setColor.mainBlack};
+  font-weight: 500;
 `;
 
 export default connect(null, mapDispatchToProps)(BaseComponent);

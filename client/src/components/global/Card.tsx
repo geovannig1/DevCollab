@@ -6,46 +6,59 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { setColor, setShadow } from '../../styles';
 import CardMenu from './CardMenu';
+import { AccessPermission, Member } from '../../actions/projectTypes';
+import { UserType } from '../../actions/authTypes';
 
 interface CardProps {
+  projectId: number;
   title: string;
   description?: string;
   deleteTitle: string;
   deleteText: string;
   deleteItem: (id: number) => Promise<void>;
-  deleteId: number;
   editLink: string;
+  members?: Member[];
+  user?: UserType;
 }
 
 const Card: React.FC<CardProps> = ({
+  projectId,
   title,
   description,
   deleteTitle,
   deleteText,
-  deleteId,
   deleteItem,
   editLink,
+  members,
+  user,
 }) => {
   const classes = useStyles();
+
+  //Find user in the project
+  const findUser = members?.find((member) => member.user._id === user?._id);
+
   return (
     <Fragment>
-      <StyledLink to='/'>
+      <StyledLink to={`/projects/${projectId}`}>
         <Container>
           <Title>{title}</Title>
           <Description>{description}</Description>
         </Container>
       </StyledLink>
-      <MenuContainer>
-        <CardMenu
-          deleteItem={deleteItem}
-          deleteId={deleteId}
-          deleteTitle={deleteTitle}
-          deleteText={deleteText}
-          editLink={editLink}
-        >
-          <StyledIcon className={classes.root} fontSize='large' />
-        </CardMenu>
-      </MenuContainer>
+
+      {findUser?.accessPermission === AccessPermission.Admin && (
+        <MenuContainer>
+          <CardMenu
+            deleteItem={deleteItem}
+            deleteId={projectId}
+            deleteTitle={deleteTitle}
+            deleteText={deleteText}
+            editLink={editLink}
+          >
+            <HorizIcon className={classes.root} fontSize='large' />
+          </CardMenu>
+        </MenuContainer>
+      )}
     </Fragment>
   );
 };
@@ -89,7 +102,7 @@ const MenuContainer = styled.div`
   cursor: pointer;
 `;
 
-const StyledIcon = styled(MoreHorizIcon)`
+const HorizIcon = styled(MoreHorizIcon)`
   color: ${setColor.lightBlack};
   transition: 0.2s ease-in-out;
   &:hover {

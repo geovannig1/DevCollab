@@ -15,9 +15,11 @@ export interface LoginSuccess {
 }
 
 export type UserType = {
+  _id: number;
   firstName: string;
   lastName: string;
   email: string;
+  avatar: string;
 };
 
 export interface Set_Loading {

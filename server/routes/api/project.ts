@@ -9,6 +9,7 @@ import {
   getProjects,
   confirmInvitation,
   deleteProject,
+  updateProject,
 } from '../../controllers/project';
 
 /**
@@ -19,10 +20,7 @@ import {
 router.post(
   '/',
   auth,
-  [
-    check('name', 'Project name is required').notEmpty(),
-    check('members', 'Project members is required'),
-  ],
+  check('name', 'Project name is required').notEmpty(),
   validateInput,
   createProject
 );
@@ -33,6 +31,19 @@ router.post(
  *  @access Private
  */
 router.get('/', auth, getProjects);
+
+/**
+ *  @route GET api/projects/:projectId
+ *  @desc Get signed in user projects
+ *  @access Private
+ */
+router.patch(
+  '/:projectId',
+  auth,
+  check('name', 'Project name is required').notEmpty(),
+  validateInput,
+  updateProject
+);
 
 /**
  *  @route DELETE api/projects/:projectId

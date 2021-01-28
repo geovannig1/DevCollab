@@ -1,5 +1,6 @@
 export const PROJECT_LOADED = 'PROJECT_LOADED';
 export const PROJECT_CREATED = 'PROJECT_CREATED';
+export const PROJECT_UPDATED = 'PROJECT_UPDATED';
 export const PROJECT_CLEAR = 'PROJECT_CLEAR';
 export const PROJECT_DELETED = 'PROJECT_DELETE';
 export const PROJECT_ERROR = 'PROJECT_ERROR';
@@ -11,11 +12,12 @@ export enum AccessPermission {
 }
 
 export type Member = {
+  accessPermission: AccessPermission;
   user: {
+    _id: number;
     firstName: string;
     lastName: string;
     email: string;
-    accessPermission: AccessPermission;
   };
 };
 export interface ProjectType extends Array<ProjectType> {
@@ -29,9 +31,16 @@ export interface ProjectLoaded {
   type: typeof PROJECT_LOADED;
   payload: ProjectType;
 }
-export interface ProjcetCreated {
+export interface ProjectCreated {
   type: typeof PROJECT_CREATED;
   payload: ProjectType;
+}
+export interface ProjectUpdated {
+  type: typeof PROJECT_UPDATED;
+  payload: {
+    id: string;
+    project: ProjectType;
+  };
 }
 export interface ProjectClear {
   type: typeof PROJECT_CLEAR;
@@ -50,7 +59,8 @@ export interface ProjectError {
 
 export type ProjectDispatchTypes =
   | ProjectLoaded
-  | ProjcetCreated
+  | ProjectCreated
+  | ProjectUpdated
   | ProjectClear
   | ProjectDeleted
   | ProjectError;

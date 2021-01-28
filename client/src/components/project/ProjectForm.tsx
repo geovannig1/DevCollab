@@ -114,23 +114,18 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     }
   };
 
-  const [deleteMember, setDeleteMember] = useState('')
-  //Handle delete member value
-  const handleDeleteChange = (e: React.FormEvent<HTMLButtonElement>) => {
-    console.log(e.target.);
-    
-  };
-
   //Handle delete member on the list
   const handleDeleteMember = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    console.log(e);
+    e.preventDefault();
 
-    // setProjectData((prevData=> ({
-    //   ...prevData,
-    //   members: prevData.members.filter(member=> member.email !== e.button.valueOf)
-    // })))
+    setProjectData({
+      ...projectData,
+      members: projectData.members.filter(
+        (member) => member.email !== e.currentTarget?.value
+      ),
+    });
   };
 
   return (
@@ -176,7 +171,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                 onChange={(e) => setMembers(e.target.value)}
                 value={members}
               />
-              <MemberButton aria-label='add member' onClick={handleAddMembers}>
+              <MemberButton onClick={handleAddMembers} aria-label='add member'>
                 <AddIcon fontSize='small' />
               </MemberButton>
             </AddMemberContainer>
@@ -207,8 +202,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                     <option value={AccessPermission.ReadOnly}>Read Only</option>
                   </Select>
                   <MemberButton
+                    id={member.email}
                     value={member.email}
-                    onChange={handleDeleteChange}
                     onClick={handleDeleteMember}
                     danger
                   >

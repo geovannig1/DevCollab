@@ -23,14 +23,21 @@ export const createProject = async (req: Request, res: Response) => {
       ];
     }
 
-    const project = await Project.create({
+    let project = await Project.create({
       name,
       description,
       members: userMember,
     });
 
+    project = await project
+      .populate({
+        path: 'members.user',
+        select: ['firstName', 'lastName', 'email'],
+      })
+      .execPopulate();
+
     //Create and send invitation email
-    members.map((member: any) => {
+    members?.map((member: Member) => {
       const payload = {
         member: {
           projectName: name,
@@ -50,24 +57,26 @@ export const createProject = async (req: Request, res: Response) => {
       }
 
       //Send email
-      nodemailer(
-        member.email,
-        `${name} - Project Invitation`,
-        `
-        <div style='font-size: 16px; margin: 0; background: #f5f5f5;padding: 10px 200px;'>
-          <div style='height: 180px;background: white; padding: 20px;'>
-            <h3 style='color:black;'>Hi ${member.email},</h3>
-            <p style='font-size: 15px; color: black; margin:0;'>${user?.email} has invited you to <b>${name}</b> project, <br/>
-            click the button below to join the project: </p> 
-            <a href="${url}">
-              <button style='background-color: #4463CC;color: white; height: 40px; width: 90px; border: none; margin: 10px 0; cursor: pointer;'>
-              Join
-              </button>
-            </a> 
+      if (member.email) {
+        nodemailer(
+          member.email,
+          `${name} - Project Invitation`,
+          `
+          <div style='font-size: 16px; margin: 0; background: #f5f5f5;padding: 10px 200px;'>
+            <div style='height: 180px;background: white; padding: 20px;'>
+              <h3 style='color:black;'>Hi ${member.email},</h3>
+              <p style='font-size: 15px; color: black; margin:0;'>${user?.email} has invited you to <b>${name}</b> project, <br/>
+              click the button below to join the project: </p> 
+              <a href="${url}">
+                <button style='background-color: #4463CC;color: white; height: 40px; width: 90px; border: none; margin: 10px 0; cursor: pointer;'>
+                Join
+                </button>
+              </a> 
+            </div>
           </div>
-        </div>
-        `
-      );
+          `
+        );
+      }
     });
 
     res.status(201).json(project);
@@ -118,6 +127,43 @@ export const getProjects = async (req: Request, res: Response) => {
     }
 
     res.status(200).json(projects);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
+//Update project
+export const updateProject = async (req: Request, res: Response) => {
+  try {
+    const { name, description } = req.body;
+
+    const project = await Project.findById(req.params.projectId);
+
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
+
+    //Check if the update request from the admin project
+    const member = project?.members.find(
+      (member) => member.user?.toString() === req.user
+    );
+    if (member?.accessPermission !== AccessPermission.Admin) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    //Update data
+    if (name) project.name = name.trim();
+    if (description) project.description = description.trim();
+
+    const updatedProject = await (await project?.save())
+      .populate({
+        path: 'members.user',
+        select: ['firstName', 'lastName', 'email'],
+      })
+      .execPopulate();
+
+    res.status(200).json(updatedProject);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
