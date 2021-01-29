@@ -24,15 +24,15 @@ interface ProjectProps {
 const Project: React.FC<ProjectProps> = ({
   loadProjects,
   deleteProject,
-  project: { shownProject },
+  project: { projects },
   auth: { user },
 }) => {
   useEffect(() => {
     document.title = 'Projects | DevCollab';
 
     //Only load if project undefined
-    !shownProject && loadProjects();
-  }, [shownProject, loadProjects]);
+    projects.length === 0 && loadProjects();
+  }, [projects, loadProjects]);
 
   return (
     <Fragment>
@@ -41,7 +41,7 @@ const Project: React.FC<ProjectProps> = ({
         <AddIcon fontSize='small' /> Start New Project
       </StyledButton>
       <ProjectContainer>
-        {shownProject?.map((project) => (
+        {projects?.map((project) => (
           <CardLink key={project._id}>
             <Card
               projectId={project._id}

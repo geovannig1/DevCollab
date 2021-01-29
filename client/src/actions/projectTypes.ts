@@ -20,7 +20,7 @@ export type Member = {
     email: string;
   };
 };
-export interface ProjectType extends Array<ProjectType> {
+export interface ProjectType {
   _id: number;
   name: string;
   description: string;
@@ -29,7 +29,7 @@ export interface ProjectType extends Array<ProjectType> {
 
 export interface ProjectLoaded {
   type: typeof PROJECT_LOADED;
-  payload: ProjectType;
+  payload: ProjectType[];
 }
 export interface ProjectCreated {
   type: typeof PROJECT_CREATED;

@@ -30,11 +30,11 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
     <Fragment>
       <GlobalStyle />
       <Router>
-        <Switch>
-          <Route exact path='/' component={Landing} />
-          <Route exact path='/signup' component={Signup} />
-          <Route exact path='/signin' component={Signin} />
-          <BaseComponent>
+        <BaseComponent>
+          <Switch>
+            <Route exact path='/' component={Landing} />
+            <Route exact path='/signup' component={Signup} />
+            <Route exact path='/signin' component={Signin} />
             <PrivateRoute exact path='/projects' component={Project} />
             <PrivateRoute
               exact
@@ -46,9 +46,9 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
               path='/projects/:projectId/edit'
               component={UpdateProject}
             />
-          </BaseComponent>
-          <Route component={NotFound} />
-        </Switch>
+            <Route component={NotFound} />
+          </Switch>
+        </BaseComponent>
       </Router>
     </Fragment>
   );

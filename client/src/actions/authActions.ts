@@ -1,3 +1,4 @@
+import { Dispatch } from 'react';
 import { ThunkDispatch } from 'redux-thunk';
 
 import api from '../api';
@@ -10,6 +11,8 @@ import {
   LOGIN_SUCCESS,
   USER_LOADED,
   AUTH_ERROR,
+  NOT_FOUND,
+  NOT_FOUND_CLEAR,
   LOGOUT_SUCCESS,
   LOGOUT_FAIL,
   LoadingDispatch,
@@ -17,6 +20,7 @@ import {
   LoginDispatchTypes,
   UserLoadDispatchTypes,
   LogoutDispatchTypes,
+  NotFoundDispatch,
   SignInData,
   SignUpData,
 } from './authTypes';
@@ -107,4 +111,14 @@ export const signOut = () => async (
     dispatch({ type: LOGOUT_FAIL });
     dispatch({ type: REMOVE_LOADING });
   }
+};
+
+//Page not found
+export const createNotFound = () => (dispatch: Dispatch<NotFoundDispatch>) => {
+  dispatch({ type: NOT_FOUND });
+};
+
+//Clear page not found
+export const clearNotFound = () => (dispatch: Dispatch<NotFoundDispatch>) => {
+  dispatch({ type: NOT_FOUND_CLEAR });
 };

@@ -10,11 +10,14 @@ import {
 } from '../actions/projectTypes';
 
 export interface ProjectInitialState {
-  shownProject?: ProjectType[];
+  projects: ProjectType[];
+  selectedProject?: ProjectType;
   projectError?: object;
 }
 
-const projectInitialState: ProjectInitialState = {};
+const projectInitialState: ProjectInitialState = {
+  projects: [],
+};
 
 const projectReducer = (
   state = projectInitialState,
@@ -22,32 +25,30 @@ const projectReducer = (
 ): ProjectInitialState => {
   switch (action.type) {
     case PROJECT_LOADED:
-      return { ...state, shownProject: [...action.payload] };
+      return { ...state, projects: action.payload };
     case PROJECT_CREATED:
       return {
         ...state,
-        shownProject: [action.payload, ...(state.shownProject ?? [])],
+        projects: [...state.projects, action.payload],
       };
     case PROJECT_UPDATED:
       return {
         ...state,
-        shownProject: [
-          action.payload.project,
-          ...(state.shownProject?.filter(
-            (project) => project._id.toString() !== action.payload.id
-          ) ?? []),
-        ],
+        projects: state.projects.map((project) => {
+          if (project._id.toString() === action.payload.id) {
+            return { ...project, ...action.payload.project };
+          }
+          return project;
+        }),
       };
     case PROJECT_CLEAR:
-      return {};
+      return { projects: [], selectedProject: undefined };
     case PROJECT_DELETED:
       return {
         ...state,
-        shownProject:
-          state.shownProject &&
-          state.shownProject.filter(
-            (project) => project._id !== action.payload
-          ),
+        projects: state.projects.filter(
+          (project) => project._id !== action.payload
+        ),
       };
     case PROJECT_ERROR:
       return { ...state, projectError: action.payload };

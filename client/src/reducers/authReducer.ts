@@ -7,11 +7,14 @@ import {
   LOGOUT_SUCCESS,
   LOGOUT_FAIL,
   AUTH_ERROR,
+  NOT_FOUND,
+  NOT_FOUND_CLEAR,
   LoadingDispatch,
   LoginDispatchTypes,
   RegisterDispatchTypes,
   LogoutDispatchTypes,
   UserLoadDispatchTypes,
+  NotFoundDispatch,
   UserType,
 } from '../actions/authTypes';
 
@@ -20,6 +23,7 @@ export interface AuthInitialState {
   isAuthenticated: boolean;
   user?: UserType;
   authError?: object;
+  notFound?: boolean;
 }
 
 const authInitialState: AuthInitialState = {
@@ -35,6 +39,7 @@ const authReducer = (
     | UserLoadDispatchTypes
     | LogoutDispatchTypes
     | LoadingDispatch
+    | NotFoundDispatch
 ): AuthInitialState => {
   switch (action.type) {
     case SET_LOADING:
@@ -71,6 +76,16 @@ const authReducer = (
         ...state,
         isAuthenticated: false,
         authError: action.payload,
+      };
+    case NOT_FOUND:
+      return {
+        ...state,
+        notFound: true,
+      };
+    case NOT_FOUND_CLEAR:
+      return {
+        ...state,
+        notFound: undefined,
       };
     default:
       return state;

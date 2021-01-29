@@ -65,6 +65,7 @@ const Card: React.FC<CardProps> = ({
 
 const StyledLink = styled(Link)`
   text-decoration: none;
+  outline: none;
 `;
 
 const Container = styled.div`
@@ -76,7 +77,7 @@ const Container = styled.div`
   padding: 20px;
   word-wrap: break-word;
   box-shadow: ${setShadow.main};
-  border-radius: 10px;
+  border-radius: 8px;
   transition: 0.2s ease-in-out;
   user-select: none;
   &:hover {

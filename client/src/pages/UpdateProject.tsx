@@ -29,27 +29,37 @@ interface UpdateProjectProps {
 
 const UpdateProject: React.FC<UpdateProjectProps> = ({
   auth: { user },
-  project: { shownProject },
+  project: { projects },
   loadProjects,
   updateProject,
 }) => {
   useEffect(() => {
     document.title = 'Update project | DevCollab';
-    !shownProject && loadProjects();
-  }, [shownProject, loadProjects]);
+    projects.length === 0 && loadProjects();
+  }, [projects, loadProjects]);
 
   const history = useHistory();
   const { projectId } = useParams<{ projectId: string }>();
 
-  const updateProjectData = shownProject?.find(
+  const updateProjectData = projects?.find(
     (project) => project._id.toString() === projectId
+  );
+
+  //Take access permission and email for the form
+  let memberProjectData = updateProjectData?.members.map((member) => {
+    const accessPermission = member.accessPermission;
+    const email = member.user.email;
+    return { accessPermission: accessPermission, email };
+  });
+  memberProjectData = memberProjectData?.filter(
+    (member) => member.email !== user?.email
   );
 
   //Form state
   const [projectData, setProjectData] = useState<ProjectData>({
     name: updateProjectData?.name ?? '',
     description: updateProjectData?.description ?? '',
-    members: [],
+    members: memberProjectData ?? [],
   });
   //Submit form data
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -106,6 +116,8 @@ const Previous = styled(Link)`
   align-items: center;
   text-decoration: none;
   transition: 0.2s ease-in-out;
+  user-select: none;
+  outline: none;
   span {
     font-weight: 600;
   }

@@ -1,52 +1,65 @@
 import React, { useEffect, Fragment } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { useLocation, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
 
+import { Store } from '../../store';
 import { clearProject } from '../../actions/projectActions';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import { setColor } from '../../styles';
 import Sidebar from '../sidebar/Sidebar';
+import { AuthInitialState } from '../../reducers/authReducer';
+import { ProjectInitialState } from '../../reducers/projectReducer';
 
 interface BaseComponentProps {
   clearProject: () => void;
+  auth: AuthInitialState;
+  project: ProjectInitialState;
 }
 
 const BaseComponent: React.FC<BaseComponentProps> = ({
   children,
   clearProject,
+  auth: { isAuthenticated, notFound },
+  project: { selectedProject },
 }) => {
   useEffect(() => {
     return () => clearProject();
   }, [clearProject]);
 
-  const { pathname } = useLocation();
-  const params = pathname.split('/')[2];
-
   return (
-    <Container>
-      <Sidebar />
-      <ChildrenContainer>
-        <Header>
-          {pathname !== '/projects' &&
-            pathname !== '/create-project' &&
-            pathname !== `/projects/${params}/edit` && (
-              <Fragment>
-                <Previous to='/projects' pathname={pathname}>
-                  <ArrowBackIosIcon />
-                  <span>Projects</span>
-                </Previous>
-                <Title>Project Name</Title>
-              </Fragment>
-            )}
-        </Header>
-        {children}
-      </ChildrenContainer>
-    </Container>
+    <Fragment>
+      {isAuthenticated && !notFound ? (
+        <Container>
+          <Sidebar />
+          <ChildrenContainer>
+            <Header>
+              {selectedProject && (
+                <Fragment>
+                  <Previous to='/projects'>
+                    <ArrowBackIosIcon />
+                    <span>Projects</span>
+                  </Previous>
+                  <Title>Project Name</Title>
+                </Fragment>
+              )}
+            </Header>
+            {children}
+          </ChildrenContainer>
+        </Container>
+      ) : (
+        children
+      )}
+    </Fragment>
   );
 };
+
+const mapStateToProps = (state: Store) => ({
+  auth: state.auth,
+  project: state.project,
+});
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   clearProject: () => dispatch(clearProject()),
@@ -70,7 +83,7 @@ const Header = styled.div`
   align-items: center;
 `;
 
-const Previous = styled(Link)<{ pathname: string }>`
+const Previous = styled(Link)`
   color: ${setColor.lightBlack};
   display: flex;
   align-items: center;
@@ -93,4 +106,4 @@ const Title = styled.h2`
   font-weight: 500;
 `;
 
-export default connect(null, mapDispatchToProps)(BaseComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(BaseComponent);

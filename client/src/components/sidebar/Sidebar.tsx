@@ -11,9 +11,9 @@ interface SidebarProps {}
 const Sidebar: React.FC<SidebarProps> = () => {
   return (
     <Container>
-      <Link to='/projects'>
+      <StyledLink to='/projects'>
         <StyledLogo />
-      </Link>
+      </StyledLink>
       <ProfileSidebar />
     </Container>
   );
@@ -31,6 +31,10 @@ const StyledLogo = styled(Logo)`
   width: 180px;
   margin: 10px 20px;
   user-select: none;
+`;
+
+const StyledLink = styled(Link)`
+  outline: none;
 `;
 
 export default Sidebar;

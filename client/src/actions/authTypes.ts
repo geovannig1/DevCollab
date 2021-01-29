@@ -6,6 +6,8 @@ export const USER_LOADED = 'USER_LOADED';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const LOGOUT_FAIL = 'LOGOUT_FAIL';
 export const AUTH_ERROR = 'AUTH_ERROR';
+export const NOT_FOUND = 'NOT_FOUND';
+export const NOT_FOUND_CLEAR = 'NOT_FOUND_CLEAR';
 
 export interface RegisterSuccess {
   type: typeof REGISTER_SUCCESS;
@@ -46,11 +48,19 @@ export interface AuthError {
   payload: { msg: string; status: string };
 }
 
+export interface NotFound {
+  type: typeof NOT_FOUND;
+}
+export interface ClearNotFound {
+  type: typeof NOT_FOUND_CLEAR;
+}
+
 export type RegisterDispatchTypes = RegisterSuccess | AuthError;
 export type LoginDispatchTypes = LoginSuccess | AuthError;
 export type LogoutDispatchTypes = LogoutSuccess | LogoutFail;
 export type UserLoadDispatchTypes = UserLoaded | AuthError;
 export type LoadingDispatch = Set_Loading | Remove_Loading;
+export type NotFoundDispatch = NotFound | ClearNotFound;
 
 export interface SignUpData {
   firstName: string;

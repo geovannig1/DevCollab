@@ -25,14 +25,14 @@ interface CreateProjectProps {
 
 const CreateProject: React.FC<CreateProjectProps> = ({
   auth: { user },
-  project: { shownProject },
+  project: { projects },
   createProject,
   loadProjects,
 }) => {
   useEffect(() => {
     document.title = 'Create new project | DevCollab';
-    !shownProject && loadProjects();
-  }, [shownProject, loadProjects]);
+    !projects && loadProjects();
+  }, [projects, loadProjects]);
 
   //Form state
   const [projectData, setProjectData] = useState<ProjectData>({
@@ -94,6 +94,8 @@ const Previous = styled(Link)`
   align-items: center;
   text-decoration: none;
   transition: 0.2s ease-in-out;
+  user-select: none;
+  outline: none;
   span {
     font-weight: 600;
   }

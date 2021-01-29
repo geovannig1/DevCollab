@@ -123,6 +123,7 @@ const StyledLink = styled(Link)`
   font-weight: 500;
   margin: 10px 0;
   font-size: ${setRem(14)};
+  outline: none;
   &:hover {
     color: ${setColor.primaryDark};
   }

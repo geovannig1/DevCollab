@@ -5,12 +5,12 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
 
-import { setColor, setRem } from '../../styles';
-import { setAlert, removeAlert } from '../../actions/alertActions';
-import validateEmail from '../../utils/validateEmail';
 import HelpIcon from '@material-ui/icons/Help';
 import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
+import { setColor, setRem } from '../../styles';
+import { setAlert, removeAlert } from '../../actions/alertActions';
+import validateEmail from '../../utils/validateEmail';
 import { Button } from '../global/Button';
 import ALert from '../global/Alert';
 import { AccessPermission, ProjectData } from '../../actions/projectTypes';
@@ -103,14 +103,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       .indexOf(value);
 
     if (changePermission !== undefined) {
-      const newData = changePermission;
-      setProjectData((prevData) => ({
-        ...prevData,
-        members: [
-          ...prevData.members,
-          ...prevData.members.splice(index, 0, newData),
-        ],
-      }));
+      setProjectData({
+        ...projectData,
+        members: [...projectData.members.splice(index, 1, changePermission)],
+      });
     }
   };
 
@@ -158,68 +154,66 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         />
       </Item>
 
-      {!update && (
-        <Fragment>
-          <Item>
-            <label htmlFor='members'>Invite Members</label>
-            <AddMemberContainer>
-              <input
-                type='email'
-                id='members'
-                name='members'
-                placeholder='Enter member email'
-                onChange={(e) => setMembers(e.target.value)}
-                value={members}
-              />
-              <MemberButton onClick={handleAddMembers} aria-label='add member'>
-                <AddIcon fontSize='small' />
-              </MemberButton>
-            </AddMemberContainer>
-          </Item>
-          <label htmlFor='members'>
-            Project Access Permission
-            <HelpIcon fontSize='small' />
-          </label>
+      <Fragment>
+        <Item>
+          <label htmlFor='members'>Invite Members</label>
+          <AddMemberContainer>
+            <input
+              type='email'
+              id='members'
+              name='members'
+              placeholder='Enter member email'
+              onChange={(e) => setMembers(e.target.value)}
+              value={members}
+            />
+            <MemberButton onClick={handleAddMembers} aria-label='add member'>
+              <AddIcon fontSize='small' />
+            </MemberButton>
+          </AddMemberContainer>
+        </Item>
+        <label htmlFor='members'>
+          Project Access Permission
+          <HelpIcon fontSize='small' />
+        </label>
 
-          <Item id='members'>
-            <MemberName>{user?.email}</MemberName>
-            <Select disabled style={{ cursor: 'not-allowed' }}>
-              <option value={AccessPermission.Admin}>Admin</option>
-            </Select>
-            {projectData.members.map((member, index) => (
-              <Fragment key={index}>
-                <MemberName>{member.email}</MemberName>
-                <Permission>
-                  <Select
-                    name={member.email}
-                    defaultValue={AccessPermission.ReadOnly}
-                    onChange={handleChangeEditPermission}
-                  >
-                    <option value={AccessPermission.Admin}>Admin</option>
-                    <option value={AccessPermission.ReadWriteDelete}>
-                      Read/Write/Delete
-                    </option>
-                    <option value={AccessPermission.ReadOnly}>Read Only</option>
-                  </Select>
-                  <MemberButton
-                    id={member.email}
-                    value={member.email}
-                    onClick={handleDeleteMember}
-                    danger
-                  >
-                    <CloseIcon fontSize='small' />
-                  </MemberButton>
-                </Permission>
-              </Fragment>
-            ))}
-          </Item>
-        </Fragment>
-      )}
+        <Item id='members'>
+          <MemberEmail>{user?.email}</MemberEmail>
+          <Select disabled style={{ cursor: 'not-allowed' }}>
+            <option value={AccessPermission.Admin}>Admin</option>
+          </Select>
+          {projectData.members.map((member, index) => (
+            <Fragment key={index}>
+              <MemberEmail>{member.email}</MemberEmail>
+              <PermissionContainer>
+                <Select
+                  name={member.email}
+                  defaultValue={AccessPermission.ReadOnly}
+                  onChange={handleChangeEditPermission}
+                >
+                  <option value={AccessPermission.Admin}>Admin</option>
+                  <option value={AccessPermission.ReadWriteDelete}>
+                    Read/Write/Delete
+                  </option>
+                  <option value={AccessPermission.ReadOnly}>Read Only</option>
+                </Select>
+                <MemberButton
+                  id={member.email}
+                  value={member.email}
+                  onClick={handleDeleteMember}
+                  danger
+                >
+                  <CloseIcon fontSize='small' />
+                </MemberButton>
+              </PermissionContainer>
+            </Fragment>
+          ))}
+        </Item>
+      </Fragment>
 
       <ALert />
 
       <StyledButton aria-label='create project' extrasmall={'extrasmall' && 1}>
-        Create Project
+        {!update ? 'Create Project' : 'Update Project'}
       </StyledButton>
       <StyledButton
         aria-label='cancel'
@@ -328,12 +322,12 @@ const Item = styled.div`
   }
 `;
 
-const Permission = styled.div`
+const PermissionContainer = styled.div`
   display: flex;
   align-items: center;
 `;
 
-const MemberName = styled.div`
+const MemberEmail = styled.div`
   color: ${setColor.mainBlack};
   font-weight: 500;
   font-size: ${setRem(14)};

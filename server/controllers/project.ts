@@ -23,13 +23,13 @@ export const createProject = async (req: Request, res: Response) => {
       ];
     }
 
-    let project = await Project.create({
+    const project = await Project.create({
       name,
       description,
       members: userMember,
     });
 
-    project = await project
+    await project
       .populate({
         path: 'members.user',
         select: ['firstName', 'lastName', 'email'],
@@ -151,6 +151,19 @@ export const updateProject = async (req: Request, res: Response) => {
     if (member?.accessPermission !== AccessPermission.Admin) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
+
+    await project
+      .populate({ path: 'members.user', select: ['email'] })
+      .execPopulate();
+
+    //Find new invited members
+    // const newMembers = project.members.map((member) => {
+    //   return members.filter(
+    //     (newMember: any) => newMember.email !== member.email
+    //   );
+    // });
+
+    // console.log(newMembers);
 
     //Update data
     if (name) project.name = name.trim();
