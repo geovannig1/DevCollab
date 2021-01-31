@@ -9,6 +9,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import { useHistory } from 'react-router-dom';
 
 import { signOut } from '../../actions/authActions';
 
@@ -35,7 +36,9 @@ const CustomizedMenu: React.FC<CustomizedMenuProps> = ({
     signOut();
   };
 
+  const history = useHistory();
   const handleSetting = () => {
+    history.push('/user-settings');
     handleClose();
   };
 

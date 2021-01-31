@@ -15,14 +15,17 @@ import {
   NOT_FOUND_CLEAR,
   LOGOUT_SUCCESS,
   LOGOUT_FAIL,
+  USER_UPDATED,
   LoadingDispatch,
   RegisterDispatchTypes,
   LoginDispatchTypes,
   UserLoadDispatchTypes,
   LogoutDispatchTypes,
   NotFoundDispatch,
+  UpdateUserDispatchTypes,
   SignInData,
   SignUpData,
+  UserData,
 } from './authTypes';
 
 //Load User
@@ -110,6 +113,29 @@ export const signOut = () => async (
   } catch (err) {
     dispatch({ type: LOGOUT_FAIL });
     dispatch({ type: REMOVE_LOADING });
+  }
+};
+
+//Update user
+export const updateUser = (userData: UserData, image: File) => async (
+  dispatch: ThunkDispatch<{}, {}, UpdateUserDispatchTypes>
+) => {
+  try {
+    userData.image = image;
+
+    const res = await api.patch('/user', userData);
+    dispatch({ type: USER_UPDATED, payload: res.data });
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error: any) => {
+        dispatch(setAlert(error.msg, MessageType.Fail, error.param));
+      });
+    }
+    dispatch({
+      type: AUTH_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
   }
 };
 

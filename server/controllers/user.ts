@@ -25,9 +25,9 @@ export const editUser = async (req: Request, res: Response) => {
     const {
       firstName,
       lastName,
+      currentPassword,
       newPassword,
       confirmNewPassowrd,
-      currentPassword,
       email,
     } = req.body;
 

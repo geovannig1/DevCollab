@@ -4,10 +4,13 @@ export const setColor = {
   mainBlack: '#272727',
   lightBlack: '#9F9F9F',
   mainRed: '#d11111',
+  lightRed: '#ff9696',
+  transparentRed: '#ffe6e6',
   darkRed: '#871818',
   primary: '#4463CC',
   primaryDark: '#374FA1',
-  primaryLight: '#8797D0',
+  primaryLight: '#b0bff7',
+  primaryTransparent: '#ebefff',
   secondary: '#4091E3',
 };
 

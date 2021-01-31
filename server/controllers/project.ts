@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 import Project, { Member, AccessPermission } from '../models/Project';
-import nodemailer from '../services/nodemailer';
+import sendEmail from '../services/sendEmail';
 import User from '../models/User';
 
 //Create a new project
@@ -37,47 +37,7 @@ export const createProject = async (req: Request, res: Response) => {
       .execPopulate();
 
     //Create and send invitation email
-    members?.map((member: Member) => {
-      const payload = {
-        member: {
-          projectName: name,
-          projectId: project.id,
-          email: member.email,
-          accessPermission: member.accessPermission,
-        },
-      };
-
-      const token = jwt.sign(payload, process.env.JWT_NODEMAILER_SECRET!);
-
-      let url: string;
-      if (process.env.NODE_ENV === 'production') {
-        url = `http://<something>/api/projects/invitation/${token}`;
-      } else {
-        url = `http://localhost:3000/api/projects/invitation/${token}`;
-      }
-
-      //Send email
-      if (member.email) {
-        nodemailer(
-          member.email,
-          `${name} - Project Invitation`,
-          `
-          <div style='font-size: 16px; margin: 0; background: #f5f5f5;padding: 10px 200px;'>
-            <div style='height: 180px;background: white; padding: 20px;'>
-              <h3 style='color:black;'>Hi ${member.email},</h3>
-              <p style='font-size: 15px; color: black; margin:0;'>${user?.email} has invited you to <b>${name}</b> project, <br/>
-              click the button below to join the project: </p> 
-              <a href="${url}">
-                <button style='background-color: #4463CC;color: white; height: 40px; width: 90px; border: none; margin: 10px 0; cursor: pointer;'>
-                Join
-                </button>
-              </a> 
-            </div>
-          </div>
-          `
-        );
-      }
-    });
+    sendEmail(members, user, name, project);
 
     res.status(201).json(project);
   } catch (err) {
@@ -136,9 +96,10 @@ export const getProjects = async (req: Request, res: Response) => {
 //Update project
 export const updateProject = async (req: Request, res: Response) => {
   try {
-    const { name, description } = req.body;
+    const { name, description, members } = req.body;
 
     const project = await Project.findById(req.params.projectId);
+    const user = await User.findById(req.user);
 
     if (!project) {
       return res.status(404).json({ msg: 'Project not found' });
@@ -156,18 +117,41 @@ export const updateProject = async (req: Request, res: Response) => {
       .populate({ path: 'members.user', select: ['email'] })
       .execPopulate();
 
-    //Find new invited members
-    // const newMembers = project.members.map((member) => {
-    //   return members.filter(
-    //     (newMember: any) => newMember.email !== member.email
-    //   );
-    // });
+    //---- Find new user from request body and send invitation email----//
+    //Get project members email
+    const projectEmail = project.members.map(
+      (member: any) => member.user.email
+    );
+    //find new user from request body
+    const newMembers = members.filter(
+      (member: any) => !projectEmail.includes(member.email)
+    );
 
-    // console.log(newMembers);
+    //Send email to new members
+    if (newMembers.length > 0) {
+      sendEmail(newMembers, user, name, project);
+    }
+
+    //find current updated member from request body
+    let currentMembers: Member[];
+    if (members.length > 0) {
+      currentMembers = project.members.filter((projectMember: any) => {
+        return members.map((member: any) => {
+          if (member.email.includes(projectMember.user.email)) {
+            return (projectMember.accessPermission = member.accessPermission);
+          }
+        });
+      });
+    } else {
+      currentMembers = project.members.filter(
+        (member: any) => member.user.id === req.user
+      );
+    }
 
     //Update data
     if (name) project.name = name.trim();
     if (description) project.description = description.trim();
+    if (currentMembers) project.members = currentMembers;
 
     const updatedProject = await (await project?.save())
       .populate({
@@ -212,6 +196,7 @@ export const confirmInvitation = async (req: Request, res: Response) => {
     const decoded: any = jwt.verify(token, process.env.JWT_NODEMAILER_SECRET!);
 
     const { member } = decoded;
+    console.log(decoded);
 
     const project = await Project.findById(member.projectId);
 

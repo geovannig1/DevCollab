@@ -8,14 +8,15 @@ import { loadUser } from './actions/authActions';
 import PrivateRoute from './components/routing/PrivateRoute';
 import Route from './components/routing/PublicRoute';
 import GlobalStyle from './components/global/GlobalStyle';
+import BaseComponent from './components/global/BaseComponent';
 import Landing from './pages/Landing';
 import Signin from './pages/Signin';
 import Signup from './pages/Signup';
-import BaseComponent from './components/global/BaseComponent';
 import Project from './pages/Project';
 import CreateProject from './pages/CreateProject';
 import UpdateProject from './pages/UpdateProject';
 import NotFound from './pages/NotFound';
+import UpdateUser from './pages/UpdateUser';
 
 interface AppProps {
   loadUser: () => Promise<void>;
@@ -35,6 +36,7 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
             <Route exact path='/' component={Landing} />
             <Route exact path='/signup' component={Signup} />
             <Route exact path='/signin' component={Signin} />
+            <PrivateRoute exact path='/user-settings' component={UpdateUser} />
             <PrivateRoute exact path='/projects' component={Project} />
             <PrivateRoute
               exact

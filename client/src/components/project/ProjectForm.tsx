@@ -16,6 +16,7 @@ import ALert from '../global/Alert';
 import { AccessPermission, ProjectData } from '../../actions/projectTypes';
 import { UserType } from '../../actions/authTypes';
 import { MessageType } from '../../actions/alertTypes';
+import { Form, InputContainer } from '../global/FormContainer';
 
 interface ProjectFormProps {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -126,7 +127,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
   return (
     <Form onSubmit={handleSubmit}>
-      <Item>
+      <InputContainer>
         <label htmlFor='name'>
           Project Name <span>*</span>
         </label>
@@ -140,9 +141,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
           onChange={handleChange}
           value={projectData.name}
         />
-      </Item>
+      </InputContainer>
 
-      <Item>
+      <InputContainer>
         <label htmlFor='description'>Description</label>
         <textarea
           name='description'
@@ -152,10 +153,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
           onChange={handleChange}
           value={projectData.description}
         />
-      </Item>
+      </InputContainer>
 
       <Fragment>
-        <Item>
+        <InputContainer>
           <label htmlFor='members'>Invite Members</label>
           <AddMemberContainer>
             <input
@@ -170,13 +171,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
               <AddIcon fontSize='small' />
             </MemberButton>
           </AddMemberContainer>
-        </Item>
+        </InputContainer>
         <label htmlFor='members'>
           Project Access Permission
           <HelpIcon fontSize='small' />
         </label>
 
-        <Item id='members'>
+        <InputContainer id='members'>
           <MemberEmail>{user?.email}</MemberEmail>
           <Select disabled style={{ cursor: 'not-allowed' }}>
             <option value={AccessPermission.Admin}>Admin</option>
@@ -187,7 +188,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
               <PermissionContainer>
                 <Select
                   name={member.email}
-                  defaultValue={AccessPermission.ReadOnly}
+                  defaultValue={
+                    member.accessPermission ?? AccessPermission.ReadOnly
+                  }
                   onChange={handleChangeEditPermission}
                 >
                   <option value={AccessPermission.Admin}>Admin</option>
@@ -202,12 +205,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                   onClick={handleDeleteMember}
                   danger
                 >
-                  <CloseIcon fontSize='small' />
+                  <CloseIcon fontSize='small' color='secondary' />
                 </MemberButton>
               </PermissionContainer>
             </Fragment>
           ))}
-        </Item>
+        </InputContainer>
       </Fragment>
 
       <ALert />
@@ -234,20 +237,6 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   removeAlert: (location: string) => dispatch(removeAlert(location)),
 });
 
-const Form = styled.form`
-  word-wrap: break-word;
-  span {
-    color: ${setColor.mainRed};
-  }
-  label {
-    margin-bottom: 5px;
-    margin-top: 10px;
-    color: ${setColor.mainBlack};
-    font-weight: 600;
-    font-size: ${setRem(15)};
-  }
-`;
-
 const StyledButton = styled(Button)`
   margin-top: 15px;
   margin-bottom: 10px;
@@ -271,9 +260,10 @@ const AddMemberContainer = styled.div`
 
 const MemberButton = styled.button<{ danger?: boolean }>`
   background-color: ${({ danger }) =>
-    danger ? setColor.mainRed : setColor.primary};
+    danger ? setColor.mainWhite : setColor.primary};
   color: ${setColor.mainWhite};
-  border: none;
+  border: ${({ danger }) =>
+    danger ? `2px solid ${setColor.mainRed}` : 'none'};
   height: 25px;
   width: 25px;
   margin-left: 5px;
@@ -286,39 +276,11 @@ const MemberButton = styled.button<{ danger?: boolean }>`
   transition: 0.2s ease-in-out;
   &:hover {
     background-color: ${({ danger }) =>
-      danger ? setColor.darkRed : setColor.primaryDark};
+      danger ? setColor.transparentRed : setColor.primaryDark};
   }
   &:active {
     background-color: ${({ danger }) =>
-      danger ? setColor.mainRed : setColor.primary};
-  }
-`;
-
-const Item = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 45vw;
-  margin-bottom: 10px;
-  margin-top: 5px;
-  input {
-    border-radius: 5px;
-    height: 20px;
-    padding: 15px;
-    border: solid ${setColor.lightBlack} 1px;
-    outline: none;
-    &:focus {
-      border-color: ${setColor.primary};
-    }
-  }
-  textarea {
-    border-radius: 5px;
-    padding: 10px;
-    resize: none;
-    border: solid ${setColor.lightBlack} 1px;
-    outline: none;
-    &:focus {
-      border-color: ${setColor.primary};
-    }
+      danger ? setColor.lightRed : setColor.primary};
   }
 `;
 

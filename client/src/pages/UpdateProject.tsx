@@ -35,7 +35,7 @@ const UpdateProject: React.FC<UpdateProjectProps> = ({
 }) => {
   useEffect(() => {
     document.title = 'Update project | DevCollab';
-    projects.length === 0 && loadProjects();
+    !projects && loadProjects();
   }, [projects, loadProjects]);
 
   const history = useHistory();

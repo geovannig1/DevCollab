@@ -27,13 +27,15 @@ export const Button = styled.button<ButtonProps>`
   font-size: ${({ small, extrasmall }) =>
     (extrasmall && setRem(13)) ?? (small ? setRem(14) : setRem(20))};
   &:hover {
-    background-color: ${({ outline }) => !outline && setColor.primaryDark};
+    background-color: ${({ outline }) =>
+      outline ? setColor.primaryTransparent : setColor.primaryDark};
     border: ${({ outline }) => outline && `solid ${setColor.primaryDark} 2px`};
     color: ${({ outline }) => outline && setColor.primaryDark};
   }
 
   &:active {
-    background-color: ${({ outline }) => !outline && setColor.primary};
+    background-color: ${({ outline }) =>
+      outline ? setColor.primaryLight : setColor.primary};
     border: ${({ outline }) => outline && `solid ${setColor.primary} 2px`};
     transition: 0.1s ease-in-out;
   }

@@ -31,7 +31,7 @@ const Project: React.FC<ProjectProps> = ({
     document.title = 'Projects | DevCollab';
 
     //Only load if project undefined
-    projects.length === 0 && loadProjects();
+    !projects && loadProjects();
   }, [projects, loadProjects]);
 
   return (

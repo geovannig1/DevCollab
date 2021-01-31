@@ -6,7 +6,7 @@ import { makeStyles, createStyles } from '@material-ui/core/styles';
 
 import { Store } from '../../store';
 import { setColor, setGradient } from '../../styles';
-import dummyImage from '../../assets/pexels-photo-220453.jpeg';
+import avatar from '../../assets/profile-picture.png';
 import { AuthInitialState } from '../../reducers/authReducer';
 import UserMenu from './UserMenu';
 
@@ -20,7 +20,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ auth: { user } }) => {
   return (
     <Container>
       <ProfileContainer>
-        <Img src={dummyImage} alt='profile' />
+        <Img src={avatar} alt='profile' />
         <UserInformation>
           <h4>
             {user?.firstName} {user?.lastName}
