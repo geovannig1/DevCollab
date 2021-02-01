@@ -15,7 +15,7 @@ interface CardProps {
   description?: string;
   deleteTitle: string;
   deleteText: string;
-  deleteItem: (id: number) => Promise<void>;
+  deleteItem: (id?: number) => Promise<void>;
   editLink: string;
   members?: Member[];
   user?: UserType;

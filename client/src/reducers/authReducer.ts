@@ -2,6 +2,7 @@ import {
   REGISTER_SUCCESS,
   LOGIN_SUCCESS,
   USER_LOADED,
+  USER_UPDATED,
   SET_LOADING,
   REMOVE_LOADING,
   LOGOUT_SUCCESS,
@@ -9,12 +10,15 @@ import {
   AUTH_ERROR,
   NOT_FOUND,
   NOT_FOUND_CLEAR,
+  USER_DELETED,
   LoadingDispatch,
   LoginDispatchTypes,
   RegisterDispatchTypes,
   LogoutDispatchTypes,
   UserLoadDispatchTypes,
+  UpdateUserDispatchTypes,
   NotFoundDispatch,
+  UserDeleteDispatchTypes,
   UserType,
 } from '../actions/authTypes';
 
@@ -37,9 +41,11 @@ const authReducer = (
     | RegisterDispatchTypes
     | LoginDispatchTypes
     | UserLoadDispatchTypes
+    | UpdateUserDispatchTypes
     | LogoutDispatchTypes
     | LoadingDispatch
     | NotFoundDispatch
+    | UserDeleteDispatchTypes
 ): AuthInitialState => {
   switch (action.type) {
     case SET_LOADING:
@@ -60,12 +66,14 @@ const authReducer = (
         isAuthenticated: true,
       };
     case USER_LOADED:
+    case USER_UPDATED:
       return {
         ...state,
         isAuthenticated: true,
         user: action.payload,
       };
     case LOGOUT_SUCCESS:
+    case USER_DELETED:
       return {
         ...state,
         isAuthenticated: false,

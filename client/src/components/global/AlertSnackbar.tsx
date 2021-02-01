@@ -47,8 +47,13 @@ const AlertSnackbar: React.FC<AlertSnackbarProps> = ({
   }, [alerts]);
 
   const classes = useStyles();
-  const handleClose = (event: any) => {
-    removeAlert(event.location);
+  const handleClose = () => {
+    removeAlert();
+  };
+  const handleTimeout = () => {
+    setTimeout(() => {
+      handleClose();
+    }, 3000);
   };
 
   return (
@@ -56,13 +61,10 @@ const AlertSnackbar: React.FC<AlertSnackbarProps> = ({
       {alerts.length > 0 &&
         results.map((result, index) => (
           <div key={index} className={classes.root}>
-            <Snackbar
-              open={true}
-              autoHideDuration={6000}
-              onClose={(result) => handleClose(result)}
-            >
+            <Snackbar open={true} autoHideDuration={6000} onClose={handleClose}>
               <Alert severity={result.messageType ? 'success' : 'error'}>
                 {result.message}
+                {handleTimeout()}
               </Alert>
             </Snackbar>
           </div>

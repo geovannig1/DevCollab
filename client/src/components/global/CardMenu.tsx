@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import AlertDialog from './AlertDialog';
 
 interface CardMenuProps {
-  deleteItem: (id: number) => Promise<void>;
+  deleteItem: (id?: number) => Promise<void>;
   deleteId: number;
   deleteTitle: string;
   deleteText: string;

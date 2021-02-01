@@ -2,6 +2,8 @@ import React, { Fragment, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
 
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import { setColor, setRem } from '../styles';
@@ -17,17 +19,42 @@ import { AuthInitialState } from '../reducers/authReducer';
 import { UserData } from '../actions/authTypes';
 import avatar from '../assets/profile-picture.png';
 import Alert from '../components/global/Alert';
+import AlertSnackbar from '../components/global/AlertSnackbar';
+import { updateUser, deleteUser } from '../actions/authActions';
+import { AlertInitialState } from '../reducers/alertReducer';
+import { MessageType } from '../actions/alertTypes';
+import AlertDialog from '../components/global/AlertDialog';
 
 interface UpdateUserProps {
   auth: AuthInitialState;
+  alert: AlertInitialState;
+  updateUser: (userData: UserData, image?: File) => Promise<void>;
+  deleteUser: () => Promise<void>;
 }
 
-const UpdateUser: React.FC<UpdateUserProps> = ({ auth: { user } }) => {
+const UpdateUser: React.FC<UpdateUserProps> = ({
+  auth: { user },
+  alert,
+  updateUser,
+  deleteUser,
+}) => {
   useEffect(() => {
     document.title = 'User Settings | DevCollab';
   }, []);
 
   const [updatePassword, setUpdatePassword] = useState(false);
+  useEffect(() => {
+    if (alert.length > 0 && alert[0].messageType === MessageType.Success) {
+      setUpdatePassword(false);
+      setUserData((prevData) => ({
+        ...prevData,
+        currentPassword: '',
+        newPassword: '',
+        confirmNewPassowrd: '',
+      }));
+    }
+  }, [alert]);
+
   const [image, setImage] = useState<File>();
   const [imagePreview, setImagePreview] = useState<
     string | ArrayBuffer | null
@@ -60,7 +87,7 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ auth: { user } }) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(userData, image);
+    updateUser(userData, image);
   };
 
   return (
@@ -108,7 +135,13 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ auth: { user } }) => {
           <FileContainer>
             <label htmlFor='image'>Profile Picture</label>
             <Avatar
-              src={imagePreview ? imagePreview?.toString() : avatar}
+              src={
+                imagePreview
+                  ? imagePreview?.toString()
+                  : user?.avatar
+                  ? user.avatar
+                  : avatar
+              }
               alt='profile-avatar'
             />
             <input
@@ -139,6 +172,7 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ auth: { user } }) => {
               type='checkbox'
               name='changePassword'
               id='changePassword'
+              checked={updatePassword}
               onChange={(e) => {
                 setUpdatePassword(e.target.checked);
                 setUserData((prevData) => ({
@@ -152,18 +186,20 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ auth: { user } }) => {
             <span>Update password?</span>
           </CheckboxContainer>
 
-          <InputContainer>
-            <label htmlFor='currentPassword'>Current Password</label>
-            <input
-              type='password'
-              id='currentPassword'
-              name='currentPassword'
-              placeholder='Current password'
-              onChange={handleChange}
-              value={userData.currentPassword}
-              disabled={!updatePassword}
-            />
-          </InputContainer>
+          {user?.havePassword && (
+            <InputContainer>
+              <label htmlFor='currentPassword'>Current Password</label>
+              <input
+                type='password'
+                id='currentPassword'
+                name='currentPassword'
+                placeholder='Current password'
+                onChange={handleChange}
+                value={userData.currentPassword}
+                disabled={!updatePassword}
+              />
+            </InputContainer>
+          )}
 
           <InputContainer>
             <label htmlFor='newPassword'>New Password</label>
@@ -180,6 +216,7 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ auth: { user } }) => {
             <input
               type='password'
               id='confirmPassword'
+              name='confirmNewPassowrd'
               placeholder='Cofirm password'
               onChange={handleChange}
               value={userData.confirmNewPassowrd}
@@ -187,7 +224,12 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ auth: { user } }) => {
             />
           </InputContainer>
 
-          <Alert />
+          {alert.length > 0 && alert[0].messageType === MessageType.Success && (
+            <AlertSnackbar />
+          )}
+          {alert.length > 0 && alert[0].messageType === MessageType.Fail && (
+            <Alert />
+          )}
 
           <StyledButton extrasmall>Update</StyledButton>
           <StyledButton
@@ -199,7 +241,16 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ auth: { user } }) => {
             Cancel
           </StyledButton>
         </Form>
-        <span>Delete Account?</span>
+        <AlertDialog
+          deleteButton
+          title='Delete Account'
+          deleteItem={deleteUser}
+          text="Are you sure want to delete this account? this process can't be undone."
+          firstButton='Delete Account'
+          secondButton='Cancel'
+        >
+          <DeleteButton>Delete Account?</DeleteButton>
+        </AlertDialog>
       </Paper>
     </Fragment>
   );
@@ -207,6 +258,13 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ auth: { user } }) => {
 
 const mapStateToProps = (state: Store) => ({
   auth: state.auth,
+  alert: state.alert,
+});
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
+  updateUser: (userData: UserData, image?: File) =>
+    dispatch(updateUser(userData, image)),
+  deleteUser: () => dispatch(deleteUser()),
 });
 
 const Header = styled.div`
@@ -273,4 +331,19 @@ const CheckboxContainer = styled.div`
   }
 `;
 
-export default connect(mapStateToProps)(UpdateUser);
+const DeleteButton = styled.span`
+  background-color: ${setColor.mainWhite};
+  outline: none;
+  border: none;
+  cursor: pointer;
+  color: ${setColor.mainRed};
+  transition: 0.3s ease-in-out;
+  &:hover {
+    color: ${setColor.lightRed};
+  }
+  &:active {
+    color: ${setColor.mainRed};
+  }
+`;
+
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateUser);

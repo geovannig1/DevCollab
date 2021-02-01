@@ -8,9 +8,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import styled from 'styled-components';
 
 interface AlertDialogProps {
-  deleteItem: (id: number) => Promise<void>;
-  deleteId: number;
-  deleteButton: boolean;
+  deleteItem?: (id?: number) => Promise<void>;
+  deleteId?: number;
+  deleteButton?: boolean;
   title: string;
   text: string;
   secondButton: string;
@@ -38,7 +38,11 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
   };
 
   const handleDelete = () => {
-    deleteItem(deleteId);
+    if (deleteItem) {
+      if (deleteId) deleteItem(deleteId);
+      else deleteItem();
+    }
+    handleClose();
   };
 
   return (

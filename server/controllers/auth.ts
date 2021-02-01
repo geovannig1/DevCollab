@@ -46,6 +46,7 @@ export const register = async (req: Request, res: Response) => {
       lastName,
       email,
       password,
+      havePassword: true,
     });
 
     //Generate jwt token

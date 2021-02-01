@@ -4,6 +4,7 @@ export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const USER_LOADED = 'USER_LOADED';
 export const USER_UPDATED = 'USER_UPDATED';
+export const USER_DELETED = 'USER_DELETED';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const LOGOUT_FAIL = 'LOGOUT_FAIL';
 export const AUTH_ERROR = 'AUTH_ERROR';
@@ -23,6 +24,7 @@ export type UserType = {
   lastName: string;
   email: string;
   avatar: string;
+  havePassword: boolean;
 };
 
 export interface Set_Loading {
@@ -38,7 +40,10 @@ export interface UserLoaded {
 }
 export interface UserUpdated {
   type: typeof USER_UPDATED;
-  payload: UserData;
+  payload: UserType;
+}
+export interface UserDeleted {
+  type: typeof USER_DELETED;
 }
 
 export interface LogoutSuccess {
@@ -66,7 +71,8 @@ export type LogoutDispatchTypes = LogoutSuccess | LogoutFail;
 export type UserLoadDispatchTypes = UserLoaded | AuthError;
 export type LoadingDispatch = Set_Loading | Remove_Loading;
 export type NotFoundDispatch = NotFound | ClearNotFound;
-export type UpdateUserDispatchTypes = UserUpdated | AuthError;
+export type UpdateUserDispatchTypes = UserUpdated;
+export type UserDeleteDispatchTypes = UserDeleted;
 
 export interface SignUpData {
   firstName: string;

@@ -13,14 +13,17 @@ import { SignUpData } from '../actions/authTypes';
 import { Store } from '../store';
 import { AuthInitialState } from '../reducers/authReducer';
 import Alert from '../components/global/Alert';
+import { clearProject } from '../actions/projectActions';
 
 interface SignupProps {
   signUp: (signUpData: SignUpData) => Promise<void>;
+  clearProject: () => void;
   auth: AuthInitialState;
 }
 
 const Signup: React.FC<SignupProps> = ({
   signUp,
+  clearProject,
   auth: { isAuthenticated, loading },
 }) => {
   useEffect(() => {
@@ -56,6 +59,7 @@ const Signup: React.FC<SignupProps> = ({
       title='Create an Account.'
       googleButtonText='Sign Up with Google'
       otherAuth='SIGNIN'
+      clearProject={clearProject}
     >
       <Form onSubmit={handleSubmit}>
         <Container>
@@ -137,6 +141,7 @@ const mapStateToProps = (state: Store) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   signUp: (signUpData: SignUpData) => dispatch(signUp(signUpData)),
+  clearProject: () => dispatch(clearProject()),
 });
 
 const Container = styled.div`

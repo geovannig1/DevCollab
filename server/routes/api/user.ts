@@ -3,8 +3,9 @@ const router = express.Router();
 import { check } from 'express-validator';
 
 import auth from '../../middlewares/auth';
-import { getUser, editUser } from '../../controllers/user';
+import { getUser, editUser, deleteUser } from '../../controllers/user';
 import validateInput from '../../middlewares/validateInput';
+import upload from '../../middlewares/upload';
 
 /**
  *  @route GET api/user
@@ -21,6 +22,7 @@ router.get('/', auth, getUser);
 router.patch(
   '/',
   auth,
+  upload.single('avatar'),
   [
     check('firstName', "First name can't be empty").notEmpty(),
     check('lastName', "Last name can't be empty").notEmpty(),
@@ -29,5 +31,12 @@ router.patch(
   validateInput,
   editUser
 );
+
+/**
+ *  @route DELETE api/user
+ *  @desc Delete  user data
+ *  @access Private
+ */
+router.delete('/', auth, deleteUser);
 
 export default router;

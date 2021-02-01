@@ -1,5 +1,6 @@
 import { Dispatch } from 'react';
 import { ThunkDispatch } from 'redux-thunk';
+import axios from 'axios';
 
 import api from '../api';
 import { removeAlert, setAlert } from './alertActions';
@@ -10,6 +11,7 @@ import {
   REMOVE_LOADING,
   LOGIN_SUCCESS,
   USER_LOADED,
+  USER_DELETED,
   AUTH_ERROR,
   NOT_FOUND,
   NOT_FOUND_CLEAR,
@@ -20,6 +22,7 @@ import {
   RegisterDispatchTypes,
   LoginDispatchTypes,
   UserLoadDispatchTypes,
+  UserDeleteDispatchTypes,
   LogoutDispatchTypes,
   NotFoundDispatch,
   UpdateUserDispatchTypes,
@@ -117,14 +120,36 @@ export const signOut = () => async (
 };
 
 //Update user
-export const updateUser = (userData: UserData, image: File) => async (
+export const updateUser = (userData: UserData, image?: File) => async (
   dispatch: ThunkDispatch<{}, {}, UpdateUserDispatchTypes>
 ) => {
   try {
-    userData.image = image;
+    dispatch(removeAlert());
 
-    const res = await api.patch('/user', userData);
+    const {
+      firstName,
+      lastName,
+      email,
+      currentPassword,
+      confirmNewPassowrd,
+      newPassword,
+    } = userData;
+
+    //Create multipart/form-data
+    const fd = new FormData();
+
+    fd.append('firstName', firstName);
+    fd.append('lastName', lastName);
+    fd.append('email', email);
+    fd.append('currentPassword', currentPassword);
+    fd.append('confirmNewPassowrd', confirmNewPassowrd);
+    fd.append('newPassword', newPassword);
+    if (image) fd.append('avatar', image);
+
+    const res = await axios.patch('/api/user', fd);
+
     dispatch({ type: USER_UPDATED, payload: res.data });
+    dispatch(setAlert('User updated', MessageType.Success, 'input'));
   } catch (err) {
     const errors = err.response.data.errors;
     if (errors) {
@@ -132,11 +157,15 @@ export const updateUser = (userData: UserData, image: File) => async (
         dispatch(setAlert(error.msg, MessageType.Fail, error.param));
       });
     }
-    dispatch({
-      type: AUTH_ERROR,
-      payload: { msg: err.response.statusText, status: err.response.status },
-    });
   }
+};
+
+//Delete user
+export const deleteUser = () => async (
+  dispatch: Dispatch<UserDeleteDispatchTypes>
+) => {
+  await api.delete('/user');
+  dispatch({ type: USER_DELETED });
 };
 
 //Page not found

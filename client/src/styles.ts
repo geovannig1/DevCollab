@@ -3,7 +3,7 @@ export const setColor = {
   mainGrey: '#F0F0F0',
   mainBlack: '#272727',
   lightBlack: '#9F9F9F',
-  mainRed: '#d11111',
+  mainRed: '#f50057',
   lightRed: '#ff9696',
   transparentRed: '#ffe6e6',
   darkRed: '#871818',

@@ -196,7 +196,6 @@ export const confirmInvitation = async (req: Request, res: Response) => {
     const decoded: any = jwt.verify(token, process.env.JWT_NODEMAILER_SECRET!);
 
     const { member } = decoded;
-    console.log(decoded);
 
     const project = await Project.findById(member.projectId);
 
