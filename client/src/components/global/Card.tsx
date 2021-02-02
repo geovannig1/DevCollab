@@ -16,6 +16,7 @@ interface CardProps {
   deleteTitle: string;
   deleteText: string;
   deleteItem: (id?: number) => Promise<void>;
+  link: string;
   editLink: string;
   members?: Member[];
   user?: UserType;
@@ -28,6 +29,7 @@ const Card: React.FC<CardProps> = ({
   deleteTitle,
   deleteText,
   deleteItem,
+  link,
   editLink,
   members,
   user,
@@ -39,7 +41,7 @@ const Card: React.FC<CardProps> = ({
 
   return (
     <Fragment>
-      <StyledLink to={`/projects/${projectId}`}>
+      <StyledLink to={link}>
         <Container>
           <Title>{title}</Title>
           <Description>{description}</Description>

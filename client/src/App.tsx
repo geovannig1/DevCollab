@@ -17,6 +17,8 @@ import CreateProject from './pages/CreateProject';
 import UpdateProject from './pages/UpdateProject';
 import NotFound from './pages/NotFound';
 import UpdateUser from './pages/UpdateUser';
+import Activity from './pages/Activity';
+import Task from './pages/Task';
 
 interface AppProps {
   loadUser: () => Promise<void>;
@@ -47,6 +49,16 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
               exact
               path='/projects/:projectId/edit'
               component={UpdateProject}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/activity'
+              component={Activity}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/tasks'
+              component={Task}
             />
             <Route component={NotFound} />
           </Switch>

@@ -45,6 +45,7 @@ const Project: React.FC<ProjectProps> = ({
           <CardLink key={project._id}>
             <Card
               projectId={project._id}
+              link={`/projects/${project._id}/activity`}
               title={project.name}
               members={project.members}
               user={user}
@@ -74,7 +75,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
 const H1 = styled.h1`
   font-weight: 500;
   color: ${setColor.mainBlack};
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 `;
 
 const StyledButton = styled(Button)`

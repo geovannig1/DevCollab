@@ -12,6 +12,7 @@ import { setColor } from '../../styles';
 import Sidebar from '../sidebar/Sidebar';
 import { AuthInitialState } from '../../reducers/authReducer';
 import { ProjectInitialState } from '../../reducers/projectReducer';
+import Navbar from '../global/Navbar';
 
 interface BaseComponentProps {
   clearProject: () => void;
@@ -35,17 +36,20 @@ const BaseComponent: React.FC<BaseComponentProps> = ({
         <Container>
           <Sidebar />
           <ChildrenContainer>
-            <Header>
-              {selectedProject && (
-                <Fragment>
-                  <Previous to='/projects'>
-                    <ArrowBackIosIcon />
-                    <span>Projects</span>
-                  </Previous>
-                  <Title>Project Name</Title>
-                </Fragment>
-              )}
-            </Header>
+            {selectedProject && (
+              <Fragment>
+                <Header>
+                  <Fragment>
+                    <Previous to='/projects'>
+                      <ArrowBackIosIcon />
+                      <span>Projects</span>
+                    </Previous>
+                    <Title>{selectedProject.name}</Title>
+                  </Fragment>
+                </Header>
+                <Navbar />
+              </Fragment>
+            )}
             {children}
           </ChildrenContainer>
         </Container>
@@ -72,7 +76,7 @@ const Container = styled.div`
 `;
 
 const ChildrenContainer = styled.div`
-  margin: 40px;
+  margin: 25px 40px;
   margin-left: 25%;
   width: 100%;
 `;

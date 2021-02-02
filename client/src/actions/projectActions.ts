@@ -7,6 +7,7 @@ import { setAlert } from './alertActions';
 import { MessageType } from './alertTypes';
 import { LoadingDispatch, SET_LOADING, REMOVE_LOADING } from './authTypes';
 import {
+  PROJECTS_LOADED,
   PROJECT_LOADED,
   PROJECT_CREATED,
   PROJECT_UPDATED,
@@ -26,7 +27,7 @@ export const loadProjects = () => async (
 
     const res = await api.get('/projects');
 
-    dispatch({ type: PROJECT_LOADED, payload: res.data });
+    dispatch({ type: PROJECTS_LOADED, payload: res.data });
     dispatch({ type: REMOVE_LOADING });
   } catch (err) {
     dispatch({
@@ -35,6 +36,25 @@ export const loadProjects = () => async (
     });
 
     dispatch({ type: PROJECT_CLEAR });
+    dispatch({ type: REMOVE_LOADING });
+  }
+};
+
+export const loadProject = (projectId: string) => async (
+  dispatch: Dispatch<ProjectDispatchTypes | LoadingDispatch>
+) => {
+  try {
+    dispatch({ type: SET_LOADING });
+
+    const res = await api.get(`/projects/${projectId}`);
+    dispatch({ type: PROJECT_LOADED, payload: res.data });
+    dispatch({ type: REMOVE_LOADING });
+  } catch (err) {
+    dispatch({
+      type: PROJECT_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+
     dispatch({ type: REMOVE_LOADING });
   }
 };

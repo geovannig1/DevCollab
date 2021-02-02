@@ -7,6 +7,7 @@ import validateInput from '../../middlewares/validateInput';
 import {
   createProject,
   getProjects,
+  getProject,
   confirmInvitation,
   deleteProject,
   updateProject,
@@ -31,6 +32,13 @@ router.post(
  *  @access Private
  */
 router.get('/', auth, getProjects);
+
+/**
+ *  @route GET api/projects/:projectId
+ *  @desc Get signed in user project
+ *  @access Private
+ */
+router.get('/:projectId', auth, getProject);
 
 /**
  *  @route GET api/projects/:projectId

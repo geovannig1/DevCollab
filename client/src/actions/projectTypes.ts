@@ -1,3 +1,4 @@
+export const PROJECTS_LOADED = 'PROJECTS_LOADED';
 export const PROJECT_LOADED = 'PROJECT_LOADED';
 export const PROJECT_CREATED = 'PROJECT_CREATED';
 export const PROJECT_UPDATED = 'PROJECT_UPDATED';
@@ -27,9 +28,13 @@ export interface ProjectType {
   members: Member[];
 }
 
+export interface ProjectsLoaded {
+  type: typeof PROJECTS_LOADED;
+  payload: ProjectType[];
+}
 export interface ProjectLoaded {
   type: typeof PROJECT_LOADED;
-  payload: ProjectType[];
+  payload: ProjectType;
 }
 export interface ProjectCreated {
   type: typeof PROJECT_CREATED;
@@ -58,6 +63,7 @@ export interface ProjectError {
 }
 
 export type ProjectDispatchTypes =
+  | ProjectsLoaded
   | ProjectLoaded
   | ProjectCreated
   | ProjectUpdated

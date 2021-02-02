@@ -93,6 +93,28 @@ export const getProjects = async (req: Request, res: Response) => {
   }
 };
 
+//Load a project
+export const getProject = async (req: Request, res: Response) => {
+  try {
+    const project = await Project.findById(
+      req.params.projectId
+    ).populate('members.user', ['firstName', 'lastName', 'email']);
+
+    //Only user from the project can access
+    const userExist = project?.members.filter(
+      (member: any) => member.user?._id.toString() === req.user
+    );
+    if (userExist?.length === 0) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    res.status(200).json(project);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
 //Update project
 export const updateProject = async (req: Request, res: Response) => {
   try {
@@ -227,7 +249,7 @@ export const confirmInvitation = async (req: Request, res: Response) => {
     });
 
     await project?.save();
-    res.status(200).redirect(`/projects/${member.projectId}`);
+    res.status(200).redirect(`/projects/${member.projectId}/activity`);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');

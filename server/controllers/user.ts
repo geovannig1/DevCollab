@@ -57,8 +57,10 @@ export const editUser = async (req: Request, res: Response) => {
           .status(400)
           .json({ errors: [{ msg: 'Email already in use' }] });
       }
-
       user.email = email;
+
+      //Delete googleid if user change email
+      if (user.googleId) user.googleId = '';
     }
 
     //Add avatar
@@ -125,7 +127,7 @@ export const deleteUser = async (req: Request, res: Response) => {
       members: { $elemMatch: { user: req.user } },
     });
 
-    //Delete user from member
+    //Delete user from projects member
     for (const project of projects) {
       const updatedProject = project.members.filter(
         (member) => member.user?.toString() !== req.user

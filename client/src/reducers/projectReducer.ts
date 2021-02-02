@@ -1,4 +1,5 @@
 import {
+  PROJECTS_LOADED,
   PROJECT_LOADED,
   PROJECT_CLEAR,
   PROJECT_CREATED,
@@ -22,8 +23,10 @@ const projectReducer = (
   action: ProjectDispatchTypes
 ): ProjectInitialState => {
   switch (action.type) {
+    case PROJECTS_LOADED:
+      return { ...state, projects: action.payload, selectedProject: undefined };
     case PROJECT_LOADED:
-      return { ...state, projects: action.payload };
+      return { ...state, selectedProject: action.payload, projects: undefined };
     case PROJECT_CREATED:
       return {
         ...state,
