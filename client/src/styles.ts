@@ -7,11 +7,13 @@ export const setColor = {
   lightRed: '#ff9696',
   transparentRed: '#ffe6e6',
   darkRed: '#871818',
+  darkGrey: ' #D0D0D0',
   primary: '#4463CC',
   primaryDark: '#374FA1',
   primaryLight: '#b0bff7',
   primaryTransparent: '#ebefff',
   secondary: '#4091E3',
+  secondaryDark: '#227BD4',
 };
 
 export const setGradient = (directions: [string, string] = ['right', '']) => {
@@ -31,4 +33,5 @@ export const setRem = (number = 16) => {
 export const setShadow = {
   main: '2px 2px 3px 0px rgba(126, 126, 126, 0.50)',
   hover: '3px 6px 3px 0px rgba(126, 126, 126, 0.25)',
+  light: '2px 4px 8px 0px rgba(126, 126, 126, 0.25)',
 };

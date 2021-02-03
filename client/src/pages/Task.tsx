@@ -6,15 +6,16 @@ import styled from 'styled-components';
 import { useParams, useHistory } from 'react-router-dom';
 import { DragDropContext, DropResult, Droppable } from 'react-beautiful-dnd';
 
-import { setColor } from '../styles';
 import { loadProject } from '../actions/projectActions';
 import { setNavbar, clearNavbar } from '../actions/navbarAction';
 import { SelectedType } from '../actions/navbarTypes';
 import { Store } from '../store';
 import { ProjectInitialState } from '../reducers/projectReducer';
 import ColumnTasks from '../components/task/ColumnTasks';
-
+import AddIcon from '@material-ui/icons/Add';
 import InitialData from './initialData';
+import { setColor } from '../styles';
+import AddListMenu from '../components/task/AddListMenu';
 
 interface TaskProps {
   setNavbar: (selected: SelectedType) => void;
@@ -146,6 +147,10 @@ const Task: React.FC<TaskProps> = ({
               );
             })}
             {provided.placeholder}
+            <AddListMenu>
+              <AddIcon />
+              New list
+            </AddListMenu>
           </Container>
         )}
       </Droppable>
@@ -165,8 +170,13 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
 
 const Container = styled.div`
   display: flex;
+  white-space: nowrap;
+  position: relative;
+  overflow-x: auto;
   margin-top: 30px;
-  min-width: 100%;
+  width: 103%;
+  height: 80%;
+  background-color: ${setColor.mainGrey};
 `;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Task);

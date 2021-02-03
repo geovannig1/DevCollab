@@ -23,6 +23,7 @@ const Container = styled.aside`
   height: 100vh;
   width: 22vw;
   position: fixed;
+  z-index: 99;
   background-color: ${setColor.mainWhite};
   box-shadow: ${setShadow.main};
 `;

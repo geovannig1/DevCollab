@@ -19,6 +19,7 @@ import NotFound from './pages/NotFound';
 import UpdateUser from './pages/UpdateUser';
 import Activity from './pages/Activity';
 import Task from './pages/Task';
+import CreateTask from './pages/CreateTask';
 
 interface AppProps {
   loadUser: () => Promise<void>;
@@ -59,6 +60,11 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
               exact
               path='/projects/:projectId/tasks'
               component={Task}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/create-task/:columnId'
+              component={CreateTask}
             />
             <Route component={NotFound} />
           </Switch>

@@ -38,15 +38,13 @@ const BaseComponent: React.FC<BaseComponentProps> = ({
           <ChildrenContainer>
             {selectedProject && (
               <Fragment>
-                <Header>
-                  <Fragment>
-                    <Previous to='/projects'>
-                      <ArrowBackIosIcon />
-                      <span>Projects</span>
-                    </Previous>
-                    <Title>{selectedProject.name}</Title>
-                  </Fragment>
-                </Header>
+                <Navigation>
+                  <Previous to='/projects'>
+                    <ArrowBackIosIcon />
+                    <span>Projects</span>
+                  </Previous>
+                  <Title>{selectedProject.name}</Title>
+                </Navigation>
                 <Navbar />
               </Fragment>
             )}
@@ -76,12 +74,13 @@ const Container = styled.div`
 `;
 
 const ChildrenContainer = styled.div`
-  margin: 25px 40px;
-  margin-left: 25%;
+  padding: 25px 30px;
+  margin-left: 23%;
   width: 100%;
+  overflow: hidden;
 `;
 
-const Header = styled.div`
+const Navigation = styled.div`
   color: ${setColor.primary};
   display: flex;
   align-items: center;
