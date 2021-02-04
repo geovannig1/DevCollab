@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { setColor } from '../styles';
@@ -27,21 +27,19 @@ const Activity: React.FC<ActivityProps> = ({
   project: { selectedProject, projectError },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
-  const history = useHistory();
 
   useEffect(() => {
     document.title = 'Activity | DevCollab';
     setNavbar(SelectedType.Activity);
 
     !selectedProject && loadProject(projectId);
-    projectError && history.push('/projects');
+    projectError && <Redirect to='/projects' />;
 
     return () => clearNavbar();
   }, [
     loadProject,
     projectId,
     selectedProject,
-    history,
     projectError,
     setNavbar,
     clearNavbar,

@@ -33,7 +33,6 @@ export const InputContainer = styled.div<{ width?: string }>`
   }
   textarea {
     border-radius: 5px;
-    margin-right: 10px;
     padding: 10px;
     resize: none;
     border: solid ${setColor.lightBlack} 1px;
@@ -45,6 +44,15 @@ export const InputContainer = styled.div<{ width?: string }>`
 `;
 
 export const FileContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  input {
+    outline: none;
+  }
+`;
+
+export const DateContaiener = styled.div`
   display: flex;
   flex-direction: column;
   width: 30%;

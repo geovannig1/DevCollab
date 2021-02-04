@@ -5,6 +5,7 @@ interface ButtonProps {
   outline?: boolean | number;
   small?: boolean | number;
   extrasmall?: boolean | number;
+  danger?: boolean;
 }
 
 export const Button = styled.button<ButtonProps>`
@@ -38,5 +39,31 @@ export const Button = styled.button<ButtonProps>`
       outline ? setColor.primaryLight : setColor.primary};
     border: ${({ outline }) => outline && `solid ${setColor.primary} 2px`};
     transition: 0.1s ease-in-out;
+  }
+`;
+
+export const RoundedButton = styled.button<ButtonProps>`
+  background-color: ${({ danger }) =>
+    danger ? setColor.mainWhite : setColor.primary};
+  color: ${setColor.mainWhite};
+  border: ${({ danger }) =>
+    danger ? `2px solid ${setColor.mainRed}` : 'none'};
+  height: 25px;
+  width: 25px;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100%;
+  outline: none;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  &:hover {
+    background-color: ${({ danger }) =>
+      danger ? setColor.transparentRed : setColor.primaryDark};
+  }
+  &:active {
+    background-color: ${({ danger }) =>
+      danger ? setColor.lightRed : setColor.primary};
   }
 `;

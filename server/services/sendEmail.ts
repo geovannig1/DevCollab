@@ -40,8 +40,8 @@ export default (
                 <p style='font-size: 15px; color: black; margin:0;'>${user?.email} has invited you to <b>${name}</b> project, <br/>
                 click the button below to join the project: </p> 
                 <a href="${url}">
-                    <button style='background-color: #4463CC;color: white; height: 40px; width: 90px; border: none; margin: 10px 0; cursor: pointer;'>
-                    Join
+                    <button style='background-color: #4463CC;color: white; height: 40px; width: 90px; border: none; margin: 10px 0;'>
+                      Join
                     </button>
                 </a> 
                 </div>

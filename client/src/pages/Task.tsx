@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import styled from 'styled-components';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, Redirect } from 'react-router-dom';
 import { DragDropContext, DropResult, Droppable } from 'react-beautiful-dnd';
 
 import { loadProject } from '../actions/projectActions';
@@ -16,6 +16,7 @@ import AddIcon from '@material-ui/icons/Add';
 import InitialData from './initialData';
 import { setColor } from '../styles';
 import AddListMenu from '../components/task/AddListMenu';
+import socket from '../utils/socketio';
 
 interface TaskProps {
   setNavbar: (selected: SelectedType) => void;
@@ -31,24 +32,28 @@ const Task: React.FC<TaskProps> = ({
   project: { selectedProject, projectError },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
-  const history = useHistory();
-
   useEffect(() => {
     document.title = 'Tasks | DevCollab';
     !selectedProject && loadProject(projectId);
-    projectError && history.push('/projects');
+    projectError && <Redirect to='/projects' />;
 
     setNavbar(SelectedType.Task);
     return () => clearNavbar();
   }, [
     setNavbar,
     clearNavbar,
-    history,
     loadProject,
     projectError,
     projectId,
     selectedProject,
   ]);
+
+  useEffect(() => {
+    socket.emit('join project', { projectId: selectedProject?._id });
+    socket.on('new list', (data: any) => {
+      console.log(data);
+    });
+  }, [selectedProject]);
 
   //State for the task
   const [taskState, setTaskState] = useState(InitialData);

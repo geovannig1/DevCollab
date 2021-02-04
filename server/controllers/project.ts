@@ -32,7 +32,7 @@ export const createProject = async (req: Request, res: Response) => {
     await project
       .populate({
         path: 'members.user',
-        select: ['firstName', 'lastName', 'email'],
+        select: ['firstName', 'lastName', 'email', 'avatar'],
       })
       .execPopulate();
 
@@ -51,7 +51,7 @@ export const getProjects = async (req: Request, res: Response) => {
   try {
     const projects = await Project.find({
       members: { $elemMatch: { user: req.user } },
-    }).populate('members.user', ['firstName', 'lastName', 'email']);
+    }).populate('members.user', ['firstName', 'lastName', 'email', 'avatar']);
 
     //If user added to project by email
     const user = await User.findById(req.user);
@@ -81,7 +81,7 @@ export const getProjects = async (req: Request, res: Response) => {
       //Load the newly updated project
       const projects = await Project.find({
         members: { $elemMatch: { user: req.user } },
-      }).populate('members.user', ['firstName', 'lastName', 'email']);
+      }).populate('members.user', ['firstName', 'lastName', 'email', 'avatar']);
 
       return res.status(200).json(projects);
     }
@@ -98,7 +98,7 @@ export const getProject = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(
       req.params.projectId
-    ).populate('members.user', ['firstName', 'lastName', 'email']);
+    ).populate('members.user', ['firstName', 'lastName', 'email', 'avatar']);
 
     //Only user from the project can access
     const userExist = project?.members.filter(
@@ -178,7 +178,7 @@ export const updateProject = async (req: Request, res: Response) => {
     const updatedProject = await (await project?.save())
       .populate({
         path: 'members.user',
-        select: ['firstName', 'lastName', 'email'],
+        select: ['firstName', 'lastName', 'email', 'avatar'],
       })
       .execPopulate();
 
@@ -239,7 +239,7 @@ export const confirmInvitation = async (req: Request, res: Response) => {
       });
 
       await project?.save();
-      return res.status(200).redirect(`/projects/${member.projectId}`);
+      return res.status(200).redirect(`/projects/${member.projectId}/activity`);
     }
 
     //When member doesn't have account

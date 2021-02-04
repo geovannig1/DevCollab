@@ -56,7 +56,7 @@ const CreateProject: React.FC<CreateProjectProps> = ({
           <ArrowBackIosIcon />
           <span>Projects</span>
         </Previous>
-        <Title>{projectData.name.trim() || 'Project Name'}</Title>
+        <Title>{projectData.name.trim() || 'Create Project'}</Title>
       </Header>
       <Paper>
         {user && (

@@ -11,7 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { setColor, setRem } from '../../styles';
 import { setAlert, removeAlert } from '../../actions/alertActions';
 import validateEmail from '../../utils/validateEmail';
-import { Button } from '../global/Button';
+import { Button, RoundedButton } from '../global/Button';
 import ALert from '../global/Alert';
 import { AccessPermission, ProjectData } from '../../actions/projectTypes';
 import { UserType } from '../../actions/authTypes';
@@ -167,9 +167,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
               onChange={(e) => setMembers(e.target.value)}
               value={members}
             />
-            <MemberButton onClick={handleAddMembers} aria-label='add member'>
+            <RoundedButton onClick={handleAddMembers} aria-label='add member'>
               <AddIcon fontSize='small' />
-            </MemberButton>
+            </RoundedButton>
           </AddMemberContainer>
         </InputContainer>
         <label htmlFor='members'>
@@ -199,14 +199,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                   </option>
                   <option value={AccessPermission.ReadOnly}>Read Only</option>
                 </Select>
-                <MemberButton
+                <RoundedButton
                   id={member.email}
                   value={member.email}
                   onClick={handleDeleteMember}
                   danger
                 >
                   <CloseIcon fontSize='small' color='secondary' />
-                </MemberButton>
+                </RoundedButton>
               </PermissionContainer>
             </Fragment>
           ))}
@@ -248,7 +248,7 @@ const Select = styled.select`
   padding: 5px;
   height: 30px;
   border-radius: 5px;
-  border: solid ${setColor.lightBlack} 2px;
+  border: solid ${setColor.lightBlack} 1px;
   outline: none;
 `;
 
@@ -256,32 +256,6 @@ const AddMemberContainer = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 20px;
-`;
-
-const MemberButton = styled.button<{ danger?: boolean }>`
-  background-color: ${({ danger }) =>
-    danger ? setColor.mainWhite : setColor.primary};
-  color: ${setColor.mainWhite};
-  border: ${({ danger }) =>
-    danger ? `2px solid ${setColor.mainRed}` : 'none'};
-  height: 25px;
-  width: 25px;
-  margin-left: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 100%;
-  outline: none;
-  cursor: pointer;
-  transition: 0.2s ease-in-out;
-  &:hover {
-    background-color: ${({ danger }) =>
-      danger ? setColor.transparentRed : setColor.primaryDark};
-  }
-  &:active {
-    background-color: ${({ danger }) =>
-      danger ? setColor.lightRed : setColor.primary};
-  }
 `;
 
 const PermissionContainer = styled.div`

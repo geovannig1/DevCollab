@@ -1,17 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useParams } from 'react-router-dom';
 
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 import { setColor, setShadow } from '../../styles';
+import socket from '../../utils/socketio';
 
-interface AddListMenuProps {}
-
-const AddListMenu: React.FC<AddListMenuProps> = ({ children }) => {
+const AddListMenu: React.FC = ({ children }) => {
   const [open, setOpen] = React.useState(false);
+  const [listData, setListData] = useState('');
+
+  const { projectId } = useParams<{ projectId: string }>();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -19,10 +24,20 @@ const AddListMenu: React.FC<AddListMenuProps> = ({ children }) => {
 
   const handleClose = () => {
     setOpen(false);
+    setListData('');
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setListData(e.target.value);
+  };
+
+  const handleClick = () => {
+    socket.emit('create list', { projectId, listData });
+    handleClose();
   };
 
   return (
-    <div>
+    <ThemeProvider theme={theme}>
       <StyledButton onClick={handleClickOpen}>{children}</StyledButton>
       <Dialog
         open={open}
@@ -32,25 +47,36 @@ const AddListMenu: React.FC<AddListMenuProps> = ({ children }) => {
         <DialogContent>
           <TextField
             autoFocus
+            color='primary'
             margin='normal'
             id='name'
-            label='List Name'
+            label='List Title'
             type='text'
             fullWidth
+            onChange={handleChange}
+            value={listData}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color='primary'>
             Cancel
           </Button>
-          <Button onClick={handleClose} color='primary'>
+          <Button onClick={handleClick} color='primary'>
             Add
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </ThemeProvider>
   );
 };
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: setColor.primary,
+    },
+  },
+});
 
 const StyledButton = styled.button`
   display: flex;
