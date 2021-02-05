@@ -53,6 +53,7 @@ const AddListMenu: React.FC = ({ children }) => {
             label='List Title'
             type='text'
             fullWidth
+            autoComplete='off'
             onChange={handleChange}
             value={listData}
           />

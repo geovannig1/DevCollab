@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AnyAction } from 'redux';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, Link, Redirect } from 'react-router-dom';
+import { useParams, Link, Redirect, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Select, { OptionsType } from 'react-select';
 
@@ -14,11 +14,15 @@ import { SelectedType } from '../actions/navbarTypes';
 import { ProjectInitialState } from '../reducers/projectReducer';
 import Paper from '../components/global/Paper';
 import Previous from '../components/global/Previous';
-import { Form, InputContainer } from '../components/global/FormContainer';
+import {
+  DateContaiener,
+  Form,
+  InputContainer,
+} from '../components/global/FormContainer';
 import { Button } from '../components/global/Button';
 import { setColor, setRem } from '../styles';
 import avatar from '../assets/profile-picture.png';
-import { TaskData } from '../actions/taskTypes';
+import { TaskData } from '../components/task/taskTypes';
 
 interface SelectOption {
   value: string;
@@ -38,7 +42,12 @@ const CreateTask: React.FC<CreateTaskProps> = ({
   loadProject,
   project: { selectedProject, projectError },
 }) => {
-  const { projectId } = useParams<{ projectId: string }>();
+  const { projectId, columnId } = useParams<{
+    projectId: string;
+    columnId: string;
+  }>();
+  const history = useHistory();
+
   useEffect(() => {
     document.title = 'Create Task | DevCollab';
     !selectedProject && loadProject(projectId);
@@ -76,9 +85,10 @@ const CreateTask: React.FC<CreateTaskProps> = ({
 
   //Set form data
   const [taskData, setTaskData] = useState<TaskData>({
-    name: '',
+    title: '',
     description: '',
     members: [],
+    dueDate: '',
   });
 
   const handleChangeMembers = (options: OptionsType<SelectOption>) => {
@@ -97,7 +107,13 @@ const CreateTask: React.FC<CreateTaskProps> = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit('create task', { projectId: selectedProject?._id, taskData });
+    socket.emit('create task', {
+      projectId: selectedProject?._id,
+      columnId,
+      taskData,
+    });
+
+    history.push(`/projects/${selectedProject?._id}/tasks`);
   };
 
   return (
@@ -105,20 +121,21 @@ const CreateTask: React.FC<CreateTaskProps> = ({
       <Previous
         link={`/projects/${selectedProject?._id}/tasks`}
         previousTo='Tasks'
-        title={taskData.name.trim() || 'Add Task'}
+        title={taskData.title.trim() || 'Add Task'}
       />
       <Form onSubmit={handleSubmit}>
         <InputContainer>
-          <label htmlFor='name'>
-            Task Name <span>*</span>
+          <label htmlFor='title'>
+            Task Title <span>*</span>
           </label>
           <input
+            required
             type='text'
-            id='name'
-            name='name'
-            placeholder='Task name'
+            id='title'
+            name='title'
+            placeholder='Task title'
             onChange={handleChange}
-            value={taskData.name}
+            value={taskData.title}
           />
         </InputContainer>
         <InputContainer>
@@ -141,16 +158,16 @@ const CreateTask: React.FC<CreateTaskProps> = ({
             onChange={handleChangeMembers}
           />
         </InputContainer>
-        <InputContainer width='12'>
-          <label htmlFor='date'>Due Date</label>
+        <DateContaiener>
+          <label htmlFor='dueDate'>Due Date</label>
           <input
             type='date'
-            name='date'
-            id='date'
+            name='dueDate'
+            id='dueDate'
             onChange={handleChange}
             value={taskData.dueDate}
           />
-        </InputContainer>
+        </DateContaiener>
         <StyledButton extrasmall>Add Task</StyledButton>
         <StyledButton
           as={Link}

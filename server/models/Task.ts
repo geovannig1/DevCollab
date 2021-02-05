@@ -9,7 +9,8 @@ export interface ITask extends Document {
   project: string;
   tasks?: {
     [taskName: string]: {
-      name: string;
+      id: string;
+      title: string;
       description: string;
       members: User[];
       dueDate: Date;
@@ -17,6 +18,7 @@ export interface ITask extends Document {
   };
   columns: {
     [columnName: string]: {
+      id: string;
       title: string;
       taskIds: string[];
     };

@@ -13,10 +13,11 @@ import { Store } from '../store';
 import { ProjectInitialState } from '../reducers/projectReducer';
 import ColumnTasks from '../components/task/ColumnTasks';
 import AddIcon from '@material-ui/icons/Add';
-import InitialData from './initialData';
+import { InitialTaskState } from '../components/task/taskTypes';
 import { setColor } from '../styles';
 import AddListMenu from '../components/task/AddListMenu';
 import socket from '../utils/socketio';
+import api from '../api';
 
 interface TaskProps {
   setNavbar: (selected: SelectedType) => void;
@@ -48,15 +49,35 @@ const Task: React.FC<TaskProps> = ({
     selectedProject,
   ]);
 
+  //State for the task
+  const [taskState, setTaskState] = useState<InitialTaskState>({
+    columnOrder: [],
+    columns: {},
+    tasks: {},
+  });
+
+  //Get project tasks
   useEffect(() => {
-    socket.emit('join project', { projectId: selectedProject?._id });
-    socket.on('new list', (data: any) => {
-      console.log(data);
-    });
+    (async () => {
+      if (selectedProject) {
+        const res = await api.get(`/tasks/${selectedProject._id}`);
+        if (res.data) setTaskState(res.data);
+      }
+    })();
   }, [selectedProject]);
 
-  //State for the task
-  const [taskState, setTaskState] = useState(InitialData);
+  //Socket connection
+  useEffect(() => {
+    //Join the project room
+    socket.emit('join project', { projectId: selectedProject?._id });
+
+    //Listen to updated task project
+    socket.on('task update', (data: InitialTaskState) => {
+      setTaskState(data);
+    });
+
+    return () => setTaskState({ tasks: {}, columns: {}, columnOrder: [] });
+  }, [selectedProject, setTaskState]);
 
   const onDragEnd = (result: DropResult) => {
     const { destination, draggableId, source, type } = result;
@@ -74,6 +95,11 @@ const Task: React.FC<TaskProps> = ({
       const newColumnOrder = [...taskState.columnOrder];
       newColumnOrder.splice(source.index, 1);
       newColumnOrder.splice(destination.index, 0, draggableId);
+
+      socket.emit('move column', {
+        projectId: selectedProject?._id,
+        columnOrder: newColumnOrder,
+      });
 
       setTaskState({
         ...taskState,
@@ -104,6 +130,10 @@ const Task: React.FC<TaskProps> = ({
         },
       };
 
+      socket.emit('move task same column', {
+        projectId: selectedProject?._id,
+        newColumn,
+      });
       setTaskState(newState);
       return;
     }
@@ -132,6 +162,11 @@ const Task: React.FC<TaskProps> = ({
       },
     };
 
+    socket.emit('move task another column', {
+      projectId: selectedProject?._id,
+      columnStart: newStart,
+      columnFinish: newFinish,
+    });
     setTaskState(newState);
   };
 

@@ -10,10 +10,13 @@ dotenv.config({ path: path.join(__dirname, 'config', '.env') });
 import joinProject from './socket/joinProject';
 import createTask from './socket/task/createTask';
 import createList from './socket/task/createList';
+import moveColumn from './socket/task/moveColumn';
+import moveTask from './socket/task/moveTask';
 
 import auth from './routes/api/auth';
 import user from './routes/api/user';
 import project from './routes/api/project';
+import task from './routes/api/task';
 
 const app = express();
 
@@ -35,12 +38,15 @@ io.on('connection', (socket: Socket) => {
   joinProject(socket);
   createTask(io, socket);
   createList(io, socket);
+  moveColumn(io, socket);
+  moveTask(io, socket);
 });
 
 //Define Routes
 app.use('/api/auth', auth);
 app.use('/api/user', user);
 app.use('/api/projects', project);
+app.use('/api/tasks', task);
 
 const PORT = process.env.PORT ?? '5000';
 httpServer.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

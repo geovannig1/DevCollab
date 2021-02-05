@@ -1,11 +1,15 @@
 import React, { Fragment, memo } from 'react';
 
 import Task from './Task';
+import { User } from './taskTypes';
 
 interface TasksProps {
   tasks: {
     id: string;
-    content: string;
+    title: string;
+    description: string;
+    members: User[];
+    dueDate: string;
   }[];
 }
 

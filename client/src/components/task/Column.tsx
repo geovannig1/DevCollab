@@ -10,6 +10,7 @@ import Tasks from './Tasks';
 import AddIcon from '@material-ui/icons/Add';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { ProjectInitialState } from '../../reducers/projectReducer';
+import { User } from './taskTypes';
 
 interface ColumnProps {
   column: {
@@ -19,7 +20,10 @@ interface ColumnProps {
   };
   tasks: {
     id: string;
-    content: string;
+    title: string;
+    description: string;
+    members: User[];
+    dueDate: string;
   }[];
   index: number;
   project: ProjectInitialState;

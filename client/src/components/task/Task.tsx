@@ -1,16 +1,19 @@
 import React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 
 import { setColor, setShadow } from '../../styles';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import dummy from '../../assets/profile-picture.png';
+import { User } from './taskTypes';
 
 interface TaskProps {
   task: {
     id: string;
-    content: string;
+    title: string;
+    description: string;
+    members: User[];
+    dueDate: string;
   };
   index: number;
 }
@@ -27,7 +30,7 @@ const Task: React.FC<TaskProps> = ({ task, index }) => {
         >
           <Content>
             <ContentContainer>
-              <span>{task.content}</span>
+              <span>{task.title}</span>
               <img src={dummy} alt='' />
             </ContentContainer>
             <button>

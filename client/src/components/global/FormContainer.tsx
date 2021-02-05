@@ -55,8 +55,14 @@ export const FileContainer = styled.div`
 export const DateContaiener = styled.div`
   display: flex;
   flex-direction: column;
-  width: 30%;
+  width: 12vw;
   input {
     outline: none;
+    padding: 5px;
+    border-radius: 5px;
+    border: solid ${setColor.lightBlack} 1px;
+    &:focus {
+      border-color: ${setColor.primary};
+    }
   }
 `;
