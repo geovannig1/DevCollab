@@ -113,7 +113,10 @@ const CreateTask: React.FC<CreateTaskProps> = ({
       taskData,
     });
 
-    history.push(`/projects/${selectedProject?._id}/tasks`);
+    history.push({
+      pathname: `/projects/${selectedProject?._id}/tasks`,
+      state: { fromCreateTask: true, createTaskProgress: true },
+    });
   };
 
   return (

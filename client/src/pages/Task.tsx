@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import styled from 'styled-components';
-import { useParams, Redirect } from 'react-router-dom';
+import { useParams, Redirect, useLocation } from 'react-router-dom';
 import { DragDropContext, DropResult, Droppable } from 'react-beautiful-dnd';
 
 import { loadProject } from '../actions/projectActions';
@@ -33,6 +33,11 @@ const Task: React.FC<TaskProps> = ({
   project: { selectedProject, projectError },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
+  const location = useLocation<{
+    fromCreateTask?: boolean;
+    createTaskProgress?: boolean;
+  }>();
+
   useEffect(() => {
     document.title = 'Tasks | DevCollab';
     !selectedProject && loadProject(projectId);
@@ -55,29 +60,78 @@ const Task: React.FC<TaskProps> = ({
     columns: {},
     tasks: {},
   });
+  //State for progress cursor
+  const [progress, setProgress] = useState(true);
 
   //Get project tasks
   useEffect(() => {
+    if (location.state?.createTaskProgress)
+      setProgress(location.state.createTaskProgress);
+
     (async () => {
-      if (selectedProject) {
+      if (selectedProject && !location.state?.fromCreateTask) {
+        setProgress(true);
         const res = await api.get(`/tasks/${selectedProject._id}`);
-        if (res.data) setTaskState(res.data);
+        setProgress(false);
+        if (res.data) {
+          setTaskState(res.data);
+        }
       }
     })();
-  }, [selectedProject]);
+
+    return () => {
+      if (location.state?.fromCreateTask) location.state.fromCreateTask = false;
+    };
+  }, [selectedProject, location]);
 
   //Socket connection
   useEffect(() => {
     //Join the project room
     socket.emit('join project', { projectId: selectedProject?._id });
 
-    //Listen to updated task project
-    socket.on('task update', (data: InitialTaskState) => {
+    //Listen to updated new list
+    socket.on('new list update', (data: InitialTaskState) => {
+      setTaskState(data);
+      setProgress(false);
+    });
+
+    //Listen to updated new task
+    socket.on('new task update', (data: InitialTaskState) => {
+      setTaskState(data);
+      setProgress(false);
+      if (location.state?.createTaskProgress)
+        location.state.createTaskProgress = false;
+    });
+
+    //Listen to updated column move
+    socket.on('move column update', (data: InitialTaskState) => {
       setTaskState(data);
     });
 
-    return () => setTaskState({ tasks: {}, columns: {}, columnOrder: [] });
-  }, [selectedProject, setTaskState]);
+    //Listen to updated move task in the same column
+    socket.on('move task same column update', (data: InitialTaskState) => {
+      setTaskState(data);
+    });
+
+    //Listen to updated move task in another column
+    socket.on('move task another column update', (data: InitialTaskState) => {
+      setTaskState(data);
+    });
+
+    //Listen to updated deleted list
+    socket.on('update delete list', (data: InitialTaskState) => {
+      setTaskState(data);
+    });
+
+    socket.on('updated update list', (data: InitialTaskState) => {
+      setTaskState(data);
+    });
+
+    return () => {
+      socket.emit('leave project', { projectId: selectedProject?._id });
+      setTaskState({ tasks: {}, columns: {}, columnOrder: [] });
+    };
+  }, [selectedProject, location.state]);
 
   const onDragEnd = (result: DropResult) => {
     const { destination, draggableId, source, type } = result;
@@ -174,7 +228,11 @@ const Task: React.FC<TaskProps> = ({
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId='all-columns' direction='horizontal' type='column'>
         {(provided) => (
-          <Container {...provided.droppableProps} ref={provided.innerRef}>
+          <Container
+            cursorProgress={progress}
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+          >
             {taskState.columnOrder.map((columnId, index) => {
               const column = taskState.columns[columnId];
               return (
@@ -187,7 +245,7 @@ const Task: React.FC<TaskProps> = ({
               );
             })}
             {provided.placeholder}
-            <AddListMenu>
+            <AddListMenu setProgress={setProgress}>
               <AddIcon />
               New list
             </AddListMenu>
@@ -208,7 +266,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
 });
 
-const Container = styled.div`
+const Container = styled.div<{ cursorProgress: boolean }>`
   display: flex;
   white-space: nowrap;
   position: relative;
@@ -217,6 +275,7 @@ const Container = styled.div`
   width: 103%;
   height: 80%;
   background-color: ${setColor.mainGrey};
+  cursor: ${({ cursorProgress }) => (cursorProgress ? 'progress' : 'default')};
 `;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Task);

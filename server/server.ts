@@ -12,6 +12,8 @@ import createTask from './socket/task/createTask';
 import createList from './socket/task/createList';
 import moveColumn from './socket/task/moveColumn';
 import moveTask from './socket/task/moveTask';
+import deleteList from './socket/task/deleteList';
+import updateList from './socket/task/updateList';
 
 import auth from './routes/api/auth';
 import user from './routes/api/user';
@@ -36,10 +38,13 @@ app.use(cookieParser());
 //Define Socketio
 io.on('connection', (socket: Socket) => {
   joinProject(socket);
+  //Task
   createTask(io, socket);
   createList(io, socket);
-  moveColumn(io, socket);
-  moveTask(io, socket);
+  moveColumn(socket);
+  moveTask(socket);
+  deleteList(io, socket);
+  updateList(io, socket);
 });
 
 //Define Routes

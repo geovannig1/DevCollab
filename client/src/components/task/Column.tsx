@@ -11,6 +11,8 @@ import AddIcon from '@material-ui/icons/Add';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { ProjectInitialState } from '../../reducers/projectReducer';
 import { User } from './taskTypes';
+import CardMenu from '../../components/global/CardMenu';
+import socket from '../../utils/socketio';
 
 interface ColumnProps {
   column: {
@@ -35,13 +37,29 @@ const Column: React.FC<ColumnProps> = ({
   index,
   project: { selectedProject },
 }) => {
+  const handleDelete = () => {
+    socket.emit('delete list', {
+      columnId: column.id,
+      projectId: selectedProject?._id,
+      tasks: tasks,
+    });
+  };
+
   return (
     <Draggable draggableId={column.id} index={index}>
       {(provided) => (
         <Container {...provided.draggableProps} ref={provided.innerRef}>
           <Header {...provided.dragHandleProps}>
             <Title>{column.title}</Title>
-            <MoreHorizIcon fontSize='large' />
+            <CardMenu
+              deleteTitle='Delete List'
+              deleteText={`Are you sure want to delete ${column.title} list? this process can't be undone.`}
+              deleteItem={handleDelete}
+              listTitle={column.title}
+              listId={column.id}
+            >
+              <HorizIcon fontSize='large' />
+            </CardMenu>
           </Header>
           <Droppable droppableId={column.id} type='task'>
             {(provided, snapshot) => (
@@ -50,7 +68,7 @@ const Column: React.FC<ColumnProps> = ({
                 ref={provided.innerRef}
                 isDraggingOver={snapshot.isDraggingOver}
               >
-                <Tasks tasks={tasks} />
+                <Tasks tasks={tasks} columnId={column.id} />
                 {provided.placeholder}
                 <StyledLink
                   to={`/projects/${selectedProject?._id}/create-task/${column.id}`}
@@ -91,6 +109,18 @@ const Header = styled.div`
 const Title = styled.h4`
   padding: 8px;
   font-weight: 600;
+`;
+
+const HorizIcon = styled(MoreHorizIcon)`
+  color: ${setColor.lightBlack};
+  cursor: pointer;
+  &:hover {
+    transition: 0.2s ease-in-out;
+    color: ${setColor.mainBlack};
+  }
+  &:active {
+    color: ${setColor.lightBlack};
+  }
 `;
 
 const TaskList = styled.div<{ isDraggingOver: boolean }>`

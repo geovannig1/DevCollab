@@ -5,13 +5,16 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 import AlertDialog from './AlertDialog';
+import EditListMenu from '../task/EditListMenu';
 
 interface CardMenuProps {
-  deleteItem: (id?: number) => Promise<void>;
-  deleteId: number;
+  deleteItem: (id?: number) => Promise<void> | void;
+  deleteId?: number;
+  editLink?: string;
   deleteTitle: string;
   deleteText: string;
-  editLink: string;
+  listTitle?: string;
+  listId?: string;
 }
 
 const CardMenu: React.FC<CardMenuProps> = ({
@@ -21,6 +24,8 @@ const CardMenu: React.FC<CardMenuProps> = ({
   deleteTitle,
   deleteText,
   editLink,
+  listTitle,
+  listId,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -32,6 +37,20 @@ const CardMenu: React.FC<CardMenuProps> = ({
     setAnchorEl(null);
   };
 
+  const MenuHelper = React.forwardRef((props, ref) => (
+    <Menu
+      innerRef={ref}
+      autoFocus={false}
+      id='simple-menu'
+      anchorEl={anchorEl}
+      keepMounted
+      open={Boolean(anchorEl)}
+      onClose={handleClose}
+    >
+      {props.children}
+    </Menu>
+  ));
+
   return (
     <div>
       <Button
@@ -41,6 +60,7 @@ const CardMenu: React.FC<CardMenuProps> = ({
       >
         {children}
       </Button>
+
       <Menu
         autoFocus={false}
         id='simple-menu'
@@ -49,9 +69,15 @@ const CardMenu: React.FC<CardMenuProps> = ({
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <StyledLink to={editLink}>
-          <MenuItem onClick={handleClose}>Edit</MenuItem>
-        </StyledLink>
+        {editLink ? (
+          <StyledLink to={editLink}>
+            <MenuItem onClick={handleClose}>Edit</MenuItem>
+          </StyledLink>
+        ) : (
+          <EditListMenu listTitle={listTitle ?? ''} listId={listId ?? ''}>
+            <MenuItem onClick={handleClose}>Edit</MenuItem>
+          </EditListMenu>
+        )}
         <AlertDialog
           deleteItem={deleteItem}
           deleteId={deleteId}

@@ -9,16 +9,23 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
-import { setColor, setShadow } from '../../styles';
+import { setColor } from '../../styles';
 import socket from '../../utils/socketio';
 
-interface AddListMenuProps {
-  setProgress: React.Dispatch<React.SetStateAction<boolean>>;
+interface EditListMenuProps {
+  setProgress?: React.Dispatch<React.SetStateAction<boolean>>;
+  listTitle: string;
+  listId: string;
 }
 
-const AddListMenu: React.FC<AddListMenuProps> = ({ children, setProgress }) => {
+const EditListMenu: React.FC<EditListMenuProps> = ({
+  children,
+  setProgress,
+  listTitle,
+  listId,
+}) => {
   const [open, setOpen] = React.useState(false);
-  const [listData, setListData] = useState('');
+  const [listData, setListData] = useState(listTitle);
 
   const { projectId } = useParams<{ projectId: string }>();
 
@@ -28,7 +35,7 @@ const AddListMenu: React.FC<AddListMenuProps> = ({ children, setProgress }) => {
 
   const handleClose = () => {
     setOpen(false);
-    setListData('');
+    setListData(listTitle);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,8 +43,8 @@ const AddListMenu: React.FC<AddListMenuProps> = ({ children, setProgress }) => {
   };
 
   const handleClick = () => {
-    setProgress(true);
-    socket.emit('create list', { projectId, listData });
+    setProgress && setProgress(true);
+    socket.emit('update list', { projectId, listData, listId });
     handleClose();
   };
 
@@ -68,7 +75,7 @@ const AddListMenu: React.FC<AddListMenuProps> = ({ children, setProgress }) => {
             Cancel
           </Button>
           <Button onClick={handleClick} color='primary'>
-            Add
+            Edit
           </Button>
         </DialogActions>
       </Dialog>
@@ -85,26 +92,9 @@ const theme = createMuiTheme({
 });
 
 const StyledButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0 50px;
-  height: 35px;
   border: none;
-  outline: none;
-  font-weight: 600;
-  cursor: pointer;
-  background-color: ${setColor.primary};
-  box-shadow: ${setShadow.main};
-  color: ${setColor.mainWhite};
-  border-radius: 10px;
-  transition: 0.3s ease-in-out;
-  &:hover {
-    background-color: ${setColor.primaryDark};
-  }
-  &:active {
-    background-color: ${setColor.primary};
-  }
+  background: none;
+  width: 100%;
 `;
 
-export default AddListMenu;
+export default EditListMenu;

@@ -20,11 +20,10 @@ export default (io: Server, socket: Socket) => {
         //Add task id to columns
         const columns = taskProject.get(`columns.${data.columnId}`);
         columns.taskIds.push(taskId);
-        taskProject.set(`columns.${data.columnId}`, {});
         taskProject.set(`columns.${data.columnId}`, columns);
 
         const updatedTaskProject = await taskProject.save();
-        io.to(data.projectId).emit('task update', updatedTaskProject);
+        io.in(data.projectId).emit('new task update', updatedTaskProject);
       }
     } catch (err) {
       console.error(err.message);

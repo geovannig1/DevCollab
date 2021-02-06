@@ -1,6 +1,7 @@
 import React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
+import { Link, useParams } from 'react-router-dom';
 
 import { setColor, setShadow } from '../../styles';
 import VisibilityIcon from '@material-ui/icons/Visibility';
@@ -16,9 +17,12 @@ interface TaskProps {
     dueDate: string;
   };
   index: number;
+  columnId: string;
 }
 
-const Task: React.FC<TaskProps> = ({ task, index }) => {
+const Task: React.FC<TaskProps> = ({ task, index, columnId }) => {
+  const { projectId } = useParams<{ projectId: string }>();
+
   return (
     <Draggable draggableId={task.id} index={index}>
       {(provided, snapshot) => (
@@ -31,11 +35,16 @@ const Task: React.FC<TaskProps> = ({ task, index }) => {
           <Content>
             <ContentContainer>
               <span>{task.title}</span>
-              <img src={dummy} alt='' />
+              <img src={dummy} alt='profile' />
             </ContentContainer>
-            <button>
+            <Link
+              to={{
+                pathname: `/projects/${projectId}/lists/${columnId}/tasks/${task.id}`,
+                state: { taskTitle: task.title },
+              }}
+            >
               <VisibilityIcon fontSize='small' />
-            </button>
+            </Link>
           </Content>
         </Container>
       )}
@@ -61,7 +70,7 @@ const Content = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  button {
+  a {
     border: none;
     background: none;
     cursor: pointer;

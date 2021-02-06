@@ -21,7 +21,7 @@ export default (io: Server, socket: Socket) => {
         const updatedTaskProject = await taskProject.save();
 
         //Send the data to client
-        io.to(data.projectId).emit('task update', updatedTaskProject);
+        io.in(data.projectId).emit('new list update', updatedTaskProject);
         return;
       } else if (!taskProject) {
         const columnId = randomstring.generate();
@@ -41,7 +41,7 @@ export default (io: Server, socket: Socket) => {
         const updatedTaskProject = await newTaskProject.save();
 
         //Send the data to client
-        io.to(data.projectId).emit('task update', updatedTaskProject);
+        io.in(data.projectId).emit('new list update', updatedTaskProject);
       }
     } catch (err) {
       console.error(err.message);

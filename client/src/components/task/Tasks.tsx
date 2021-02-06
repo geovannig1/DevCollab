@@ -11,13 +11,14 @@ interface TasksProps {
     members: User[];
     dueDate: string;
   }[];
+  columnId: string;
 }
 
-const Tasks: React.FC<TasksProps> = ({ tasks }) => {
+const Tasks: React.FC<TasksProps> = ({ tasks, columnId }) => {
   return (
     <Fragment>
       {tasks.map((task, index) => (
-        <Task key={task.id} task={task} index={index} />
+        <Task key={task.id} task={task} index={index} columnId={columnId} />
       ))}
     </Fragment>
   );
