@@ -6,6 +6,7 @@ interface ButtonProps {
   small?: boolean | number;
   extrasmall?: boolean | number;
   danger?: boolean;
+  size?: string;
 }
 
 export const Button = styled.button<ButtonProps>`
@@ -48,8 +49,8 @@ export const RoundedButton = styled.button<ButtonProps>`
   color: ${setColor.mainWhite};
   border: ${({ danger }) =>
     danger ? `2px solid ${setColor.mainRed}` : 'none'};
-  height: 25px;
-  width: 25px;
+  height: ${({ size }) => size ?? '25'}px;
+  width: ${({ size }) => size ?? '25'}px;
   margin-left: 5px;
   display: flex;
   align-items: center;

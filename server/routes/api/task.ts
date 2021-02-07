@@ -2,13 +2,20 @@ import express from 'express';
 const router = express.Router();
 
 import auth from '../../middlewares/auth';
-import { getTask } from '../../controllers/task';
+import { getTasks, getTask } from '../../controllers/task';
 
 /**
- *  @route GET api/tasks/:projectId
+ *  @route GET api/projects/:projectId/tasks
+ *  @desc load the project tasks
+ *  @access Private
+ */
+router.get('/:projectId/tasks', auth, getTasks);
+
+/**
+ *  @route GET api/projects/:projectId/tasks/:taskId
  *  @desc load the project task
  *  @access Private
  */
-router.get('/:projectId', auth, getTask);
+router.get('/:projectId/tasks/:taskId', auth, getTask);
 
 export default router;

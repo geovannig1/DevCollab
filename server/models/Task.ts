@@ -33,7 +33,26 @@ const taskSchema = new Schema<ITask>({
   },
   tasks: {
     type: Map,
-    of: Object,
+    of: {
+      id: {
+        type: String,
+      },
+      title: {
+        type: String,
+      },
+      description: {
+        type: String,
+      },
+      members: [
+        {
+          user: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+          },
+        },
+      ],
+      dueDate: Date,
+    },
   },
   columns: {
     type: Map,

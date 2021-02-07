@@ -20,7 +20,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ auth: { user } }) => {
   return (
     <Container>
       <ProfileContainer>
-        <Img src={user?.avatar ? user.avatar : avatar} alt='profile' />
+        <Img src={user?.avatar ?? avatar} alt='profile' />
         <UserInformation>
           <h4>
             {user?.firstName} {user?.lastName}

@@ -10,7 +10,7 @@ export const googleCallback = (req: Request, res: Response) => {
     const token = jwt(<IUser>req.user);
 
     res
-      .cookie('access_token', token, { maxAge: 24 * 60 * 60 * 1000 })
+      .cookie('access_token', token, { maxAge: 3 * 24 * 60 * 60 * 1000 })
       .redirect('/projects');
   } catch (err) {
     console.error(err.message);
@@ -54,7 +54,7 @@ export const register = async (req: Request, res: Response) => {
 
     res
       .status(201)
-      .cookie('access_token', token, { maxAge: 24 * 60 * 60 * 1000 })
+      .cookie('access_token', token, { maxAge: 3 * 24 * 60 * 60 * 1000 })
       .json({ msg: 'User Registered' });
   } catch (err) {
     console.error(err.message);
@@ -89,7 +89,7 @@ export const login = async (req: Request, res: Response) => {
 
     res
       .status(200)
-      .cookie('access_token', token, { maxAge: 24 * 60 * 60 * 1000 })
+      .cookie('access_token', token, { maxAge: 3 * 24 * 60 * 60 * 1000 })
       .json({ msg: 'User Authenticated' });
   } catch (err) {
     console.error(err.message);

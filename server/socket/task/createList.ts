@@ -7,7 +7,7 @@ export default (io: Server, socket: Socket) => {
   socket.on('create list', async (data) => {
     try {
       const taskProject = await Task.findOne({ project: data.projectId });
-      const columnId = randomstring.generate();
+      const columnId = randomstring.generate(20);
 
       if (taskProject) {
         taskProject.set(`columns.${columnId}`, {
@@ -24,7 +24,7 @@ export default (io: Server, socket: Socket) => {
         io.in(data.projectId).emit('new list update', updatedTaskProject);
         return;
       } else if (!taskProject) {
-        const columnId = randomstring.generate();
+        const columnId = randomstring.generate(20);
 
         const newTaskProject = await Task.create({
           project: data.projectId,

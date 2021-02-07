@@ -1,5 +1,9 @@
 interface Members {
-  value: string;
+  user: {
+    _id: string;
+    email?: string;
+    avatar?: string;
+  };
 }
 
 export interface TaskData {

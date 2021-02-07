@@ -71,7 +71,7 @@ const Task: React.FC<TaskProps> = ({
     (async () => {
       if (selectedProject && !location.state?.fromCreateTask) {
         setProgress(true);
-        const res = await api.get(`/tasks/${selectedProject._id}`);
+        const res = await api.get(`/projects/${selectedProject._id}/tasks`);
         setProgress(false);
         if (res.data) {
           setTaskState(res.data);

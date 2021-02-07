@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { useParams, Link, Redirect, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import Select, { OptionsType } from 'react-select';
 
 import socket from '../utils/socketio';
 import { Store } from '../store';
@@ -20,14 +19,8 @@ import {
   InputContainer,
 } from '../components/global/FormContainer';
 import { Button } from '../components/global/Button';
-import { setColor, setRem } from '../styles';
-import avatar from '../assets/profile-picture.png';
 import { TaskData } from '../components/task/taskTypes';
-
-interface SelectOption {
-  value: string;
-  label: JSX.Element;
-}
+import SelectMembers from '../components/global/SelectMembers';
 
 interface CreateTaskProps {
   setNavbar: (selected: SelectedType) => void;
@@ -64,25 +57,6 @@ const CreateTask: React.FC<CreateTaskProps> = ({
     selectedProject,
   ]);
 
-  //Create option for the select options
-  const [selectOptions, setSelectOptions] = useState<SelectOption[]>([]);
-  useEffect(() => {
-    selectedProject?.members.map((member) =>
-      setSelectOptions((prevData) => [
-        ...prevData,
-        {
-          label: (
-            <LabelContainer style={{ display: 'flex', alignItems: 'center' }}>
-              <img src={member.user.avatar ?? avatar} alt='user profile' />
-              <label>{member.user.email}</label>
-            </LabelContainer>
-          ),
-          value: member.user._id.toString(),
-        },
-      ])
-    );
-  }, [setSelectOptions, selectedProject]);
-
   //Set form data
   const [taskData, setTaskData] = useState<TaskData>({
     title: '',
@@ -90,11 +64,6 @@ const CreateTask: React.FC<CreateTaskProps> = ({
     members: [],
     dueDate: '',
   });
-
-  const handleChangeMembers = (options: OptionsType<SelectOption>) => {
-    const members = options.map((option) => ({ value: option.value }));
-    setTaskData((prevData) => ({ ...prevData, members }));
-  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -154,11 +123,9 @@ const CreateTask: React.FC<CreateTaskProps> = ({
         </InputContainer>
         <InputContainer>
           <label htmlFor='members'>Members</label>
-          <Select
-            options={selectOptions}
-            isMulti
-            styles={customStyle}
-            onChange={handleChangeMembers}
+          <SelectMembers
+            selectedProject={selectedProject}
+            setTaskData={setTaskData}
           />
         </InputContainer>
         <DateContaiener>
@@ -195,32 +162,9 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
 });
 
-const customStyle = {
-  control: (base: any) => ({
-    ...base,
-    border: `1px solid ${setColor.lightBlack}`,
-    boxShadow: 'none',
-    '&:hover': { borderColor: setColor.primary },
-  }),
-};
-
 const StyledButton = styled(Button)`
   margin-top: 10px;
   margin-right: 10px;
-`;
-
-const LabelContainer = styled.div`
-  img {
-    height: 30px;
-    width: 30px;
-    object-fit: cover;
-    margin-right: 5px;
-    border-radius: 100%;
-  }
-  label {
-    font-weight: 500;
-    font-size: ${setRem(12)};
-  }
 `;
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateTask);

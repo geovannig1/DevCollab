@@ -7,6 +7,7 @@ import { setColor, setShadow } from '../../styles';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import dummy from '../../assets/profile-picture.png';
 import { User } from './taskTypes';
+import Avatar from '../global/Avatar';
 
 interface TaskProps {
   task: {
@@ -35,13 +36,10 @@ const Task: React.FC<TaskProps> = ({ task, index, columnId }) => {
           <Content>
             <ContentContainer>
               <span>{task.title}</span>
-              <img src={dummy} alt='profile' />
+              <Avatar src={dummy} alt='profile' />
             </ContentContainer>
             <Link
-              to={{
-                pathname: `/projects/${projectId}/lists/${columnId}/tasks/${task.id}`,
-                state: { taskTitle: task.title },
-              }}
+              to={`/projects/${projectId}/lists/${columnId}/tasks/${task.id}`}
             >
               <VisibilityIcon fontSize='small' />
             </Link>
@@ -79,6 +77,9 @@ const Content = styled.div`
     &:hover {
       color: ${setColor.mainBlack};
     }
+    &:active {
+      color: ${setColor.lightBlack};
+    }
   }
 `;
 
@@ -89,12 +90,6 @@ const ContentContainer = styled.div`
   span {
     font-weight: 500;
     margin-bottom: 10px;
-  }
-  img {
-    height: 30px;
-    width: 30px;
-    border-radius: 100%;
-    object-fit: cover;
   }
 `;
 
