@@ -25,6 +25,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import AlertDialog from '../components/global/AlertDialog';
 import CommentTask from '../components/task/CommentTask';
 import SelectMembers from '../components/global/SelectMembers';
+import { Button } from '../components/global/Button';
+import socket from '../utils/socketio';
 
 interface DetailTaskProps {
   setNavbar: (selected: SelectedType) => void;
@@ -41,10 +43,10 @@ const DetailTask: React.FC<DetailTaskProps> = ({
   project: { selectedProject, projectError },
   auth: { user },
 }) => {
-  const { projectId, columnId, taskId } = useParams<{
+  const { projectId, taskId, columnId } = useParams<{
     projectId: string;
-    columnId: string;
     taskId: string;
+    columnId: string;
   }>();
 
   //Load the task data
@@ -54,10 +56,18 @@ const DetailTask: React.FC<DetailTaskProps> = ({
     title: '',
     dueDate: '',
   });
+  const [defaultTaskData, setDefaultTaskData] = useState<TaskData>({
+    description: '',
+    members: [],
+    title: '',
+    dueDate: '',
+  });
+
   useEffect(() => {
     (async () => {
       const res = await api.get(`/projects/${projectId}/tasks/${taskId}`);
       setTaskData(res.data);
+      setDefaultTaskData(res.data);
     })();
 
     return () =>
@@ -83,6 +93,12 @@ const DetailTask: React.FC<DetailTaskProps> = ({
   //State to edit the data
   const [editData, setEditData] = useState(false);
 
+  //Get the updated members with avatar and email
+  const taskDataMembersId = taskData.members.map((member) => member.user._id);
+  const taskDataMembers = selectedProject?.members.filter((member) =>
+    taskDataMembersId?.includes(member.user._id.toString())
+  );
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -92,89 +108,128 @@ const DetailTask: React.FC<DetailTaskProps> = ({
     }));
   };
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    socket.emit('update task', { projectId, taskId, taskData });
+    setEditData(false);
+  };
+
+  const handleDelete = () => {
+    socket.emit('delete task', { projectId, columnId, taskId });
+  };
+
   return (
     <Fragment>
-      {taskData.title && (
+      {defaultTaskData.title && (
         <Paper>
           <EditButton onClick={() => setEditData(true)}>
             <EditIcon fontSize='small' />
           </EditButton>
+
           <DeleteButton as='div'>
             <AlertDialog
               title='Delete Task'
               firstButton='Delete'
               secondButton='Cancel'
+              deleteItem={handleDelete}
               text={`Are you sure want to delete ${taskData.title} task? This process can't be undone`}
               deleteButton
             >
               <DeleteIcon fontSize='small' />
             </AlertDialog>
           </DeleteButton>
+
           <Previous
             link={`/projects/${selectedProject?._id}/tasks`}
             previousTo='Tasks'
             title={taskData.title}
           />
+
           <Label>Title</Label>
-          {!editData ? (
-            <Text>{taskData.title}</Text>
-          ) : (
-            <Input
-              type='text'
-              placeholder='Task title'
-              name='title'
-              onChange={handleChange}
-              value={taskData.title}
-            />
-          )}
-          <Label as='p'>Description</Label>
-          {!editData ? (
-            <Text>{taskData.description}</Text>
-          ) : (
-            <Input
-              as='textarea'
-              rows={8}
-              placeholder='Describe the task'
-              name='description'
-              onChange={handleChange}
-              value={taskData.description}
-            />
-          )}
-          <Label>Members</Label>
-          {!editData ? (
-            taskData.members.map((member) => (
-              <MembersContainer key={member.user._id}>
-                <Avatar src={member.user?.avatar ?? avatar} alt='profile' />
-                <Text>{member.user.email}</Text>
-              </MembersContainer>
-            ))
-          ) : (
-            <SelectMembers
-              selectedProject={selectedProject}
-              taskData={taskData}
-              setTaskData={setTaskData}
-            />
-          )}
-          <Label>Due Date</Label>
-          <DueDate>
+
+          <form onSubmit={handleSubmit}>
             {!editData ? (
-              <Fragment>
-                <DateRangeIcon fontSize='small' />
-                <span>
-                  {taskData.dueDate &&
-                    dayjs(taskData.dueDate).format('DD MMM YYYY')}
-                </span>
-              </Fragment>
+              <Text>{taskData.title}</Text>
             ) : (
               <Input
-                type='date'
-                name='dueDate'
+                type='text'
+                placeholder='Task title'
+                name='title'
                 onChange={handleChange}
-                value={taskData.dueDate}
+                value={taskData.title}
               />
             )}
-          </DueDate>
+            <Label as='p'>Description</Label>
+            {!editData ? (
+              <Text>{taskData.description}</Text>
+            ) : (
+              <Input
+                as='textarea'
+                rows={8}
+                placeholder='Describe the task'
+                name='description'
+                onChange={handleChange}
+                value={taskData.description}
+              />
+            )}
+            <Label>Members</Label>
+            {!editData ? (
+              taskDataMembers?.map((member) => (
+                <MembersContainer key={member.user._id}>
+                  <Avatar src={member.user?.avatar ?? avatar} alt='profile' />
+                  <Text>{member.user.email}</Text>
+                </MembersContainer>
+              ))
+            ) : (
+              <SelectContainer>
+                <SelectMembers
+                  selectedProject={selectedProject}
+                  selectData={taskDataMembers}
+                  setTaskData={setTaskData}
+                />
+              </SelectContainer>
+            )}
+            <Label>Due Date</Label>
+            <DueDate>
+              {!editData ? (
+                <Fragment>
+                  <DateRangeIcon fontSize='small' />
+                  <span>
+                    {taskData.dueDate &&
+                      dayjs(taskData.dueDate).format('DD MMM YYYY')}
+                  </span>
+                </Fragment>
+              ) : (
+                <Input
+                  type='date'
+                  name='dueDate'
+                  onChange={handleChange}
+                  value={dayjs(taskData.dueDate).format('YYYY-MM-DD')}
+                />
+              )}
+            </DueDate>
+
+            {editData && (
+              <Fragment>
+                <Button style={{ marginRight: '10px' }} extrasmall>
+                  Save Update
+                </Button>
+                <Button
+                  extrasmall
+                  outline
+                  onClick={() => {
+                    setEditData(false);
+                    setTaskData(defaultTaskData);
+                  }}
+                >
+                  Cancel Update
+                </Button>
+              </Fragment>
+            )}
+          </form>
+
           <Line />
+
           <CommentTask userAvatar={user?.avatar} />
         </Paper>
       )}
@@ -208,8 +263,8 @@ const Text = styled.span`
 
 const Input = styled.input`
   border-radius: 5px;
-  width: 350px;
-  padding: 5px 8px;
+  width: 60%;
+  padding: 10px 8px;
   outline: none;
   border: solid ${setColor.lightBlack} 1px;
   resize: none;
@@ -233,6 +288,8 @@ const DueDate = styled.span`
   font-size: ${setRem(14)};
   display: flex;
   align-items: center;
+  margin-bottom: 20px;
+  width: 40%;
   span {
     font-weight: 500;
     margin-left: 5px;
@@ -254,6 +311,10 @@ const EditButton = styled.button`
   &:active {
     color: ${setColor.secondary};
   }
+`;
+
+const SelectContainer = styled.div`
+  width: 60%;
 `;
 
 const DeleteButton = styled(EditButton)`
