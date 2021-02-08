@@ -131,6 +131,10 @@ const Task: React.FC<TaskProps> = ({
       setTaskState(data);
     });
 
+    socket.on('updated delete task', (data: InitialTaskState) => {
+      setTaskState(data);
+    });
+
     return () => {
       socket.emit('leave project', { projectId: selectedProject?._id });
       setTaskState({ tasks: {}, columns: {}, columnOrder: [] });

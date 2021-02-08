@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, Redirect } from 'react-router-dom';
+import { useParams, Redirect, useHistory } from 'react-router-dom';
 import dayjs from 'dayjs';
 
 import { Store } from '../store';
@@ -48,6 +48,7 @@ const DetailTask: React.FC<DetailTaskProps> = ({
     taskId: string;
     columnId: string;
   }>();
+  const history = useHistory();
 
   //Load the task data
   const [taskData, setTaskData] = useState<TaskData>({
@@ -111,11 +112,18 @@ const DetailTask: React.FC<DetailTaskProps> = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     socket.emit('update task', { projectId, taskId, taskData });
+    setDefaultTaskData(taskData);
     setEditData(false);
   };
 
   const handleDelete = () => {
-    socket.emit('delete task', { projectId, columnId, taskId });
+    socket.emit('delete task', {
+      projectId,
+      columnId,
+      taskId,
+      taskTitle: defaultTaskData.title,
+    });
+    history.push(`/projects/${projectId}/tasks`);
   };
 
   return (
