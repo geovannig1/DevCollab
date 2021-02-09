@@ -11,7 +11,17 @@ export default (socket: Socket) => {
         //Update column with new task order
         taskProject.set(`columns.${data.newColumn.id}`, data.newColumn);
 
-        const updateTaskProject = await taskProject.save();
+        const updateTaskProject = await (await taskProject.save())
+          .populate({
+            path: 'tasks.$*.comments.user',
+            select: ['email', 'avatar'],
+          })
+          .populate({
+            path: 'tasks.$*.members.user',
+            select: ['email', 'avatar'],
+          })
+          .execPopulate();
+
         socket
           .to(data.projectId)
           .emit('move task same column update', updateTaskProject);
@@ -31,7 +41,17 @@ export default (socket: Socket) => {
         //Update finish/destination column with new task order
         taskProject.set(`columns.${data.columnFinish.id}`, data.columnFinish);
 
-        const updateTaskProject = await taskProject.save();
+        const updateTaskProject = await (await taskProject.save())
+          .populate({
+            path: 'tasks.$*.comments.user',
+            select: ['email', 'avatar'],
+          })
+          .populate({
+            path: 'tasks.$*.members.user',
+            select: ['email', 'avatar'],
+          })
+          .execPopulate();
+
         socket
           .to(data.projectId)
           .emit('move task another column update', updateTaskProject);

@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 
 import Column from './Column';
-import { User } from '../../components/task/taskTypes';
+import { Member } from '../../components/task/taskTypes';
 
 interface ColumnTasksProps {
   column: {
@@ -14,7 +14,7 @@ interface ColumnTasksProps {
       id: string;
       title: string;
       description: string;
-      members: User[];
+      members: Member[];
       dueDate: string;
     };
   };

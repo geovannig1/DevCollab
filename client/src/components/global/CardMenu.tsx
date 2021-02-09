@@ -8,8 +8,8 @@ import AlertDialog from './AlertDialog';
 import EditListMenu from '../task/EditListMenu';
 
 interface CardMenuProps {
-  deleteItem: (id?: number) => Promise<void> | void;
-  deleteId?: number;
+  deleteItem: (id?: string) => Promise<void> | void;
+  deleteId?: string;
   editLink?: string;
   deleteTitle: string;
   deleteText: string;

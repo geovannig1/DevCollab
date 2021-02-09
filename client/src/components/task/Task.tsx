@@ -2,19 +2,21 @@ import React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import { Link, useParams } from 'react-router-dom';
+import dayjs from 'dayjs';
 
-import { setColor, setShadow } from '../../styles';
+import { setColor, setRem, setShadow } from '../../styles';
 import VisibilityIcon from '@material-ui/icons/Visibility';
-import dummy from '../../assets/profile-picture.png';
-import { User } from './taskTypes';
+import avatar from '../../assets/profile-picture.png';
+import { Member } from './taskTypes';
 import Avatar from '../global/Avatar';
+import AccessAlarmsIcon from '@material-ui/icons/AccessAlarms';
 
 interface TaskProps {
   task: {
     id: string;
     title: string;
     description: string;
-    members: User[];
+    members: Member[];
     dueDate: string;
   };
   index: number;
@@ -36,7 +38,23 @@ const Task: React.FC<TaskProps> = ({ task, index, columnId }) => {
           <Content>
             <ContentContainer>
               <span>{task.title}</span>
-              <Avatar src={dummy} alt='profile' />
+
+              {task.dueDate && (
+                <DateContainer>
+                  <AccessAlarmsIcon fontSize='small' />
+                  <span>{dayjs(task.dueDate).format('DD MMM YYYY')}</span>
+                </DateContainer>
+              )}
+
+              <AvatarContainer>
+                {task.members.map((member) => (
+                  <Avatar
+                    key={member.user._id}
+                    src={member.user.avatar ?? avatar}
+                    alt='profile'
+                  />
+                ))}
+              </AvatarContainer>
             </ContentContainer>
             <Link
               to={`/projects/${projectId}/lists/${columnId}/tasks/${task.id}`}
@@ -89,7 +107,25 @@ const ContentContainer = styled.div`
   justify-content: space-between;
   span {
     font-weight: 500;
-    margin-bottom: 10px;
+  }
+`;
+
+const AvatarContainer = styled.div`
+  display: flex;
+`;
+
+const DateContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  background-color: ${setColor.primary};
+  padding: 3px 5px;
+  border-radius: 5px;
+  color: ${setColor.mainWhite};
+  span {
+    margin: 0;
+    margin-left: 5px;
+    font-size: ${setRem(12)};
   }
 `;
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, Fragment } from 'react';
 import styled from 'styled-components';
 
 import SendIcon from '@material-ui/icons/Send';
@@ -6,32 +6,74 @@ import { RoundedButton } from '../global/Button';
 import { setColor } from '../../styles';
 import Avatar from '../global/Avatar';
 import avatar from '../../assets/profile-picture.png';
+import socket from '../../utils/socketio';
+import { UserType } from '../../actions/authTypes';
+import { Comment as IComment } from './taskTypes';
+import Comment from './Comment';
 
 interface CommentTaskProps {
-  userAvatar?: string;
+  user?: UserType;
+  taskId: string;
+  projectId: string;
+  comments?: IComment[];
 }
 
-const handleSubmitComment = (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-};
+const CommentTask: React.FC<CommentTaskProps> = ({
+  user,
+  taskId,
+  projectId,
+  comments,
+}) => {
+  const [commentData, setCommentData] = useState('');
 
-const CommentTask: React.FC<CommentTaskProps> = ({ userAvatar }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCommentData(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (commentData.trim() !== '') {
+      socket.emit('send comment', {
+        projectId,
+        taskId,
+        userId: user?._id,
+        commentData,
+      });
+      setCommentData('');
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmitComment}>
-      <InputComment>
-        <Avatar size='40' src={userAvatar ?? avatar} alt='profile' />
-        <input
-          type='text'
-          name='comment'
-          placeholder='Write a comment...
-'
-        />
-        <RoundedButton size='40'>
-          <SendIcon fontSize='small' />
-        </RoundedButton>
-      </InputComment>
-      <Comments></Comments>
-    </form>
+    <Fragment>
+      <form onSubmit={handleSubmit}>
+        <InputComment>
+          <Avatar size='40' src={user?.avatar ?? avatar} alt='profile' />
+          <input
+            type='text'
+            name='comment'
+            placeholder='Write a comment...'
+            onChange={handleChange}
+            value={commentData}
+          />
+          <RoundedButton size='40'>
+            <SendIcon fontSize='small' />
+          </RoundedButton>
+        </InputComment>
+      </form>
+
+      <CommentContainer>
+        {comments?.map((comment) => (
+          <Comment
+            key={comment._id}
+            comment={comment}
+            projectId={projectId}
+            taskId={taskId}
+            user={user}
+          />
+        ))}
+      </CommentContainer>
+    </Fragment>
   );
 };
 
@@ -53,7 +95,7 @@ const InputComment = styled.div`
   }
 `;
 
-const Comments = styled.div`
+const CommentContainer = styled.div`
   min-height: 100px;
 `;
 

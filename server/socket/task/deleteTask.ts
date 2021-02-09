@@ -21,7 +21,17 @@ export default (io: Server, socket: Socket) => {
           taskIds: newTaskIds,
         });
 
-        const updatedTaskProject = await taskProject.save();
+        const updatedTaskProject = await (await taskProject.save())
+          .populate({
+            path: 'tasks.$*.comments.user',
+            select: ['email', 'avatar'],
+          })
+          .populate({
+            path: 'tasks.$*.members.user',
+            select: ['email', 'avatar'],
+          })
+          .execPopulate();
+
         io.in(data.projectId).emit('updated delete task', updatedTaskProject);
       }
     } catch (err) {

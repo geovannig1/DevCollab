@@ -1,14 +1,14 @@
 import React, { Fragment, memo } from 'react';
 
 import Task from './Task';
-import { User } from './taskTypes';
+import { Member } from './taskTypes';
 
 interface TasksProps {
   tasks: {
     id: string;
     title: string;
     description: string;
-    members: User[];
+    members: Member[];
     dueDate: string;
   }[];
   columnId: string;

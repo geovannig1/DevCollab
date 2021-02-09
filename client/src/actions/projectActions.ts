@@ -116,7 +116,7 @@ export const updateProject = (
 };
 
 //Delete project
-export const deleteProject = (projectId: number) => async (
+export const deleteProject = (projectId: string) => async (
   dispatch: ThunkDispatch<{}, {}, ProjectDispatchTypes>
 ) => {
   try {

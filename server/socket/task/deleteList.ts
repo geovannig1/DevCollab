@@ -23,7 +23,16 @@ export default (io: Server, socket: Socket) => {
           taskProject.set(`tasks.${taskId}`, undefined);
         });
 
-        const updatedProject = await taskProject.save();
+        const updatedProject = await (await taskProject.save())
+          .populate({
+            path: 'tasks.$*.comments.user',
+            select: ['email', 'avatar'],
+          })
+          .populate({
+            path: 'tasks.$*.members.user',
+            select: ['email', 'avatar'],
+          })
+          .execPopulate();
 
         io.in(data.projectId).emit('update delete list', updatedProject);
       }

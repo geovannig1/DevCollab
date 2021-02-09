@@ -10,12 +10,12 @@ import { AccessPermission, Member } from '../../actions/projectTypes';
 import { UserType } from '../../actions/authTypes';
 
 interface CardProps {
-  projectId: number;
+  projectId: string;
   title: string;
   description?: string;
   deleteTitle: string;
   deleteText: string;
-  deleteItem: (id?: number) => Promise<void>;
+  deleteItem: (id?: string) => Promise<void>;
   link: string;
   editLink: string;
   members?: Member[];

@@ -5,7 +5,10 @@ import Project from '../models/Project';
 
 export const getTasks = async (req: Request, res: Response) => {
   try {
-    const task = await Task.findOne({ project: req.params.projectId });
+    const projectTask = await Task.findOne({ project: req.params.projectId })
+      .populate('tasks.$*.members.user', ['email', 'avatar'])
+      .populate('tasks.$*.comments.user', ['email', 'avatar']);
+
     const project = await Project.findById(req.params.projectId);
 
     //Only user from the project can access
@@ -16,7 +19,7 @@ export const getTasks = async (req: Request, res: Response) => {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
-    res.status(200).json(task);
+    res.status(200).json(projectTask);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
@@ -27,7 +30,10 @@ export const getTask = async (req: Request, res: Response) => {
   try {
     const projectTask = await Task.findOne({
       project: req.params.projectId,
-    }).populate('tasks.$*.members.user', ['email', 'avatar']);
+    })
+      .populate('tasks.$*.members.user', ['email', 'avatar'])
+      .populate('tasks.$*.comments.user', ['email', 'avatar']);
+
     const project = await Project.findById(req.params.projectId);
 
     //Only user from the project can access

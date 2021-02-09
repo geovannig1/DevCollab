@@ -15,7 +15,7 @@ export enum AccessPermission {
 export type Member = {
   accessPermission: AccessPermission;
   user: {
-    _id: number;
+    _id: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -23,7 +23,7 @@ export type Member = {
   };
 };
 export interface ProjectType {
-  _id: number;
+  _id: string;
   name: string;
   description: string;
   members: Member[];
@@ -53,7 +53,7 @@ export interface ProjectClear {
 }
 export interface ProjectDeleted {
   type: typeof PROJECT_DELETED;
-  payload: number;
+  payload: string;
 }
 export interface ProjectError {
   type: typeof PROJECT_ERROR;

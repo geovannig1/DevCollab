@@ -1,4 +1,4 @@
-interface Members {
+export interface Member {
   user: {
     _id: string;
     email?: string;
@@ -6,16 +6,23 @@ interface Members {
   };
 }
 
+export interface Comment {
+  _id: string;
+  date: Date;
+  user: {
+    _id: string;
+    email?: string;
+    avatar?: string;
+  };
+  comment: string;
+}
+
 export interface TaskData {
   title: string;
   description: string;
-  members: Members[];
+  members: Member[];
   dueDate?: string;
-}
-
-export interface User {
-  email: string;
-  avatar: string;
+  comments?: Comment[];
 }
 
 export interface InitialTaskState {
@@ -24,7 +31,7 @@ export interface InitialTaskState {
       id: string;
       title: string;
       description: string;
-      members: User[];
+      members: Member[];
       dueDate: string;
     };
   };

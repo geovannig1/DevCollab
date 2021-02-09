@@ -10,7 +10,7 @@ import Tasks from './Tasks';
 import AddIcon from '@material-ui/icons/Add';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { ProjectInitialState } from '../../reducers/projectReducer';
-import { User } from './taskTypes';
+import { Member } from './taskTypes';
 import CardMenu from '../../components/global/CardMenu';
 import socket from '../../utils/socketio';
 
@@ -24,7 +24,7 @@ interface ColumnProps {
     id: string;
     title: string;
     description: string;
-    members: User[];
+    members: Member[];
     dueDate: string;
   }[];
   index: number;

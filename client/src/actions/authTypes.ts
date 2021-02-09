@@ -19,7 +19,7 @@ export interface LoginSuccess {
 }
 
 export type UserType = {
-  _id: number;
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;

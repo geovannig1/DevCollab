@@ -56,24 +56,63 @@ const DetailTask: React.FC<DetailTaskProps> = ({
     members: [],
     title: '',
     dueDate: '',
+    comments: [],
   });
   const [defaultTaskData, setDefaultTaskData] = useState<TaskData>({
     description: '',
     members: [],
     title: '',
     dueDate: '',
+    comments: [],
   });
 
   useEffect(() => {
     (async () => {
-      const res = await api.get(`/projects/${projectId}/tasks/${taskId}`);
-      setTaskData(res.data);
-      setDefaultTaskData(res.data);
+      try {
+        const res = await api.get(`/projects/${projectId}/tasks/${taskId}`);
+        setTaskData(res.data);
+        setDefaultTaskData(res.data);
+      } catch (err) {
+        console.error(err.message);
+      }
     })();
 
-    return () =>
-      setTaskData({ description: '', members: [], title: '', dueDate: '' });
+    return () => {
+      setTaskData({
+        description: '',
+        members: [],
+        title: '',
+        dueDate: '',
+        comments: [],
+      });
+    };
   }, [projectId, taskId]);
+
+  useEffect(() => {
+    socket.emit('join project', { projectId });
+
+    //Listen to new comment
+    socket.on('receive comment', (data: TaskData) => {
+      setTaskData(data);
+      setDefaultTaskData(data);
+    });
+
+    //Listen to deleted comment
+    socket.on('updated delete comment', (data: TaskData) => {
+      setTaskData(data);
+      setDefaultTaskData(data);
+    });
+
+    //Listen to updated task
+    socket.on('updated selected task', (data: TaskData) => {
+      setTaskData(data);
+      setDefaultTaskData(data);
+    });
+
+    return () => {
+      socket.emit('leave project', { projectId });
+    };
+  }, [projectId]);
 
   useEffect(() => {
     document.title = 'Detail Task | DevCollab';
@@ -165,6 +204,7 @@ const DetailTask: React.FC<DetailTaskProps> = ({
                 name='title'
                 onChange={handleChange}
                 value={taskData.title}
+                required
               />
             )}
             <Label as='p'>Description</Label>
@@ -238,7 +278,12 @@ const DetailTask: React.FC<DetailTaskProps> = ({
 
           <Line />
 
-          <CommentTask userAvatar={user?.avatar} />
+          <CommentTask
+            user={user}
+            taskId={taskId}
+            projectId={projectId}
+            comments={taskData.comments}
+          />
         </Paper>
       )}
     </Fragment>

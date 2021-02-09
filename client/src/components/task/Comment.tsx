@@ -1,0 +1,110 @@
+import React from 'react';
+import styled from 'styled-components';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+import { setColor, setRem, setShadow } from '../../styles';
+import { Comment as IComment } from './taskTypes';
+import avatar from '../../assets/profile-picture.png';
+import Avatar from '../global/Avatar';
+import AlertDialog from '../global/AlertDialog';
+import socket from '../../utils/socketio';
+import { UserType } from '../../actions/authTypes';
+
+interface CommentProps {
+  comment: IComment;
+  projectId: string;
+  taskId: string;
+  user?: UserType;
+}
+
+const Comment: React.FC<CommentProps> = ({
+  comment,
+  projectId,
+  taskId,
+  user,
+}) => {
+  //Use relativeTime plugin
+  dayjs.extend(relativeTime);
+
+  const handleClick = () => {
+    socket.emit('delete comment', {
+      projectId,
+      taskId,
+      commentId: comment._id,
+    });
+  };
+
+  return (
+    <Container>
+      <Avatar src={comment.user.avatar ?? avatar} alt='avatar' size='40' />
+      <CommentContainer>
+        <Header>
+          <h5>{comment.user.email}</h5>
+          <span>{dayjs(comment.date).fromNow()}</span>
+        </Header>
+
+        <Text>{comment.comment}</Text>
+
+        {comment.user._id === user?._id && (
+          <AlertDialog
+            title='Delete Comment'
+            text="Are you sure want to delete this comment? This process can't be undone"
+            firstButton='Delete'
+            secondButton='Cancel'
+            deleteButton
+            deleteItem={handleClick}
+          >
+            <DeleteButton>Delete</DeleteButton>
+          </AlertDialog>
+        )}
+      </CommentContainer>
+    </Container>
+  );
+};
+
+const Container = styled.div`
+  margin: 25px 0;
+  display: flex;
+  align-items: center;
+`;
+
+const CommentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Header = styled.div`
+  display: flex;
+  h5 {
+    font-weight: 600;
+  }
+  span {
+    margin: 0 10px;
+    font-size: ${setRem(14)};
+    font-weight: 500;
+  }
+`;
+
+const Text = styled.span`
+  padding: 10px;
+  margin: 3px 0;
+  background-color: ${setColor.lightGrey};
+  box-shadow: ${setShadow.light};
+  align-self: flex-start;
+`;
+
+const DeleteButton = styled.span`
+  color: ${setColor.lightBlack};
+  font-size: ${setRem(11)};
+  text-decoration: underline;
+  transition: ease-in-out 0.3s;
+  &:hover {
+    color: ${setColor.mainBlack};
+  }
+  &:active {
+    color: ${setColor.lightBlack};
+  }
+`;
+
+export default Comment;

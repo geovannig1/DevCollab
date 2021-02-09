@@ -8,8 +8,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import styled from 'styled-components';
 
 interface AlertDialogProps {
-  deleteItem?: (id?: number) => Promise<void> | void;
-  deleteId?: number;
+  deleteItem?: (id?: string) => Promise<void> | void;
+  deleteId?: string;
   deleteButton?: boolean;
   title: string;
   text: string;

@@ -26,7 +26,17 @@ export default (io: Server, socket: Socket) => {
         taskProject.set(`columns.${data.columnId}`, {});
         taskProject.set(`columns.${data.columnId}`, columns);
 
-        const updatedTaskProject = await taskProject.save();
+        const updatedTaskProject = await (await taskProject.save())
+          .populate({
+            path: 'tasks.$*.comments.user',
+            select: ['email', 'avatar'],
+          })
+          .populate({
+            path: 'tasks.$*.members.user',
+            select: ['email', 'avatar'],
+          })
+          .execPopulate();
+
         io.in(data.projectId).emit('new task update', updatedTaskProject);
       }
     } catch (err) {

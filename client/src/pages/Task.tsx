@@ -60,6 +60,7 @@ const Task: React.FC<TaskProps> = ({
     columns: {},
     tasks: {},
   });
+
   //State for progress cursor
   const [progress, setProgress] = useState(true);
 
@@ -69,13 +70,17 @@ const Task: React.FC<TaskProps> = ({
       setProgress(location.state.createTaskProgress);
 
     (async () => {
-      if (selectedProject && !location.state?.fromCreateTask) {
-        setProgress(true);
-        const res = await api.get(`/projects/${selectedProject._id}/tasks`);
-        setProgress(false);
-        if (res.data) {
-          setTaskState(res.data);
+      try {
+        if (selectedProject && !location.state?.fromCreateTask) {
+          setProgress(true);
+          const res = await api.get(`/projects/${selectedProject._id}/tasks`);
+          setProgress(false);
+          if (res.data) {
+            setTaskState(res.data);
+          }
         }
+      } catch (err) {
+        console.error(err.message);
       }
     })();
 
@@ -143,6 +148,7 @@ const Task: React.FC<TaskProps> = ({
 
   const onDragEnd = (result: DropResult) => {
     const { destination, draggableId, source, type } = result;
+
     if (!destination) return;
 
     if (

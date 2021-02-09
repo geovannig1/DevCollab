@@ -14,6 +14,13 @@ export interface ITask extends Document {
       description: string;
       members: User[];
       dueDate: Date;
+      comments: {
+        user: {
+          email: string;
+          avatar: string;
+        };
+        comment: string;
+      }[];
     };
   };
   columns: {
@@ -52,6 +59,21 @@ const taskSchema = new Schema<ITask>({
         },
       ],
       dueDate: Date,
+      comments: [
+        {
+          user: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+          },
+          comment: {
+            type: String,
+          },
+          date: {
+            type: Date,
+            default: Date.now,
+          },
+        },
+      ],
     },
   },
   columns: {

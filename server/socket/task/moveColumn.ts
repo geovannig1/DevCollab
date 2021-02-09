@@ -9,12 +9,20 @@ export default (socket: Socket) => {
 
       if (task) {
         task.columnOrder = data.columnOrder;
+
+        const newColumnOrder = await (await task.save())
+          .populate({
+            path: 'tasks.$*.comments.user',
+            select: ['email', 'avatar'],
+          })
+          .populate({
+            path: 'tasks.$*.members.user',
+            select: ['email', 'avatar'],
+          })
+          .execPopulate();
+        //Send the data to client
+        socket.to(data.projectId).emit('move column update', newColumnOrder);
       }
-
-      const newColumnOrder = await task?.save();
-
-      //Send the data to client
-      socket.to(data.projectId).emit('move column update', newColumnOrder);
     } catch (err) {
       console.error(err.message);
     }

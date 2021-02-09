@@ -16,7 +16,7 @@ import { AuthInitialState } from '../reducers/authReducer';
 
 interface ProjectProps {
   loadProjects: () => Promise<void>;
-  deleteProject: (projectId: number) => Promise<void>;
+  deleteProject: (projectId: string) => Promise<void>;
   project: ProjectInitialState;
   auth: AuthInitialState;
 }
@@ -69,7 +69,7 @@ const mapStateToProps = (state: Store) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProjects: () => dispatch(loadProjects()),
-  deleteProject: (projectId: number) => dispatch(deleteProject(projectId)),
+  deleteProject: (projectId: string) => dispatch(deleteProject(projectId)),
 });
 
 const H1 = styled.h1`

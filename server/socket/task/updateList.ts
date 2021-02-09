@@ -14,7 +14,17 @@ export default (io: Server, socket: Socket) => {
           taskIds: taskIds,
         });
 
-        const updatedProjectTask = await projectTask.save();
+        const updatedProjectTask = await (await projectTask.save())
+          .populate({
+            path: 'tasks.$*.comments.user',
+            select: ['email', 'avatar'],
+          })
+          .populate({
+            path: 'tasks.$*.members.user',
+            select: ['email', 'avatar'],
+          })
+          .execPopulate();
+
         io.in(data.projectId).emit('updated update list', updatedProjectTask);
       }
     } catch (err) {

@@ -18,8 +18,16 @@ export default (io: Server, socket: Socket) => {
         //Add column id to column order
         taskProject.columnOrder?.push(columnId);
 
-        const updatedTaskProject = await taskProject.save();
-
+        const updatedTaskProject = await (await taskProject.save())
+          .populate({
+            path: 'tasks.$*.comments.user',
+            select: ['email', 'avatar'],
+          })
+          .populate({
+            path: 'tasks.$*.members.user',
+            select: ['email', 'avatar'],
+          })
+          .execPopulate();
         //Send the data to client
         io.in(data.projectId).emit('new list update', updatedTaskProject);
         return;
@@ -38,8 +46,16 @@ export default (io: Server, socket: Socket) => {
         });
         newTaskProject.columnOrder?.push(columnId);
 
-        const updatedTaskProject = await newTaskProject.save();
-
+        const updatedTaskProject = await (await newTaskProject.save())
+          .populate({
+            path: 'tasks.$*.comments.user',
+            select: ['email', 'avatar'],
+          })
+          .populate({
+            path: 'tasks.$*.members.user',
+            select: ['email', 'avatar'],
+          })
+          .execPopulate();
         //Send the data to client
         io.in(data.projectId).emit('new list update', updatedTaskProject);
       }
