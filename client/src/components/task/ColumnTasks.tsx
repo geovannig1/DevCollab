@@ -16,18 +16,28 @@ interface ColumnTasksProps {
       description: string;
       members: Member[];
       dueDate: string;
+      comments?: Comment[];
     };
   };
   index: number;
+  signedInMember?: Member;
 }
 
 const ColumnTasks: React.FC<ColumnTasksProps> = ({
   column,
   taskMap,
   index,
+  signedInMember,
 }) => {
   const tasks = column.taskIds.map((taskId) => taskMap[taskId]);
-  return <Column column={column} tasks={tasks} index={index} />;
+  return (
+    <Column
+      column={column}
+      tasks={tasks}
+      index={index}
+      signedInMember={signedInMember}
+    />
+  );
 };
 
 export default memo(ColumnTasks);

@@ -36,9 +36,11 @@ const AddListMenu: React.FC<AddListMenuProps> = ({ children, setProgress }) => {
   };
 
   const handleClick = () => {
-    setProgress(true);
-    socket.emit('create list', { projectId, listData });
-    handleClose();
+    if (listData !== '') {
+      setProgress(true);
+      socket.emit('create list', { projectId, listData });
+      handleClose();
+    }
   };
 
   return (

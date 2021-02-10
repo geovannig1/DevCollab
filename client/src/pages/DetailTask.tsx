@@ -27,6 +27,7 @@ import CommentTask from '../components/task/CommentTask';
 import SelectMembers from '../components/global/SelectMembers';
 import { Button } from '../components/global/Button';
 import socket from '../utils/socketio';
+import { AccessPermission } from '../actions/projectTypes';
 
 interface DetailTaskProps {
   setNavbar: (selected: SelectedType) => void;
@@ -165,26 +166,35 @@ const DetailTask: React.FC<DetailTaskProps> = ({
     history.push(`/projects/${projectId}/tasks`);
   };
 
+  //Get the signed in user data
+  const signedInMember = selectedProject?.members.filter(
+    (member) => member.user._id === user?._id
+  )[0];
+
   return (
     <Fragment>
       {defaultTaskData.title && (
         <Paper>
-          <EditButton onClick={() => setEditData(true)}>
-            <EditIcon fontSize='small' />
-          </EditButton>
+          {signedInMember?.accessPermission !== AccessPermission.ReadOnly && (
+            <Fragment>
+              <EditButton onClick={() => setEditData(true)}>
+                <EditIcon fontSize='small' />
+              </EditButton>
 
-          <DeleteButton as='div'>
-            <AlertDialog
-              title='Delete Task'
-              firstButton='Delete'
-              secondButton='Cancel'
-              deleteItem={handleDelete}
-              text={`Are you sure want to delete ${taskData.title} task? This process can't be undone`}
-              deleteButton
-            >
-              <DeleteIcon fontSize='small' />
-            </AlertDialog>
-          </DeleteButton>
+              <DeleteButton as='div'>
+                <AlertDialog
+                  title='Delete Task'
+                  firstButton='Delete'
+                  secondButton='Cancel'
+                  deleteItem={handleDelete}
+                  text={`Are you sure want to delete ${taskData.title} task? This process can't be undone`}
+                  deleteButton
+                >
+                  <DeleteIcon fontSize='small' />
+                </AlertDialog>
+              </DeleteButton>
+            </Fragment>
+          )}
 
           <Previous
             link={`/projects/${selectedProject?._id}/tasks`}
@@ -283,6 +293,7 @@ const DetailTask: React.FC<DetailTaskProps> = ({
             taskId={taskId}
             projectId={projectId}
             comments={taskData.comments}
+            signedInMember={signedInMember}
           />
         </Paper>
       )}

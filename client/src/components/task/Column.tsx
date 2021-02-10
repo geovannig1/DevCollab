@@ -13,6 +13,7 @@ import { ProjectInitialState } from '../../reducers/projectReducer';
 import { Member } from './taskTypes';
 import CardMenu from '../../components/global/CardMenu';
 import socket from '../../utils/socketio';
+import { AccessPermission } from '../../actions/projectTypes';
 
 interface ColumnProps {
   column: {
@@ -26,9 +27,11 @@ interface ColumnProps {
     description: string;
     members: Member[];
     dueDate: string;
+    comments?: Comment[];
   }[];
   index: number;
   project: ProjectInitialState;
+  signedInMember?: Member;
 }
 
 const Column: React.FC<ColumnProps> = ({
@@ -36,6 +39,7 @@ const Column: React.FC<ColumnProps> = ({
   tasks,
   index,
   project: { selectedProject },
+  signedInMember,
 }) => {
   const handleDelete = () => {
     socket.emit('delete list', {
@@ -49,17 +53,22 @@ const Column: React.FC<ColumnProps> = ({
     <Draggable draggableId={column.id} index={index}>
       {(provided) => (
         <Container {...provided.draggableProps} ref={provided.innerRef}>
-          <Header {...provided.dragHandleProps}>
+          <Header
+            {...(signedInMember?.accessPermission !==
+              AccessPermission.ReadOnly && provided.dragHandleProps)}
+          >
             <Title>{column.title}</Title>
-            <CardMenu
-              deleteTitle='Delete List'
-              deleteText={`Are you sure want to delete ${column.title} list? this process can't be undone.`}
-              deleteItem={handleDelete}
-              listTitle={column.title}
-              listId={column.id}
-            >
-              <HorizIcon fontSize='large' />
-            </CardMenu>
+            {signedInMember?.accessPermission !== AccessPermission.ReadOnly && (
+              <CardMenu
+                deleteTitle='Delete List'
+                deleteText={`Are you sure want to delete ${column.title} list? this process can't be undone.`}
+                deleteItem={handleDelete}
+                listTitle={column.title}
+                listId={column.id}
+              >
+                <HorizIcon fontSize='large' />
+              </CardMenu>
+            )}
           </Header>
           <Droppable droppableId={column.id} type='task'>
             {(provided, snapshot) => (
@@ -68,14 +77,21 @@ const Column: React.FC<ColumnProps> = ({
                 ref={provided.innerRef}
                 isDraggingOver={snapshot.isDraggingOver}
               >
-                <Tasks tasks={tasks} columnId={column.id} />
+                <Tasks
+                  tasks={tasks}
+                  columnId={column.id}
+                  signedInMember={signedInMember}
+                />
                 {provided.placeholder}
-                <StyledLink
-                  to={`/projects/${selectedProject?._id}/create-task/${column.id}`}
-                >
-                  <AddIcon />
-                  Add task
-                </StyledLink>
+                {signedInMember?.accessPermission !==
+                  AccessPermission.ReadOnly && (
+                  <StyledLink
+                    to={`/projects/${selectedProject?._id}/create-task/${column.id}`}
+                  >
+                    <AddIcon />
+                    Add task
+                  </StyledLink>
+                )}
               </TaskList>
             )}
           </Droppable>

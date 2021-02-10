@@ -10,6 +10,8 @@ import avatar from '../../assets/profile-picture.png';
 import { Member } from './taskTypes';
 import Avatar from '../global/Avatar';
 import AccessAlarmsIcon from '@material-ui/icons/AccessAlarms';
+import { AccessPermission } from '../../actions/projectTypes';
+import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
 
 interface TaskProps {
   task: {
@@ -18,12 +20,19 @@ interface TaskProps {
     description: string;
     members: Member[];
     dueDate: string;
+    comments?: Comment[];
   };
   index: number;
   columnId: string;
+  signedInMember?: Member;
 }
 
-const Task: React.FC<TaskProps> = ({ task, index, columnId }) => {
+const Task: React.FC<TaskProps> = ({
+  task,
+  index,
+  columnId,
+  signedInMember,
+}) => {
   const { projectId } = useParams<{ projectId: string }>();
 
   return (
@@ -31,19 +40,26 @@ const Task: React.FC<TaskProps> = ({ task, index, columnId }) => {
       {(provided, snapshot) => (
         <Container
           {...provided.draggableProps}
-          {...provided.dragHandleProps}
+          {...(signedInMember?.accessPermission !== AccessPermission.ReadOnly &&
+            provided.dragHandleProps)}
           ref={provided.innerRef}
           isDragging={snapshot.isDragging}
         >
           <Content>
             <ContentContainer>
               <span>{task.title}</span>
-
               {task.dueDate && (
                 <DateContainer>
                   <AccessAlarmsIcon fontSize='small' />
                   <span>{dayjs(task.dueDate).format('DD MMM YYYY')}</span>
                 </DateContainer>
+              )}
+
+              {task.comments && (
+                <CommentContainer>
+                  <CommentOutlinedIcon fontSize='small' />
+                  <span>{task.comments.length}</span>
+                </CommentContainer>
               )}
 
               <AvatarContainer>
@@ -126,6 +142,18 @@ const DateContainer = styled.div`
     margin: 0;
     margin-left: 5px;
     font-size: ${setRem(12)};
+  }
+`;
+
+const CommentContainer = styled.div`
+  display: flex;
+  align-items: center;
+  color: ${setColor.primaryDark};
+  margin-bottom: 5px;
+  span {
+    margin-left: 5px;
+    font-weight: 600;
+    font-size: ${setRem(15)};
   }
 `;
 

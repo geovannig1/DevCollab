@@ -8,14 +8,16 @@ import Avatar from '../global/Avatar';
 import avatar from '../../assets/profile-picture.png';
 import socket from '../../utils/socketio';
 import { UserType } from '../../actions/authTypes';
-import { Comment as IComment } from './taskTypes';
+import { Comment as IComment, Member } from './taskTypes';
 import Comment from './Comment';
+import { AccessPermission } from '../../actions/projectTypes';
 
 interface CommentTaskProps {
   user?: UserType;
   taskId: string;
   projectId: string;
   comments?: IComment[];
+  signedInMember?: Member;
 }
 
 const CommentTask: React.FC<CommentTaskProps> = ({
@@ -23,6 +25,7 @@ const CommentTask: React.FC<CommentTaskProps> = ({
   taskId,
   projectId,
   comments,
+  signedInMember,
 }) => {
   const [commentData, setCommentData] = useState('');
 
@@ -46,21 +49,23 @@ const CommentTask: React.FC<CommentTaskProps> = ({
 
   return (
     <Fragment>
-      <form onSubmit={handleSubmit}>
-        <InputComment>
-          <Avatar size='40' src={user?.avatar ?? avatar} alt='profile' />
-          <input
-            type='text'
-            name='comment'
-            placeholder='Write a comment...'
-            onChange={handleChange}
-            value={commentData}
-          />
-          <RoundedButton size='40'>
-            <SendIcon fontSize='small' />
-          </RoundedButton>
-        </InputComment>
-      </form>
+      {signedInMember?.accessPermission !== AccessPermission.ReadOnly && (
+        <form onSubmit={handleSubmit}>
+          <InputComment>
+            <Avatar size='40' src={user?.avatar ?? avatar} alt='profile' />
+            <input
+              type='text'
+              name='comment'
+              placeholder='Write a comment...'
+              onChange={handleChange}
+              value={commentData}
+            />
+            <RoundedButton size='40'>
+              <SendIcon fontSize='small' />
+            </RoundedButton>
+          </InputComment>
+        </form>
+      )}
 
       <CommentContainer>
         {comments?.map((comment) => (

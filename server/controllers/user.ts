@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import fs from 'fs';
+import fs from 'fs/promises';
 
 import User from '../models/User';
 import cloudinary from '../config/cloudinaryConfig';
@@ -65,19 +65,17 @@ export const editUser = async (req: Request, res: Response) => {
 
     //Add avatar
     if (req.file) {
-      cloudinary.uploader.upload(req.file.path, async (err, result) => {
-        user.avatar = result?.secure_url;
-        await user.save();
+      cloudinary.uploader.upload(
+        req.file.path,
+        { folder: 'avatar' },
+        async (err, result) => {
+          user.avatar = result?.secure_url;
+          await user.save();
 
-        //Delete image in the upload folder
-        fs.unlink(req.file.path, (err) => {
-          if (err) {
-            console.error(err);
-            return;
-          }
-          //file removed
-        });
-      });
+          //Delete image in the upload folder
+          await fs.unlink(req.file.path);
+        }
+      );
     }
 
     if (newPassword) {

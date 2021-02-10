@@ -18,12 +18,15 @@ import { setColor } from '../styles';
 import AddListMenu from '../components/task/AddListMenu';
 import socket from '../utils/socketio';
 import api from '../api';
+import { AuthInitialState } from '../reducers/authReducer';
+import { AccessPermission } from '../actions/projectTypes';
 
 interface TaskProps {
   setNavbar: (selected: SelectedType) => void;
   loadProject: (projectId: string) => Promise<void>;
   clearNavbar: () => void;
   project: ProjectInitialState;
+  auth: AuthInitialState;
 }
 
 const Task: React.FC<TaskProps> = ({
@@ -31,6 +34,7 @@ const Task: React.FC<TaskProps> = ({
   clearNavbar,
   loadProject,
   project: { selectedProject, projectError },
+  auth: { user },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
   const location = useLocation<{
@@ -238,6 +242,11 @@ const Task: React.FC<TaskProps> = ({
     setTaskState(newState);
   };
 
+  //Get the signed in user data
+  const signedInMember = selectedProject?.members.filter(
+    (member) => member.user._id === user?._id
+  )[0];
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId='all-columns' direction='horizontal' type='column'>
@@ -255,14 +264,17 @@ const Task: React.FC<TaskProps> = ({
                   column={column}
                   taskMap={taskState.tasks}
                   index={index}
+                  signedInMember={signedInMember}
                 />
               );
             })}
             {provided.placeholder}
-            <AddListMenu setProgress={setProgress}>
-              <AddIcon />
-              New list
-            </AddListMenu>
+            {signedInMember?.accessPermission !== AccessPermission.ReadOnly && (
+              <AddListMenu setProgress={setProgress}>
+                <AddIcon />
+                New list
+              </AddListMenu>
+            )}
           </Container>
         )}
       </Droppable>
@@ -272,6 +284,7 @@ const Task: React.FC<TaskProps> = ({
 
 const mapStateToProps = (state: Store) => ({
   project: state.project,
+  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({

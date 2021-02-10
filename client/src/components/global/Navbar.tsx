@@ -47,7 +47,7 @@ const Navbar: React.FC<NavbarProps> = ({
       </StyledLink>
 
       <StyledLink
-        to='#'
+        to={`/projects/${selectedProject?._id}/discussions`}
         selected={navbar.selected === SelectedType.Discussions}
       >
         <QuestionAnswerIcon />
@@ -111,6 +111,7 @@ const StyledLink = styled(Link)<{ selected?: boolean }>`
   align-items: center;
   text-decoration: none;
   outline: none;
+  user-select: none;
   color: ${({ selected }) =>
     selected ? setColor.primaryDark : setColor.lightBlack};
   transition: 0.2s ease-in-out;

@@ -21,6 +21,8 @@ import Activity from './pages/Activity';
 import Task from './pages/Task';
 import CreateTask from './pages/CreateTask';
 import DetailTask from './pages/DetailTask';
+import Discussion from './pages/Discussion';
+import CreateDiscussion from './pages/CreateDiscussion';
 
 interface AppProps {
   loadUser: () => Promise<void>;
@@ -71,6 +73,16 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
               exact
               path='/projects/:projectId/lists/:columnId/tasks/:taskId'
               component={DetailTask}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/discussions'
+              component={Discussion}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/create-discussion'
+              component={CreateDiscussion}
             />
             <Route component={NotFound} />
           </Switch>

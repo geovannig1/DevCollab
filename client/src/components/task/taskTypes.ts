@@ -1,9 +1,12 @@
+import { AccessPermission } from '../../actions/projectTypes';
+
 export interface Member {
   user: {
     _id: string;
     email?: string;
     avatar?: string;
   };
+  accessPermission?: AccessPermission;
 }
 
 export interface Comment {

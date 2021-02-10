@@ -15,7 +15,7 @@ export const Button = styled.button<ButtonProps>`
     outline ? setColor.mainWhite : setColor.primary};
   color: ${({ outline }) => (outline ? setColor.primary : setColor.mainWhite)};
   min-width: ${({ extrasmall }) => (extrasmall ? '100px' : '135px')};
-  padding: ${({ extrasmall }) => (extrasmall ? '8px' : '10px')};
+  padding: ${({ extrasmall }) => (extrasmall ? '5px' : '10px')};
   border: solid ${setColor.primary} 2px;
   border-radius: 10px;
   cursor: pointer;
