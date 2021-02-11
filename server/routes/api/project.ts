@@ -12,6 +12,7 @@ import {
   deleteProject,
   updateProject,
 } from '../../controllers/project';
+import checkObjectId from '../../middlewares/checkObjectId';
 
 /**
  *  @route POST api/projects
@@ -35,10 +36,10 @@ router.get('/', auth, getProjects);
 
 /**
  *  @route GET api/projects/:projectId
- *  @desc Get signed in user project
+ *  @desc Load a project
  *  @access Private
  */
-router.get('/:projectId', auth, getProject);
+router.get('/:projectId', auth, checkObjectId('projectId'), getProject);
 
 /**
  *  @route GET api/projects/:projectId
@@ -48,6 +49,7 @@ router.get('/:projectId', auth, getProject);
 router.patch(
   '/:projectId',
   auth,
+  checkObjectId('projectId'),
   check('name', 'Project name is required').notEmpty(),
   validateInput,
   updateProject
@@ -58,7 +60,7 @@ router.patch(
  *  @desc Delete a project
  *  @access Private
  */
-router.delete('/:projectId', auth, deleteProject);
+router.delete('/:projectId', auth, checkObjectId('projectId'), deleteProject);
 
 /**
  *  @route GET api/projects/invitation/token

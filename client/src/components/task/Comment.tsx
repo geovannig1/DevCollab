@@ -37,7 +37,7 @@ const Comment: React.FC<CommentProps> = ({
 
   return (
     <Container>
-      <Avatar src={comment.user.avatar ?? avatar} alt='avatar' size='40' />
+      <Avatar src={comment.user.avatar?.url ?? avatar} alt='avatar' size='40' />
       <CommentContainer>
         <Header>
           <h5>{comment.user.email}</h5>

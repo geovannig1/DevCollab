@@ -30,6 +30,8 @@ import {
   SignUpData,
   UserData,
 } from './authTypes';
+import { clearDiscussion } from './discussionActions';
+import { clearProject } from './projectActions';
 
 //Load User
 export const loadUser = () => async (
@@ -110,6 +112,9 @@ export const signOut = () => async (
     dispatch({ type: SET_LOADING });
 
     await api.get('/auth/signout');
+
+    dispatch(clearDiscussion());
+    dispatch(clearProject());
 
     dispatch({ type: REMOVE_LOADING });
     dispatch({ type: LOGOUT_SUCCESS });

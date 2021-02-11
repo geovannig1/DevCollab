@@ -8,7 +8,10 @@ export interface IUser extends Document {
   havePassword: boolean;
   password?: string;
   googleId?: string;
-  avatar?: string;
+  avatar?: {
+    url: string;
+    publicId?: string;
+  };
 }
 
 const userSchema = new Schema<IUser>({
@@ -35,7 +38,12 @@ const userSchema = new Schema<IUser>({
     type: String,
   },
   avatar: {
-    type: String,
+    url: {
+      type: String,
+    },
+    publicId: {
+      type: String,
+    },
   },
   date: {
     type: Date,

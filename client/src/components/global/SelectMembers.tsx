@@ -33,7 +33,10 @@ const SelectMembers: React.FC<SelectMembersProps> = ({
         {
           label: (
             <LabelContainer style={{ display: 'flex', alignItems: 'center' }}>
-              <Avatar src={member.user.avatar ?? avatar} alt='user profile' />
+              <Avatar
+                src={member.user.avatar.url ?? avatar}
+                alt='user profile'
+              />
               <label>{member.user.email}</label>
             </LabelContainer>
           ),
@@ -62,10 +65,10 @@ const SelectMembers: React.FC<SelectMembersProps> = ({
       isMulti
       styles={customStyle}
       onChange={handleChangeMembers}
-      defaultValue={selectData?.map((member: any) => ({
+      defaultValue={selectData?.map((member: Member) => ({
         label: (
           <LabelContainer style={{ display: 'flex', alignItems: 'center' }}>
-            <Avatar src={member.user.avatar ?? avatar} alt='user profile' />
+            <Avatar src={member.user.avatar.url ?? avatar} alt='user profile' />
             <label>{member.user.email}</label>
           </LabelContainer>
         ),

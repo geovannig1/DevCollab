@@ -27,7 +27,7 @@ passport.use(
             firstName: name?.givenName,
             lastName: name?.familyName,
             email: emails?.[0].value,
-            avatar: photos?.[0].value,
+            avatar: { url: photos?.[0].value ?? '' },
             havePassword: false,
           });
 

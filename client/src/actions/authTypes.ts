@@ -23,7 +23,9 @@ export type UserType = {
   firstName: string;
   lastName: string;
   email: string;
-  avatar: string;
+  avatar: {
+    url: string;
+  };
   havePassword: boolean;
 };
 

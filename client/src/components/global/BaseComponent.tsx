@@ -1,12 +1,9 @@
-import React, { useEffect, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { ThunkDispatch } from 'redux-thunk';
-import { AnyAction } from 'redux';
 
 import { Store } from '../../store';
-import { clearProject } from '../../actions/projectActions';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import { setColor } from '../../styles';
 import Sidebar from '../sidebar/Sidebar';
@@ -15,21 +12,15 @@ import { ProjectInitialState } from '../../reducers/projectReducer';
 import Navbar from '../global/Navbar';
 
 interface BaseComponentProps {
-  clearProject: () => void;
   auth: AuthInitialState;
   project: ProjectInitialState;
 }
 
 const BaseComponent: React.FC<BaseComponentProps> = ({
   children,
-  clearProject,
   auth: { isAuthenticated, notFound },
   project: { selectedProject },
 }) => {
-  useEffect(() => {
-    return () => clearProject();
-  }, [clearProject]);
-
   return (
     <Fragment>
       {isAuthenticated && !notFound ? (
@@ -61,10 +52,6 @@ const BaseComponent: React.FC<BaseComponentProps> = ({
 const mapStateToProps = (state: Store) => ({
   auth: state.auth,
   project: state.project,
-});
-
-const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
-  clearProject: () => dispatch(clearProject()),
 });
 
 const Container = styled.div`
@@ -110,4 +97,4 @@ const Title = styled.h2`
   font-weight: 500;
 `;
 
-export default connect(mapStateToProps, mapDispatchToProps)(BaseComponent);
+export default connect(mapStateToProps)(BaseComponent);

@@ -12,7 +12,6 @@ interface BaseAuthProps {
   title: string;
   googleButtonText: string;
   otherAuth: 'SIGNUP' | 'SIGNIN';
-  clearProject: () => void;
 }
 
 const BaseAuth: React.FC<BaseAuthProps> = ({
@@ -20,12 +19,7 @@ const BaseAuth: React.FC<BaseAuthProps> = ({
   title,
   googleButtonText,
   otherAuth,
-  clearProject,
 }) => {
-  useEffect(() => {
-    clearProject();
-  }, [clearProject]);
-
   return (
     <Fragment>
       <ScrollToTop />

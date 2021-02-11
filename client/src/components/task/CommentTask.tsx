@@ -52,11 +52,12 @@ const CommentTask: React.FC<CommentTaskProps> = ({
       {signedInMember?.accessPermission !== AccessPermission.ReadOnly && (
         <form onSubmit={handleSubmit}>
           <InputComment>
-            <Avatar size='40' src={user?.avatar ?? avatar} alt='profile' />
+            <Avatar size='40' src={user?.avatar.url ?? avatar} alt='profile' />
             <input
               type='text'
               name='comment'
               placeholder='Write a comment...'
+              autoComplete='off'
               onChange={handleChange}
               value={commentData}
             />

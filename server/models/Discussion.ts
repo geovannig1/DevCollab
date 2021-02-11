@@ -4,7 +4,18 @@ export interface IDiscussion extends Document {
   project: string;
   title: string;
   description?: string;
-  attachment?: string;
+  attachment?: {
+    url: string;
+    publicId: string;
+  };
+  creator: string;
+  chats?: {
+    user: {
+      email: string;
+      avatar: string;
+    };
+    chat: string;
+  }[];
 }
 
 const discussionSchema = new Schema<IDiscussion>({
@@ -20,7 +31,31 @@ const discussionSchema = new Schema<IDiscussion>({
     type: String,
   },
   attachment: {
+    url: String,
+    publicId: String,
+  },
+  creator: {
     type: String,
+    required: true,
+  },
+  chats: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      chat: {
+        type: String,
+      },
+      date: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
+  date: {
+    type: Date,
+    default: Date.now,
   },
 });
 

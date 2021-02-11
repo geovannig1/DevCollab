@@ -65,17 +65,18 @@ export const editUser = async (req: Request, res: Response) => {
 
     //Add avatar
     if (req.file) {
-      cloudinary.uploader.upload(
-        req.file.path,
-        { folder: 'avatar' },
-        async (err, result) => {
-          user.avatar = result?.secure_url;
-          await user.save();
+      //Delete old image in the cloudinary cloud
+      cloudinary.uploader.destroy(user.avatar?.publicId ?? '');
 
-          //Delete image in the upload folder
-          await fs.unlink(req.file.path);
-        }
-      );
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'avatar',
+      });
+      user.avatar!.url = result?.secure_url ?? '';
+      user.avatar!.publicId = result?.public_id ?? '';
+      await user.save();
+
+      //Delete image in the upload folder
+      await fs.unlink(req.file.path);
     }
 
     if (newPassword) {

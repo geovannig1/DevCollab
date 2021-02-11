@@ -4,7 +4,9 @@ export interface Member {
   user: {
     _id: string;
     email?: string;
-    avatar?: string;
+    avatar?: {
+      url: string;
+    };
   };
   accessPermission?: AccessPermission;
 }
@@ -15,7 +17,9 @@ export interface Comment {
   user: {
     _id: string;
     email?: string;
-    avatar?: string;
+    avatar?: {
+      url: string;
+    };
   };
   comment: string;
 }

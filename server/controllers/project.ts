@@ -100,6 +100,10 @@ export const getProject = async (req: Request, res: Response) => {
       req.params.projectId
     ).populate('members.user', ['firstName', 'lastName', 'email', 'avatar']);
 
+    if (!project) {
+      return res.status(404).json({ msg: 'project not exist' });
+    }
+
     //Only user from the project can access
     const userExist = project?.members.filter(
       (member: any) => member.user?._id.toString() === req.user

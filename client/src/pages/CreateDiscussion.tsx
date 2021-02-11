@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
-import { useParams, Redirect, Link } from 'react-router-dom';
+import { useParams, Redirect, Link, useHistory } from 'react-router-dom';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { Store } from '../store';
@@ -42,6 +42,7 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({
   createDiscussion,
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
+  const history = useHistory();
 
   useEffect(() => {
     document.title = 'Discussions | DevCollab';
@@ -82,6 +83,7 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     createDiscussion(projectId, discussionData, attachment);
+    history.push(`/projects/${projectId}/discussions`);
   };
 
   return (
@@ -116,12 +118,14 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({
           />
         </InputContainer>
         <FileContainer>
-          <label htmlFor='attachments'>Attachments</label>
+          <label htmlFor='attachments'>Attachment</label>
           <input
             type='file'
             id='attachments'
             name='attachments'
             onChange={handleAttachmentChange}
+            accept='application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,
+            text/plain, application/pdf, image/*'
           />
         </FileContainer>
         <StyledButton extrasmall>Create Discussion</StyledButton>

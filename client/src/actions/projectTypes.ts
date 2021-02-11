@@ -19,7 +19,9 @@ export type Member = {
     firstName: string;
     lastName: string;
     email: string;
-    avatar: string;
+    avatar: {
+      url: string;
+    };
   };
 };
 export interface ProjectType {

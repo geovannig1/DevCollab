@@ -48,25 +48,28 @@ const Task: React.FC<TaskProps> = ({
           <Content>
             <ContentContainer>
               <span>{task.title}</span>
-              {task.dueDate && (
-                <DateContainer>
-                  <AccessAlarmsIcon fontSize='small' />
-                  <span>{dayjs(task.dueDate).format('DD MMM YYYY')}</span>
-                </DateContainer>
-              )}
 
-              {task.comments && (
-                <CommentContainer>
-                  <CommentOutlinedIcon fontSize='small' />
-                  <span>{task.comments.length}</span>
-                </CommentContainer>
-              )}
+              <DateCommentContainer>
+                {task.dueDate && (
+                  <DateContainer>
+                    <AccessAlarmsIcon fontSize='small' />
+                    <span>{dayjs(task.dueDate).format('DD MMM YYYY')}</span>
+                  </DateContainer>
+                )}
+
+                {task.comments && (
+                  <CommentContainer>
+                    <CommentOutlinedIcon fontSize='small' />
+                    <span>{task.comments.length}</span>
+                  </CommentContainer>
+                )}
+              </DateCommentContainer>
 
               <AvatarContainer>
                 {task.members.map((member) => (
                   <Avatar
                     key={member.user._id}
-                    src={member.user.avatar ?? avatar}
+                    src={member.user.avatar?.url ?? avatar}
                     alt='profile'
                   />
                 ))}
@@ -130,10 +133,15 @@ const AvatarContainer = styled.div`
   display: flex;
 `;
 
+const DateCommentContainer = styled.div`
+  display: flex;
+  margin: 10px 0;
+`;
+
 const DateContainer = styled.div`
   display: flex;
   align-items: center;
-  margin: 10px 0;
+  margin-right: 10px;
   background-color: ${setColor.primary};
   padding: 3px 5px;
   border-radius: 5px;
@@ -149,7 +157,6 @@ const CommentContainer = styled.div`
   display: flex;
   align-items: center;
   color: ${setColor.primaryDark};
-  margin-bottom: 5px;
   span {
     margin-left: 5px;
     font-weight: 600;

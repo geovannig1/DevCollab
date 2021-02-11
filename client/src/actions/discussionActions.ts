@@ -2,14 +2,49 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import {
   DiscussionType,
+  DISCUSSIONS_LOADED,
   DISCUSSION_LOADED,
   DISCUSSION_FAIL,
   DISCUSSION_CREATED,
+  CLEAR_DISCUSSION,
   DiscussionDispatchTypes,
 } from './discussionTypes';
 import api from '../api';
 import { setAlert } from './alertActions';
 import { MessageType } from './alertTypes';
+
+export const loadDiscussions = (projectId: string) => async (
+  dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>
+) => {
+  try {
+    const res = await api.get(`/projects/${projectId}/discussions`);
+
+    dispatch({ type: DISCUSSIONS_LOADED, payload: res.data });
+  } catch (err) {
+    dispatch({
+      type: DISCUSSION_FAIL,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
+export const loadDiscussion = (
+  projectId: string,
+  discussionId: string
+) => async (dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>) => {
+  try {
+    const res = await api.get(
+      `/projects/${projectId}/discussions/${discussionId}`
+    );
+
+    dispatch({ type: DISCUSSION_LOADED, payload: res.data });
+  } catch (err) {
+    dispatch({
+      type: DISCUSSION_FAIL,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
 
 export const createDiscussion = (
   projectId: string,
@@ -42,4 +77,10 @@ export const createDiscussion = (
       });
     }
   }
+};
+
+export const clearDiscussion = () => (
+  dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>
+) => {
+  dispatch({ type: CLEAR_DISCUSSION });
 };

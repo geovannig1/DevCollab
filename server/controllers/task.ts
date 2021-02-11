@@ -5,10 +5,6 @@ import Project from '../models/Project';
 
 export const getTasks = async (req: Request, res: Response) => {
   try {
-    const projectTask = await Task.findOne({ project: req.params.projectId })
-      .populate('tasks.$*.members.user', ['email', 'avatar'])
-      .populate('tasks.$*.comments.user', ['email', 'avatar']);
-
     const project = await Project.findById(req.params.projectId);
 
     //Only user from the project can access
@@ -17,6 +13,14 @@ export const getTasks = async (req: Request, res: Response) => {
     );
     if (userExist?.length === 0) {
       return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    const projectTask = await Task.findOne({ project: req.params.projectId })
+      .populate('tasks.$*.members.user', ['email', 'avatar'])
+      .populate('tasks.$*.comments.user', ['email', 'avatar']);
+
+    if (!projectTask) {
+      return res.status(404).json({ msg: 'Tasks not found' });
     }
 
     res.status(200).json(projectTask);
@@ -28,12 +32,6 @@ export const getTasks = async (req: Request, res: Response) => {
 
 export const getTask = async (req: Request, res: Response) => {
   try {
-    const projectTask = await Task.findOne({
-      project: req.params.projectId,
-    })
-      .populate('tasks.$*.members.user', ['email', 'avatar'])
-      .populate('tasks.$*.comments.user', ['email', 'avatar']);
-
     const project = await Project.findById(req.params.projectId);
 
     //Only user from the project can access
@@ -43,6 +41,12 @@ export const getTask = async (req: Request, res: Response) => {
     if (userExist?.length === 0) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
+
+    const projectTask = await Task.findOne({
+      project: req.params.projectId,
+    })
+      .populate('tasks.$*.members.user', ['email', 'avatar'])
+      .populate('tasks.$*.comments.user', ['email', 'avatar']);
 
     if (!projectTask) {
       return res.status(400).json({
