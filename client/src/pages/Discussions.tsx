@@ -67,6 +67,7 @@ const Discussions: React.FC<DiscussionsProps> = ({
 
       {discussions.map((discussion) => (
         <DiscussionCard
+          key={discussion._id}
           discussion={discussion}
           totalDiscussions='0'
           projectId={projectId}

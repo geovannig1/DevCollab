@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io';
 
-import createDiscussion from './createDiscussion';
+import comments from './comments';
 
 export default (io: Server, socket: Socket) => {
-  createDiscussion(io, socket);
+  comments(io, socket);
 };

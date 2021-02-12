@@ -3,7 +3,7 @@ import { Server, Socket } from 'socket.io';
 import Task from '../../models/Task';
 
 export default (io: Server, socket: Socket) => {
-  socket.on('send comment', async (data) => {
+  socket.on('send task comment', async (data) => {
     try {
       const taskProject = await Task.findOne({ project: data.projectId });
       if (taskProject) {
@@ -27,14 +27,14 @@ export default (io: Server, socket: Socket) => {
 
         const selectedTask = updatedTaskProject.get(`tasks.${data.taskId}`);
 
-        io.in(data.projectId).emit('receive comment', selectedTask);
+        io.in(data.projectId).emit('receive task comment', selectedTask);
       }
     } catch (err) {
       console.error(err.message);
     }
   });
 
-  socket.on('delete comment', async (data) => {
+  socket.on('delete task comment', async (data) => {
     try {
       const taskProject = await Task.findOne({ project: data.projectId });
 
@@ -61,7 +61,7 @@ export default (io: Server, socket: Socket) => {
 
         const selectedTask = updatedTaskProject.get(`tasks.${data.taskId}`);
 
-        io.in(data.projectId).emit('updated delete comment', selectedTask);
+        io.in(data.projectId).emit('updated delete task comment', selectedTask);
       }
     } catch (err) {
       console.error(err.message);

@@ -9,7 +9,7 @@ import avatar from '../../assets/profile-picture.png';
 import socket from '../../utils/socketio';
 import { UserType } from '../../actions/authTypes';
 import { Comment as IComment, Member } from './taskTypes';
-import Comment from './Comment';
+import Comment from '../global/Comment';
 import { AccessPermission } from '../../actions/projectTypes';
 
 interface CommentTaskProps {
@@ -37,7 +37,7 @@ const CommentTask: React.FC<CommentTaskProps> = ({
     e.preventDefault();
 
     if (commentData.trim() !== '') {
-      socket.emit('send comment', {
+      socket.emit('send task comment', {
         projectId,
         taskId,
         userId: user?._id,
@@ -74,7 +74,7 @@ const CommentTask: React.FC<CommentTaskProps> = ({
             key={comment._id}
             comment={comment}
             projectId={projectId}
-            taskId={taskId}
+            itemId={taskId}
             user={user}
           />
         ))}

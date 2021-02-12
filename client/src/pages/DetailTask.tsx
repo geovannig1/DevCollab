@@ -93,13 +93,13 @@ const DetailTask: React.FC<DetailTaskProps> = ({
     socket.emit('join project', { projectId });
 
     //Listen to new comment
-    socket.on('receive comment', (data: TaskData) => {
+    socket.on('receive task comment', (data: TaskData) => {
       setTaskData(data);
       setDefaultTaskData(data);
     });
 
     //Listen to deleted comment
-    socket.on('updated delete comment', (data: TaskData) => {
+    socket.on('updated delete task comment', (data: TaskData) => {
       setTaskData(data);
       setDefaultTaskData(data);
     });

@@ -3,6 +3,7 @@ import {
   DISCUSSION_CREATED,
   DISCUSSIONS_LOADED,
   DISCUSSION_LOADED,
+  COMMENT_RECEIVED,
   CLEAR_DISCUSSION,
   DiscussionDispatchTypes,
   DiscussionType,
@@ -30,6 +31,7 @@ const discussionReducer = (
         discussions: action.payload,
         selectedDiscussion: undefined,
       };
+    case COMMENT_RECEIVED:
     case DISCUSSION_LOADED:
       return { ...state, selectedDiscussion: action.payload, discussions: [] };
     case DISCUSSION_CREATED:

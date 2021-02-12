@@ -4,6 +4,7 @@ import {
   DiscussionType,
   DISCUSSIONS_LOADED,
   DISCUSSION_LOADED,
+  COMMENT_RECEIVED,
   DISCUSSION_FAIL,
   DISCUSSION_CREATED,
   CLEAR_DISCUSSION,
@@ -76,6 +77,20 @@ export const createDiscussion = (
         payload: { msg: err.response.statusText, status: err.response.status },
       });
     }
+  }
+};
+
+export const receiveComment = (discussionData: DiscussionType) => (
+  dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>
+) => {
+  dispatch({ type: COMMENT_RECEIVED, payload: discussionData });
+
+  try {
+  } catch (err) {
+    dispatch({
+      type: DISCUSSION_FAIL,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
   }
 };
 

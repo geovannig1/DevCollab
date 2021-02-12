@@ -1,5 +1,9 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useParams } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
 
 import SendIcon from '@material-ui/icons/Send';
 import Avatar from '../global/Avatar';
@@ -7,13 +11,33 @@ import { RoundedButton } from '../global/Button';
 import avatar from '../../assets/profile-picture.png';
 import { UserType } from '../../actions/authTypes';
 import { setColor } from '../../styles';
+import socket from '../../utils/socketio';
+import { receiveComment } from '../../actions/discussionActions';
+import { DiscussionType } from '../../actions/discussionTypes';
+import Comment from '../global/Comment';
 
 interface DiscussionCommentProps {
   user?: UserType;
+  receiveComment: (commentData: DiscussionType) => void;
+  selectedDiscussion: DiscussionType;
 }
 
-const DiscussionComment: React.FC<DiscussionCommentProps> = ({ user }) => {
+const DiscussionComment: React.FC<DiscussionCommentProps> = ({
+  user,
+  receiveComment,
+  selectedDiscussion,
+}) => {
+  const { discussionId, projectId } = useParams<{
+    discussionId: string;
+    projectId: string;
+  }>();
   const [commentData, setCommentData] = useState('');
+
+  useEffect(() => {
+    socket.on('receive discussion comment', (data: DiscussionType) => {
+      receiveComment(data);
+    });
+  }, [receiveComment]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCommentData(e.target.value);
@@ -21,8 +45,15 @@ const DiscussionComment: React.FC<DiscussionCommentProps> = ({ user }) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(commentData);
-    setCommentData('');
+    if (commentData.trim() !== '') {
+      socket.emit('send discussion comment', {
+        projectId,
+        discussionId,
+        userId: user?._id,
+        commentData,
+      });
+      setCommentData('');
+    }
   };
 
   return (
@@ -44,10 +75,25 @@ const DiscussionComment: React.FC<DiscussionCommentProps> = ({ user }) => {
         </InputComment>
       </form>
 
-      <CommentContainer></CommentContainer>
+      <CommentContainer>
+        {selectedDiscussion.comments?.map((comment) => (
+          <Comment
+            key={comment._id}
+            comment={comment}
+            projectId=''
+            itemId=''
+            user={user}
+          />
+        ))}
+      </CommentContainer>
     </Fragment>
   );
 };
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
+  receiveComment: (commentData: DiscussionType) =>
+    dispatch(receiveComment(commentData)),
+});
 
 const InputComment = styled.div`
   display: flex;
@@ -71,4 +117,4 @@ const CommentContainer = styled.div`
   min-height: 100px;
 `;
 
-export default DiscussionComment;
+export default connect(null, mapDispatchToProps)(DiscussionComment);

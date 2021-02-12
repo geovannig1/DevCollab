@@ -9,12 +9,9 @@ export interface IDiscussion extends Document {
     publicId: string;
   };
   creator: string;
-  chats?: {
-    user: {
-      email: string;
-      avatar: string;
-    };
-    chat: string;
+  comments?: {
+    user: string;
+    comment: string;
   }[];
 }
 
@@ -38,13 +35,13 @@ const discussionSchema = new Schema<IDiscussion>({
     type: String,
     required: true,
   },
-  chats: [
+  comments: [
     {
       user: {
         type: Schema.Types.ObjectId,
         ref: 'User',
       },
-      chat: {
+      comment: {
         type: String,
       },
       date: {

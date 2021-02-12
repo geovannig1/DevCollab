@@ -14,10 +14,7 @@ export const getDiscussions = async (req: Request, res: Response) => {
     const userExist = project?.members.filter(
       (member: any) => member.user?._id.toString() === req.user
     );
-    if (
-      userExist?.length === 0 ||
-      userExist?.[0].accessPermission === AccessPermission.ReadOnly
-    ) {
+    if (userExist?.length === 0) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
@@ -46,14 +43,13 @@ export const getDiscussion = async (req: Request, res: Response) => {
     const userExist = project?.members.filter(
       (member: any) => member.user?._id.toString() === req.user
     );
-    if (
-      userExist?.length === 0 ||
-      userExist?.[0].accessPermission === AccessPermission.ReadOnly
-    ) {
+    if (userExist?.length === 0) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
-    const discussion = await Discussion.findById(req.params.discussionId);
+    const discussion = await Discussion.findById(
+      req.params.discussionId
+    ).populate('comments.user', ['avatar', 'email']);
 
     if (!discussion) {
       return res.status(404).json({ msg: 'Discussion not found' });

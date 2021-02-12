@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, Redirect, Link } from 'react-router-dom';
+import { useParams, Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 
@@ -19,6 +19,7 @@ import { DiscussionInitialState } from '../reducers/discussionReducer';
 import AttachmentIcon from '@material-ui/icons/Attachment';
 import DiscussionComment from '../components/discussion/DiscussionComment';
 import { AuthInitialState } from '../reducers/authReducer';
+import socket from '../utils/socketio';
 
 interface DiscussionProps {
   loadProject: (projectId: string) => Promise<void>;
@@ -63,7 +64,12 @@ const Discussion: React.FC<DiscussionProps> = ({
 
   useEffect(() => {
     loadDiscussion(projectId, discussionId);
-  }, [loadDiscussion, projectId, discussionId]);
+
+    socket.emit('join project', { projectId: selectedProject?._id });
+    return () => {
+      socket.emit('leave project', { projectId: selectedProject?._id });
+    };
+  }, [loadDiscussion, projectId, discussionId, selectedProject?._id]);
 
   return (
     <Fragment>
@@ -99,7 +105,10 @@ const Discussion: React.FC<DiscussionProps> = ({
 
           <Line />
 
-          <DiscussionComment user={user} />
+          <DiscussionComment
+            selectedDiscussion={selectedDiscussion}
+            user={user}
+          />
         </Paper>
       )}
     </Fragment>

@@ -4,33 +4,43 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
 import { setColor, setRem, setShadow } from '../../styles';
-import { Comment as IComment } from './taskTypes';
 import avatar from '../../assets/profile-picture.png';
-import Avatar from '../global/Avatar';
-import AlertDialog from '../global/AlertDialog';
+import Avatar from './Avatar';
+import AlertDialog from './AlertDialog';
 import socket from '../../utils/socketio';
 import { UserType } from '../../actions/authTypes';
 
 interface CommentProps {
-  comment: IComment;
+  comment: {
+    _id: string;
+    date: Date;
+    user: {
+      _id: string;
+      email?: string;
+      avatar?: {
+        url: string;
+      };
+    };
+    comment: string;
+  };
   projectId: string;
-  taskId: string;
+  itemId: string;
   user?: UserType;
 }
 
 const Comment: React.FC<CommentProps> = ({
   comment,
   projectId,
-  taskId,
+  itemId,
   user,
 }) => {
   //Use relativeTime plugin
   dayjs.extend(relativeTime);
 
   const handleClick = () => {
-    socket.emit('delete comment', {
+    socket.emit('delete task comment', {
       projectId,
-      taskId,
+      itemId,
       commentId: comment._id,
     });
   };
@@ -82,6 +92,7 @@ const Header = styled.div`
   span {
     margin: 0 10px;
     font-size: ${setRem(14)};
+    color: ${setColor.lightBlack};
     font-weight: 500;
   }
 `;
