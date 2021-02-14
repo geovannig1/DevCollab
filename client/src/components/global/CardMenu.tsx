@@ -37,20 +37,6 @@ const CardMenu: React.FC<CardMenuProps> = ({
     setAnchorEl(null);
   };
 
-  const MenuHelper = React.forwardRef((props, ref) => (
-    <Menu
-      innerRef={ref}
-      autoFocus={false}
-      id='simple-menu'
-      anchorEl={anchorEl}
-      keepMounted
-      open={Boolean(anchorEl)}
-      onClose={handleClose}
-    >
-      {props.children}
-    </Menu>
-  ));
-
   return (
     <div>
       <Button

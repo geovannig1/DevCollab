@@ -76,6 +76,7 @@ const CommentTask: React.FC<CommentTaskProps> = ({
             projectId={projectId}
             itemId={taskId}
             user={user}
+            socketName='delete task comment'
           />
         ))}
       </CommentContainer>

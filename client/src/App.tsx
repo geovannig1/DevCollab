@@ -24,6 +24,7 @@ import DetailTask from './pages/DetailTask';
 import Discussions from './pages/Discussions';
 import CreateDiscussion from './pages/CreateDiscussion';
 import Discussion from './pages/Discussion';
+import UpdateDiscussion from './pages/UpdateDiscussion';
 
 interface AppProps {
   loadUser: () => Promise<void>;
@@ -89,6 +90,11 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
               exact
               path='/projects/:projectId/discussions/:discussionId'
               component={Discussion}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/discussions/:discussionId/edit'
+              component={UpdateDiscussion}
             />
             <Route component={NotFound} />
           </Switch>

@@ -10,6 +10,7 @@ export interface IDiscussion extends Document {
   };
   creator: string;
   comments?: {
+    _id?: object;
     user: string;
     comment: string;
   }[];

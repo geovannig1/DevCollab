@@ -39,14 +39,14 @@ export default (io: Server, socket: Socket) => {
       const taskProject = await Task.findOne({ project: data.projectId });
 
       if (taskProject) {
-        const task = taskProject.get(`tasks.${data.taskId}`);
+        const task = taskProject.get(`tasks.${data.itemId}`);
         const updatedTask = task.comments.filter(
           (comment: any) => comment._id.toString() !== data.commentId
         );
         task.comments = updatedTask;
 
-        taskProject.set(`tasks.${data.taskId}`, {});
-        taskProject.set(`tasks.${data.taskId}`, task);
+        taskProject.set(`tasks.${data.itemId}`, {});
+        taskProject.set(`tasks.${data.itemId}`, task);
 
         const updatedTaskProject = await (await taskProject.save())
           .populate({
@@ -59,7 +59,7 @@ export default (io: Server, socket: Socket) => {
           })
           .execPopulate();
 
-        const selectedTask = updatedTaskProject.get(`tasks.${data.taskId}`);
+        const selectedTask = updatedTaskProject.get(`tasks.${data.itemId}`);
 
         io.in(data.projectId).emit('updated delete task comment', selectedTask);
       }

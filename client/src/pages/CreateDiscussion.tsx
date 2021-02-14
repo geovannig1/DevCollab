@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
-import { useParams, Redirect, Link, useHistory } from 'react-router-dom';
+import { useParams, Redirect, useHistory } from 'react-router-dom';
 import { ThunkDispatch } from 'redux-thunk';
+import { History } from 'history';
 
 import { Store } from '../store';
 import { loadProject } from '../actions/projectActions';
@@ -11,16 +11,10 @@ import { ProjectInitialState } from '../reducers/projectReducer';
 import { setNavbar, clearNavbar } from '../actions/navbarAction';
 import { SelectedType } from '../actions/navbarTypes';
 import Paper from '../components/global/Paper';
-import { Button } from '../components/global/Button';
 import Previous from '../components/global/Previous';
-import {
-  Form,
-  InputContainer,
-  FileContainer,
-} from '../components/global/FormContainer';
 import { DiscussionType } from '../actions/discussionTypes';
 import { createDiscussion } from '../actions/discussionActions';
-import Alert from '../components/global/Alert';
+import DiscussionForm from '../components/discussion/DiscussionForm';
 
 interface CreateDiscussionProps {
   loadProject: (projectId: string) => Promise<void>;
@@ -30,7 +24,8 @@ interface CreateDiscussionProps {
   createDiscussion: (
     projectId: string,
     formData: DiscussionType,
-    attachment?: File
+    attachment?: File,
+    history?: History
   ) => Promise<void>;
 }
 
@@ -67,23 +62,9 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({
     description: '',
   });
 
-  const handleAttachmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAttachment(e.target.files?.[0]);
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setDiscussionData((prevData) => ({
-      ...prevData,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    createDiscussion(projectId, discussionData, attachment);
-    history.push(`/projects/${projectId}/discussions`);
+    createDiscussion(projectId, discussionData, attachment, history);
   };
 
   return (
@@ -93,53 +74,14 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({
         previousTo='Discussions'
         title={discussionData.title.trim() || 'Create Discussion'}
       />
-      <Form onSubmit={handleSubmit}>
-        <InputContainer>
-          <label htmlFor='title'>
-            Title <span>*</span>
-          </label>
-          <input
-            type='text'
-            id='title'
-            placeholder='Discussion title'
-            name='title'
-            autoComplete='off'
-            onChange={handleChange}
-          />
-        </InputContainer>
-        <InputContainer>
-          <label htmlFor='description'>Description</label>
-          <textarea
-            rows={8}
-            id='description'
-            name='description'
-            placeholder='Describe the discussion'
-            onChange={handleChange}
-          />
-        </InputContainer>
-        <FileContainer>
-          <label htmlFor='attachments'>Attachment</label>
-          <input
-            type='file'
-            id='attachments'
-            name='attachments'
-            onChange={handleAttachmentChange}
-            accept='application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,
-            text/plain, application/pdf, image/*'
-          />
-        </FileContainer>
-        <StyledButton extrasmall>Create Discussion</StyledButton>
-        <StyledButton
-          as={Link}
-          to={`/projects/${projectId}/discussions`}
-          extrasmall={'extrasmall' && 1}
-          outline={'outline' && 1}
-        >
-          Cancel
-        </StyledButton>
-      </Form>
 
-      <Alert />
+      <DiscussionForm
+        handleSubmit={handleSubmit}
+        projectId={projectId}
+        setAttachment={setAttachment}
+        setDiscussionData={setDiscussionData}
+        discussionData={discussionData}
+      />
     </Paper>
   );
 };
@@ -155,12 +97,9 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   createDiscussion: (
     projectId: string,
     formData: DiscussionType,
-    attachment?: File
-  ) => dispatch(createDiscussion(projectId, formData, attachment)),
+    attachment?: File,
+    history?: History
+  ) => dispatch(createDiscussion(projectId, formData, attachment, history)),
 });
-
-const StyledButton = styled(Button)`
-  margin: 20px 10px 10px 0;
-`;
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateDiscussion);

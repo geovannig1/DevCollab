@@ -69,7 +69,7 @@ const Discussions: React.FC<DiscussionsProps> = ({
         <DiscussionCard
           key={discussion._id}
           discussion={discussion}
-          totalDiscussions='0'
+          totalDiscussions={discussion.comments?.length ?? 0}
           projectId={projectId}
         />
       ))}

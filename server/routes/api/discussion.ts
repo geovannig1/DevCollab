@@ -9,6 +9,8 @@ import {
   createDiscussion,
   getDiscussions,
   getDiscussion,
+  updateDiscussion,
+  deleteDiscussion,
 } from '../../controllers/discussion';
 import checkObjectId from '../../middlewares/checkObjectId';
 
@@ -49,6 +51,33 @@ router.post(
   check('title', "Title can't be empty").notEmpty(),
   validateInput,
   createDiscussion
+);
+
+/**
+ *  @route POST api/projects/:projectId/discussions/:discussionId
+ *  @desc Update a discussion
+ *  @access Private
+ */
+router.patch(
+  '/:projectId/discussions/:discussionId',
+  auth,
+  [checkObjectId('projectId'), checkObjectId('discussionId')],
+  Upload.single('attachment'),
+  check('title', "Title can't be empty").notEmpty(),
+  validateInput,
+  updateDiscussion
+);
+
+/**
+ *  @route DELETE api/projects/:projectId/discussions/:discussionId
+ *  @desc Delete a discussion
+ *  @access Private
+ */
+router.delete(
+  '/:projectId/discussions/:discussionId',
+  auth,
+  [checkObjectId('projectId'), checkObjectId('discussionId')],
+  deleteDiscussion
 );
 
 export default router;

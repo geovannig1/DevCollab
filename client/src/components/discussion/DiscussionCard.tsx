@@ -8,10 +8,11 @@ import { setColor, setShadow, setRem } from '../../styles';
 import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
 import MoreHorizOutlinedIcon from '@material-ui/icons/MoreHorizOutlined';
 import { DiscussionType } from '../../actions/discussionTypes';
+import CardMenu from '../global/CardMenu';
 
 interface DiscussionCardProps {
   discussion: DiscussionType;
-  totalDiscussions: string;
+  totalDiscussions: number;
   projectId: string;
 }
 
@@ -24,28 +25,44 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
   dayjs.extend(relativeTime);
 
   return (
-    <StyledLink to={`/projects/${projectId}/discussions/${discussion._id}`}>
-      <Container>
-        <ContainerLeft>
-          <CommentOutlinedIcon />
-          <span>{totalDiscussions}</span>
-          <h4>{discussion.title}</h4>
-        </ContainerLeft>
-        <ContainerRight>
-          <span>{dayjs(discussion.date).fromNow()}</span>
-          <MoreHorizOutlinedIcon />
-        </ContainerRight>
-      </Container>
-    </StyledLink>
+    <Container>
+      <StyledLink to={`/projects/${projectId}/discussions/${discussion._id}`}>
+        <Card>
+          <ContainerLeft>
+            <CommentOutlinedIcon />
+            <span>{totalDiscussions}</span>
+            <h4>{discussion.title}</h4>
+          </ContainerLeft>
+          <ContainerRight>
+            <span>{dayjs(discussion.date).fromNow()}</span>
+          </ContainerRight>
+        </Card>
+      </StyledLink>
+
+      <MenuContainer>
+        <CardMenu
+          deleteItem={() => {}}
+          deleteText={`Are you sure want to delete ${discussion.title} discussion? this process can't be undone.`}
+          deleteTitle='Delete Discussion'
+          editLink={`/projects/${projectId}/discussions/${discussion._id}/edit`}
+        >
+          <HorizIcon fontSize='large' />
+        </CardMenu>
+      </MenuContainer>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  position: relative;
+`;
 
 const StyledLink = styled(Link)`
   text-decoration: none;
   outline: none;
 `;
 
-const Container = styled.div`
+const Card = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -82,14 +99,32 @@ const ContainerLeft = styled.div`
 `;
 
 const ContainerRight = styled.div`
-  display: flex;
-  align-items: center;
   color: ${setColor.mainBlack};
   span {
     font-size: ${setRem(14)};
     justify-items: flex-end;
     font-weight: 500;
-    margin: 0 15px;
+    margin-right: 55px;
+  }
+`;
+
+const MenuContainer = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-right: 25px;
+  margin-top: 11px;
+  cursor: pointer;
+`;
+
+const HorizIcon = styled(MoreHorizOutlinedIcon)`
+  color: ${setColor.lightBlack};
+  &:hover {
+    transition: 0.2s ease-in-out;
+    color: ${setColor.mainBlack};
+  }
+  &:active {
+    color: ${setColor.lightBlack};
   }
 `;
 

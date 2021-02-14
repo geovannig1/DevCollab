@@ -1,4 +1,5 @@
 import { ThunkDispatch } from 'redux-thunk';
+import { History } from 'history';
 
 import {
   DiscussionType,
@@ -50,7 +51,8 @@ export const loadDiscussion = (
 export const createDiscussion = (
   projectId: string,
   formData: DiscussionType,
-  attachment?: File
+  attachment?: File,
+  history?: History
 ) => async (dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>) => {
   try {
     //Create multipart/form-data
@@ -65,6 +67,8 @@ export const createDiscussion = (
     const res = await api.post(`/projects/${projectId}/discussions`, fd);
 
     dispatch({ type: DISCUSSION_CREATED, payload: res.data });
+
+    history?.push(`/projects/${projectId}/discussions`);
   } catch (err) {
     const errors = err.response.data.errors;
     if (errors) {

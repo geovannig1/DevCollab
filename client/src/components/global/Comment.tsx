@@ -26,6 +26,7 @@ interface CommentProps {
   projectId: string;
   itemId: string;
   user?: UserType;
+  socketName: string;
 }
 
 const Comment: React.FC<CommentProps> = ({
@@ -33,12 +34,13 @@ const Comment: React.FC<CommentProps> = ({
   projectId,
   itemId,
   user,
+  socketName,
 }) => {
   //Use relativeTime plugin
   dayjs.extend(relativeTime);
 
   const handleClick = () => {
-    socket.emit('delete task comment', {
+    socket.emit(socketName, {
       projectId,
       itemId,
       commentId: comment._id,

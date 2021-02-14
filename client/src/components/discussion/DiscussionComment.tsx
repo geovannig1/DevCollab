@@ -80,9 +80,10 @@ const DiscussionComment: React.FC<DiscussionCommentProps> = ({
           <Comment
             key={comment._id}
             comment={comment}
-            projectId=''
-            itemId=''
+            projectId={projectId}
+            itemId={discussionId}
             user={user}
+            socketName='delete discussion comment'
           />
         ))}
       </CommentContainer>

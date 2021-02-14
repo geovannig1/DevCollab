@@ -24,4 +24,29 @@ export default (io: Server, socket: Socket) => {
       console.error(err.message);
     }
   });
+
+  socket.on('delete discussion comment', async (data) => {
+    try {
+      const discussion = await Discussion.findById(data.itemId);
+
+      if (discussion) {
+        const updatedDiscussion = discussion.comments?.filter(
+          (comment) => comment._id?.toString() !== data.commentId
+        );
+
+        discussion.comments = updatedDiscussion;
+
+        await (await discussion.save())
+          .populate({
+            path: 'comments.user',
+            select: ['avatar', 'email'],
+          })
+          .execPopulate();
+      }
+
+      io.in(data.projectId).emit('receive discussion comment', discussion);
+    } catch (err) {
+      console.error(err.message);
+    }
+  });
 };
