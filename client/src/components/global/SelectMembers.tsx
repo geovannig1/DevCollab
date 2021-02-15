@@ -7,6 +7,7 @@ import { setColor, setRem } from '../../styles';
 import avatar from '../../assets/profile-picture.png';
 import { TaskData } from '../task/taskTypes';
 import Avatar from './Avatar';
+import { MeetingTypes } from '../../actions/meetingTypes';
 
 interface SelectOption {
   value: string;
@@ -15,13 +16,15 @@ interface SelectOption {
 
 interface SelectMembersProps {
   selectedProject?: ProjectType;
-  setTaskData: React.Dispatch<React.SetStateAction<TaskData>>;
+  setData:
+    | React.Dispatch<React.SetStateAction<TaskData>>
+    | React.Dispatch<React.SetStateAction<MeetingTypes>>;
   selectData?: Member[];
 }
 
 const SelectMembers: React.FC<SelectMembersProps> = ({
   selectedProject,
-  setTaskData,
+  setData,
   selectData,
 }) => {
   //Create option for the select options
@@ -53,7 +56,7 @@ const SelectMembers: React.FC<SelectMembersProps> = ({
       },
     }));
 
-    setTaskData((prevData) => ({
+    setData((prevData: any) => ({
       ...prevData,
       members,
     }));

@@ -125,7 +125,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({
           <label htmlFor='members'>Members</label>
           <SelectMembers
             selectedProject={selectedProject}
-            setTaskData={setTaskData}
+            setData={setTaskData}
           />
         </InputContainer>
         <DateContaiener>

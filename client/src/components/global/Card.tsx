@@ -20,6 +20,8 @@ interface CardProps {
   editLink: string;
   members?: Member[];
   user?: UserType;
+  width?: string;
+  height?: string;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -33,6 +35,8 @@ const Card: React.FC<CardProps> = ({
   editLink,
   members,
   user,
+  width,
+  height,
 }) => {
   const classes = useStyles();
 
@@ -42,9 +46,12 @@ const Card: React.FC<CardProps> = ({
   return (
     <Fragment>
       <StyledLink to={link}>
-        <Container>
+        <Container width={width} height={height}>
           <Title>{title}</Title>
-          <Description>{description}</Description>
+          <Description>
+            {description?.substring(0, 150)}
+            {(description?.length ?? 0) > 150 && '...'}
+          </Description>
         </Container>
       </StyledLink>
 
@@ -70,11 +77,11 @@ const StyledLink = styled(Link)`
   outline: none;
 `;
 
-const Container = styled.div`
+const Container = styled.div<{ width?: string; height?: string }>`
   background-color: ${setColor.mainWhite};
   position: relative;
-  width: 250px;
-  height: 300px;
+  width: ${({ width }) => width ?? '250'}px;
+  height: ${({ height }) => height ?? '300'}px;
   cursor: pointer;
   padding: 20px;
   word-wrap: break-word;

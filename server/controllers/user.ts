@@ -50,7 +50,7 @@ export const editUser = async (req: Request, res: Response) => {
     //Edit user data
     if (firstName) user.firstName = firstName.trim();
     if (lastName) user.lastName = lastName.trim();
-    if (email) {
+    if (email && email !== user.email) {
       const users = await User.findOne({ email });
       if (users && email !== user.email) {
         return res

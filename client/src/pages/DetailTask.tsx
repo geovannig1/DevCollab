@@ -246,7 +246,7 @@ const DetailTask: React.FC<DetailTaskProps> = ({
                 <SelectMembers
                   selectedProject={selectedProject}
                   selectData={taskDataMembers}
-                  setTaskData={setTaskData}
+                  setData={setTaskData}
                 />
               </SelectContainer>
             )}

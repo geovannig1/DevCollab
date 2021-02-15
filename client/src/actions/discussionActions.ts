@@ -5,6 +5,8 @@ import {
   DiscussionType,
   DISCUSSIONS_LOADED,
   DISCUSSION_LOADED,
+  DISCUSSION_UPDATED,
+  DISCUSSION_DELETED,
   COMMENT_RECEIVED,
   DISCUSSION_FAIL,
   DISCUSSION_CREATED,
@@ -15,6 +17,7 @@ import api from '../api';
 import { setAlert } from './alertActions';
 import { MessageType } from './alertTypes';
 
+//Get all discussions
 export const loadDiscussions = (projectId: string) => async (
   dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>
 ) => {
@@ -30,6 +33,7 @@ export const loadDiscussions = (projectId: string) => async (
   }
 };
 
+//Get a discussion
 export const loadDiscussion = (
   projectId: string,
   discussionId: string
@@ -48,11 +52,12 @@ export const loadDiscussion = (
   }
 };
 
+//Create a new discussion
 export const createDiscussion = (
+  history: History,
   projectId: string,
   formData: DiscussionType,
-  attachment?: File,
-  history?: History
+  attachment?: File
 ) => async (dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>) => {
   try {
     //Create multipart/form-data
@@ -68,7 +73,7 @@ export const createDiscussion = (
 
     dispatch({ type: DISCUSSION_CREATED, payload: res.data });
 
-    history?.push(`/projects/${projectId}/discussions`);
+    history.push(`/projects/${projectId}/discussions`);
   } catch (err) {
     const errors = err.response.data.errors;
     if (errors) {
@@ -84,12 +89,56 @@ export const createDiscussion = (
   }
 };
 
-export const receiveComment = (discussionData: DiscussionType) => (
-  dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>
-) => {
-  dispatch({ type: COMMENT_RECEIVED, payload: discussionData });
-
+//Update a discussion
+export const updateDiscussion = (
+  history: History,
+  projectId: string,
+  discussionId: string,
+  formData: DiscussionType,
+  attachment?: File
+) => async (dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>) => {
   try {
+    //Create multipart/form-data
+    const fd = new FormData();
+
+    const { title, description } = formData;
+
+    fd.append('title', title);
+    fd.append('description', description);
+    if (attachment) fd.append('attachment', attachment);
+
+    const res = await api.patch(
+      `/projects/${projectId}/discussions/${discussionId}`,
+      fd
+    );
+
+    dispatch({ type: DISCUSSION_UPDATED, payload: res.data });
+
+    history.push(`/projects/${projectId}/discussions`);
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error: any) =>
+        dispatch(setAlert(error.msg, MessageType.Fail, error.param))
+      );
+
+      dispatch({
+        type: DISCUSSION_FAIL,
+        payload: { msg: err.response.statusText, status: err.response.status },
+      });
+    }
+  }
+};
+
+//Delete a discussion
+export const deleteDiscussion = (
+  projectId: string,
+  discussionId: string
+) => async (dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>) => {
+  try {
+    await api.delete(`/projects/${projectId}/discussions/${discussionId}`);
+
+    dispatch({ type: DISCUSSION_DELETED, payload: discussionId });
   } catch (err) {
     dispatch({
       type: DISCUSSION_FAIL,
@@ -98,6 +147,21 @@ export const receiveComment = (discussionData: DiscussionType) => (
   }
 };
 
+//Receive a comment
+export const receiveComment = (discussionData: DiscussionType) => (
+  dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>
+) => {
+  try {
+    dispatch({ type: COMMENT_RECEIVED, payload: discussionData });
+  } catch (err) {
+    dispatch({
+      type: DISCUSSION_FAIL,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
+//Clear all discussion
 export const clearDiscussion = () => (
   dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>
 ) => {

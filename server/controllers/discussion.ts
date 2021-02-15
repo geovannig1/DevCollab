@@ -190,7 +190,9 @@ export const deleteDiscussion = async (req: Request, res: Response) => {
     }
 
     //Delete file in the cloudinary cloud
-    await cloudinary.uploader.destroy(discussion.attachment?.publicId ?? '');
+    if (discussion.attachment?.publicId) {
+      await cloudinary.uploader.destroy(discussion.attachment?.publicId ?? '');
+    }
 
     //Remove discussion
     await discussion.remove();

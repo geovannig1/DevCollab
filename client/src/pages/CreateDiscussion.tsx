@@ -22,10 +22,10 @@ interface CreateDiscussionProps {
   clearNavbar: () => void;
   project: ProjectInitialState;
   createDiscussion: (
+    history: History,
     projectId: string,
     formData: DiscussionType,
-    attachment?: File,
-    history?: History
+    attachment?: File
   ) => Promise<void>;
 }
 
@@ -64,7 +64,7 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    createDiscussion(projectId, discussionData, attachment, history);
+    createDiscussion(history, projectId, discussionData, attachment);
   };
 
   return (
@@ -95,11 +95,11 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   clearNavbar: () => dispatch(clearNavbar()),
   createDiscussion: (
+    history: History,
     projectId: string,
     formData: DiscussionType,
-    attachment?: File,
-    history?: History
-  ) => dispatch(createDiscussion(projectId, formData, attachment, history)),
+    attachment?: File
+  ) => dispatch(createDiscussion(history, projectId, formData, attachment)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateDiscussion);

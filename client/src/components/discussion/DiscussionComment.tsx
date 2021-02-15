@@ -1,6 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
@@ -15,22 +14,21 @@ import socket from '../../utils/socketio';
 import { receiveComment } from '../../actions/discussionActions';
 import { DiscussionType } from '../../actions/discussionTypes';
 import Comment from '../global/Comment';
+import { AccessPermission, ProjectType } from '../../actions/projectTypes';
 
 interface DiscussionCommentProps {
   user?: UserType;
   receiveComment: (commentData: DiscussionType) => void;
   selectedDiscussion: DiscussionType;
+  selectedProject?: ProjectType;
 }
 
 const DiscussionComment: React.FC<DiscussionCommentProps> = ({
   user,
   receiveComment,
   selectedDiscussion,
+  selectedProject,
 }) => {
-  const { discussionId, projectId } = useParams<{
-    discussionId: string;
-    projectId: string;
-  }>();
   const [commentData, setCommentData] = useState('');
 
   useEffect(() => {
@@ -47,8 +45,8 @@ const DiscussionComment: React.FC<DiscussionCommentProps> = ({
     e.preventDefault();
     if (commentData.trim() !== '') {
       socket.emit('send discussion comment', {
-        projectId,
-        discussionId,
+        projectId: selectedProject?._id,
+        discussionId: selectedDiscussion._id,
         userId: user?._id,
         commentData,
       });
@@ -56,32 +54,39 @@ const DiscussionComment: React.FC<DiscussionCommentProps> = ({
     }
   };
 
+  //Find user in the project
+  const findUser = selectedProject?.members?.find(
+    (member) => member.user._id === user?._id
+  );
+
   return (
     <Fragment>
-      <form onSubmit={handleSubmit}>
-        <InputComment>
-          <Avatar size='40' src={user?.avatar.url ?? avatar} alt='profile' />
-          <input
-            type='text'
-            name='comment'
-            placeholder='Write a comment...'
-            autoComplete='off'
-            onChange={handleChange}
-            value={commentData}
-          />
-          <RoundedButton size='40'>
-            <SendIcon fontSize='small' />
-          </RoundedButton>
-        </InputComment>
-      </form>
+      {findUser?.accessPermission !== AccessPermission.ReadOnly && (
+        <form onSubmit={handleSubmit}>
+          <InputComment>
+            <Avatar size='40' src={user?.avatar.url ?? avatar} alt='profile' />
+            <input
+              type='text'
+              name='comment'
+              placeholder='Write a comment...'
+              autoComplete='off'
+              onChange={handleChange}
+              value={commentData}
+            />
+            <RoundedButton size='40'>
+              <SendIcon fontSize='small' />
+            </RoundedButton>
+          </InputComment>
+        </form>
+      )}
 
       <CommentContainer>
         {selectedDiscussion.comments?.map((comment) => (
           <Comment
             key={comment._id}
             comment={comment}
-            projectId={projectId}
-            itemId={discussionId}
+            projectId={selectedProject?._id ?? ''}
+            itemId={selectedDiscussion._id ?? ''}
             user={user}
             socketName='delete discussion comment'
           />

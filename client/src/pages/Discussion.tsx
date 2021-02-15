@@ -107,6 +107,7 @@ const Discussion: React.FC<DiscussionProps> = ({
 
           <DiscussionComment
             selectedDiscussion={selectedDiscussion}
+            selectedProject={selectedProject}
             user={user}
           />
         </Paper>

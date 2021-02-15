@@ -3,6 +3,8 @@ import {
   DISCUSSION_CREATED,
   DISCUSSIONS_LOADED,
   DISCUSSION_LOADED,
+  DISCUSSION_UPDATED,
+  DISCUSSION_DELETED,
   COMMENT_RECEIVED,
   CLEAR_DISCUSSION,
   DiscussionDispatchTypes,
@@ -36,6 +38,20 @@ const discussionReducer = (
       return { ...state, selectedDiscussion: action.payload, discussions: [] };
     case DISCUSSION_CREATED:
       return { ...state, discussions: [action.payload, ...state.discussions] };
+    case DISCUSSION_UPDATED:
+      return {
+        ...state,
+        discussions: state.discussions.map((discussion) =>
+          discussion._id === action.payload._id ? action.payload : discussion
+        ),
+      };
+    case DISCUSSION_DELETED:
+      return {
+        ...state,
+        discussions: state.discussions.filter(
+          (discussion) => discussion._id !== action.payload
+        ),
+      };
     case DISCUSSION_FAIL:
       return { ...state, discussionFail: action.payload };
     case CLEAR_DISCUSSION:

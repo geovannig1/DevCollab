@@ -1,8 +1,10 @@
 export const DISCUSSIONS_LOADED = 'DISCUSSIONS_LOADED';
 export const DISCUSSION_LOADED = 'DISCUSSION_LOADED';
 export const DISCUSSION_CREATED = 'DISCUSSION_CREATED';
-export const COMMENT_RECEIVED = 'COMMENT_RECEIVED';
+export const DISCUSSION_UPDATED = 'DISCUSSION_UPDATED';
+export const DISCUSSION_DELETED = 'DISCUSSION_DELETED';
 export const DISCUSSION_FAIL = 'DISCUSSION_FAIL';
+export const COMMENT_RECEIVED = 'COMMENT_RECEIVED';
 export const CLEAR_DISCUSSION = 'CLEAR_DISCUSSION';
 
 export interface DiscussionType {
@@ -48,6 +50,16 @@ export interface DiscussionCreated {
   payload: DiscussionType;
 }
 
+export interface DiscussionUpdated {
+  type: typeof DISCUSSION_UPDATED;
+  payload: DiscussionType;
+}
+
+export interface DiscussionDeleted {
+  type: typeof DISCUSSION_DELETED;
+  payload: string;
+}
+
 export interface DiscussionFail {
   type: typeof DISCUSSION_FAIL;
   payload: { msg: string; status: string };
@@ -61,6 +73,8 @@ export type DiscussionDispatchTypes =
   | DiscussionsLoaded
   | DiscussionLoaded
   | DiscussionCreated
+  | DiscussionUpdated
+  | DiscussionDeleted
   | CommentReceived
   | DiscussionFail
   | ClearDiscussion;

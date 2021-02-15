@@ -3,30 +3,51 @@ import styled from 'styled-components';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Link } from 'react-router-dom';
+import { AnyAction } from 'redux';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import { setColor, setShadow, setRem } from '../../styles';
 import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
 import MoreHorizOutlinedIcon from '@material-ui/icons/MoreHorizOutlined';
 import { DiscussionType } from '../../actions/discussionTypes';
 import CardMenu from '../global/CardMenu';
+import { deleteDiscussion } from '../../actions/discussionActions';
+import { AccessPermission, ProjectType } from '../../actions/projectTypes';
+import { UserType } from '../../actions/authTypes';
 
 interface DiscussionCardProps {
   discussion: DiscussionType;
   totalDiscussions: number;
-  projectId: string;
+  selectedProject?: ProjectType;
+  deleteDiscussion: (projectId: string, discussionId: string) => Promise<void>;
+  user?: UserType;
 }
 
 const DiscussionCard: React.FC<DiscussionCardProps> = ({
   discussion,
   totalDiscussions,
-  projectId,
+  selectedProject,
+  deleteDiscussion,
+  user,
 }) => {
   //Extend dayjs with relativeTime
   dayjs.extend(relativeTime);
 
+  const handleDelete = () => {
+    deleteDiscussion(selectedProject?._id ?? '', discussion._id ?? '');
+  };
+
+  //Find user in the project
+  const findUser = selectedProject?.members?.find(
+    (member) => member.user._id === user?._id
+  );
+
   return (
     <Container>
-      <StyledLink to={`/projects/${projectId}/discussions/${discussion._id}`}>
+      <StyledLink
+        to={`/projects/${selectedProject?._id}/discussions/${discussion._id}`}
+      >
         <Card>
           <ContainerLeft>
             <CommentOutlinedIcon />
@@ -38,20 +59,26 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
           </ContainerRight>
         </Card>
       </StyledLink>
-
-      <MenuContainer>
-        <CardMenu
-          deleteItem={() => {}}
-          deleteText={`Are you sure want to delete ${discussion.title} discussion? this process can't be undone.`}
-          deleteTitle='Delete Discussion'
-          editLink={`/projects/${projectId}/discussions/${discussion._id}/edit`}
-        >
-          <HorizIcon fontSize='large' />
-        </CardMenu>
-      </MenuContainer>
+      {findUser?.accessPermission !== AccessPermission.ReadOnly && (
+        <MenuContainer>
+          <CardMenu
+            deleteItem={handleDelete}
+            deleteText={`Are you sure want to delete ${discussion.title} discussion? this process can't be undone.`}
+            deleteTitle='Delete Discussion'
+            editLink={`/projects/${selectedProject?._id}/discussions/${discussion._id}/edit`}
+          >
+            <HorizIcon fontSize='large' />
+          </CardMenu>
+        </MenuContainer>
+      )}
     </Container>
   );
 };
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
+  deleteDiscussion: (projectId: string, discussionId: string) =>
+    dispatch(deleteDiscussion(projectId, discussionId)),
+});
 
 const Container = styled.div`
   position: relative;
@@ -128,4 +155,4 @@ const HorizIcon = styled(MoreHorizOutlinedIcon)`
   }
 `;
 
-export default DiscussionCard;
+export default connect(null, mapDispatchToProps)(DiscussionCard);

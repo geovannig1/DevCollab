@@ -1,45 +1,38 @@
 import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
-import { useParams, Redirect, Link } from 'react-router-dom';
 import { ThunkDispatch } from 'redux-thunk';
+import { useParams, Redirect, Link } from 'react-router-dom';
+import styled from 'styled-components';
+import { Button } from '../components/global/Button';
 
+import { setColor } from '../styles';
 import { Store } from '../store';
 import { loadProject } from '../actions/projectActions';
 import { ProjectInitialState } from '../reducers/projectReducer';
 import { setNavbar, clearNavbar } from '../actions/navbarAction';
 import { SelectedType } from '../actions/navbarTypes';
-import { Button } from '../components/global/Button';
 import AddIcon from '@material-ui/icons/Add';
-import DiscussionCard from '../components/discussion/DiscussionCard';
-import { DiscussionInitialState } from '../reducers/discussionReducer';
-import { loadDiscussions } from '../actions/discussionActions';
-import { AuthInitialState } from '../reducers/authReducer';
+import RoomCard from '../components/meeting/RoomCard';
 
-interface DiscussionsProps {
+interface MeetingRoomsProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
-  loadDiscussions: (projectId: string) => Promise<void>;
   project: ProjectInitialState;
-  discussion: DiscussionInitialState;
-  auth: AuthInitialState;
 }
 
-const Discussions: React.FC<DiscussionsProps> = ({
+const MeetingRooms: React.FC<MeetingRoomsProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
   project: { selectedProject, projectError },
-  discussion: { discussions },
-  auth: { user },
-  loadDiscussions,
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
 
   useEffect(() => {
-    document.title = 'Discussions | DevCollab';
-    setNavbar(SelectedType.Discussions);
+    document.title = 'Meeting Rooms | DevCollab';
+    setNavbar(SelectedType.Meeting);
 
     !selectedProject && loadProject(projectId);
     projectError && <Redirect to='/projects' />;
@@ -53,45 +46,40 @@ const Discussions: React.FC<DiscussionsProps> = ({
     setNavbar,
     clearNavbar,
   ]);
-
-  useEffect(() => {
-    loadDiscussions(projectId);
-  }, [loadDiscussions, projectId]);
+  const handleDelete = async () => {};
 
   return (
     <Fragment>
       <Button
         as={Link}
-        to={`/projects/${projectId}/create-discussion`}
+        to={`/projects/${projectId}/create-room`}
         extrasmall={'extrasmall' && 1}
       >
-        <AddIcon /> New Discussion
+        <AddIcon /> New Room
       </Button>
 
-      {discussions.map((discussion) => (
-        <DiscussionCard
-          key={discussion._id}
-          discussion={discussion}
-          totalDiscussions={discussion.comments?.length ?? 0}
-          selectedProject={selectedProject}
-          user={user}
-        />
-      ))}
+      <Container>
+        <RoomCard />
+      </Container>
     </Fragment>
   );
 };
 
 const mapStateToProps = (state: Store) => ({
   project: state.project,
-  discussion: state.discussion,
-  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   clearNavbar: () => dispatch(clearNavbar()),
-  loadDiscussions: (projectId: string) => dispatch(loadDiscussions(projectId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Discussions);
+const Container = styled.div`
+  margin: 15px 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 50px 20px;
+`;
+
+export default connect(mapStateToProps, mapDispatchToProps)(MeetingRooms);

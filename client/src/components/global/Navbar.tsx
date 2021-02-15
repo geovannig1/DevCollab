@@ -55,7 +55,10 @@ const Navbar: React.FC<NavbarProps> = ({
         <div />
       </StyledLink>
 
-      <StyledLink to='#' selected={navbar.selected === SelectedType.Meeting}>
+      <StyledLink
+        to={`/projects/${selectedProject?._id}/meeting-rooms`}
+        selected={navbar.selected === SelectedType.Meeting}
+      >
         <VideocamIcon />
         <Text>Meeting Rooms</Text>
         <div />

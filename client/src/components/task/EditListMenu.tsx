@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 

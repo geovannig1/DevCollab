@@ -19,10 +19,6 @@ export const getTasks = async (req: Request, res: Response) => {
       .populate('tasks.$*.members.user', ['email', 'avatar'])
       .populate('tasks.$*.comments.user', ['email', 'avatar']);
 
-    if (!projectTask) {
-      return res.status(404).json({ msg: 'Tasks not found' });
-    }
-
     res.status(200).json(projectTask);
   } catch (err) {
     console.error(err.message);

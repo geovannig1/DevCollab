@@ -25,6 +25,8 @@ import Discussions from './pages/Discussions';
 import CreateDiscussion from './pages/CreateDiscussion';
 import Discussion from './pages/Discussion';
 import UpdateDiscussion from './pages/UpdateDiscussion';
+import MeetingRooms from './pages/MeetingRooms';
+import CreateRoom from './pages/CreateRoom';
 
 interface AppProps {
   loadUser: () => Promise<void>;
@@ -95,6 +97,16 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
               exact
               path='/projects/:projectId/discussions/:discussionId/edit'
               component={UpdateDiscussion}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/meeting-rooms'
+              component={MeetingRooms}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/create-room'
+              component={CreateRoom}
             />
             <Route component={NotFound} />
           </Switch>
