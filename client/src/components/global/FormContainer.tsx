@@ -3,6 +3,7 @@ import { setColor, setRem } from '../../styles';
 
 export const Form = styled.form`
   word-wrap: break-word;
+  margin-bottom: 10px;
   span {
     color: ${setColor.mainRed};
   }

@@ -163,7 +163,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
 });
 
 const StyledButton = styled(Button)`
-  margin-top: 10px;
+  margin-top: 15px;
   margin-right: 10px;
 `;
 

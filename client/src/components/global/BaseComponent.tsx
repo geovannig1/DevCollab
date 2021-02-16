@@ -10,20 +10,23 @@ import Sidebar from '../sidebar/Sidebar';
 import { AuthInitialState } from '../../reducers/authReducer';
 import { ProjectInitialState } from '../../reducers/projectReducer';
 import Navbar from '../global/Navbar';
+import { MeetingInitialState } from '../../reducers/meetingReducer';
 
 interface BaseComponentProps {
   auth: AuthInitialState;
   project: ProjectInitialState;
+  meeting: MeetingInitialState;
 }
 
 const BaseComponent: React.FC<BaseComponentProps> = ({
   children,
   auth: { isAuthenticated, notFound },
   project: { selectedProject },
+  meeting: { selectedMeeting },
 }) => {
   return (
     <Fragment>
-      {isAuthenticated && !notFound ? (
+      {isAuthenticated && !notFound && !selectedMeeting ? (
         <Container>
           <Sidebar />
           <ChildrenContainer>
@@ -52,6 +55,7 @@ const BaseComponent: React.FC<BaseComponentProps> = ({
 const mapStateToProps = (state: Store) => ({
   auth: state.auth,
   project: state.project,
+  meeting: state.meeting,
 });
 
 const Container = styled.div`

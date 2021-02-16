@@ -12,13 +12,12 @@ import {
 } from '../actions/discussionTypes';
 
 export interface DiscussionInitialState {
-  discussions: DiscussionType[];
-  discussionFail: object;
+  discussions?: DiscussionType[];
   selectedDiscussion?: DiscussionType;
+  discussionFail: object;
 }
 
 const discussionInitialState: DiscussionInitialState = {
-  discussions: [],
   discussionFail: {},
 };
 
@@ -35,20 +34,27 @@ const discussionReducer = (
       };
     case COMMENT_RECEIVED:
     case DISCUSSION_LOADED:
-      return { ...state, selectedDiscussion: action.payload, discussions: [] };
+      return {
+        ...state,
+        selectedDiscussion: action.payload,
+        discussions: undefined,
+      };
     case DISCUSSION_CREATED:
-      return { ...state, discussions: [action.payload, ...state.discussions] };
+      return {
+        ...state,
+        discussions: [action.payload, ...(state.discussions ?? [])],
+      };
     case DISCUSSION_UPDATED:
       return {
         ...state,
-        discussions: state.discussions.map((discussion) =>
+        discussions: state.discussions?.map((discussion) =>
           discussion._id === action.payload._id ? action.payload : discussion
         ),
       };
     case DISCUSSION_DELETED:
       return {
         ...state,
-        discussions: state.discussions.filter(
+        discussions: state.discussions?.filter(
           (discussion) => discussion._id !== action.payload
         ),
       };
@@ -56,7 +62,7 @@ const discussionReducer = (
       return { ...state, discussionFail: action.payload };
     case CLEAR_DISCUSSION:
       return {
-        discussions: [],
+        discussions: undefined,
         discussionFail: {},
         selectedDiscussion: undefined,
       };

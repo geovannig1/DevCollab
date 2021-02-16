@@ -95,7 +95,8 @@ const DiscussionForm: React.FC<DiscussionFormProps> = ({
 };
 
 const StyledButton = styled(Button)`
-  margin: 20px 10px 10px 0;
+  margin-top: 15px;
+  margin-right: 10px;
 `;
 
 export default DiscussionForm;

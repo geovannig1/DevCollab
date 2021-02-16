@@ -6,7 +6,6 @@ import { useParams, Redirect, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Button } from '../components/global/Button';
 
-import { setColor } from '../styles';
 import { Store } from '../store';
 import { loadProject } from '../actions/projectActions';
 import { ProjectInitialState } from '../reducers/projectReducer';
@@ -14,19 +13,25 @@ import { setNavbar, clearNavbar } from '../actions/navbarAction';
 import { SelectedType } from '../actions/navbarTypes';
 import AddIcon from '@material-ui/icons/Add';
 import RoomCard from '../components/meeting/RoomCard';
+import { loadMeetings } from '../actions/meetingActions';
+import { MeetingInitialState } from '../reducers/meetingReducer';
 
 interface MeetingRoomsProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
+  loadMeetings: (projectId: string) => Promise<void>;
   project: ProjectInitialState;
+  meeting: MeetingInitialState;
 }
 
 const MeetingRooms: React.FC<MeetingRoomsProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
+  loadMeetings,
   project: { selectedProject, projectError },
+  meeting: { meetings },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
 
@@ -46,6 +51,11 @@ const MeetingRooms: React.FC<MeetingRoomsProps> = ({
     setNavbar,
     clearNavbar,
   ]);
+
+  useEffect(() => {
+    !meetings && loadMeetings(projectId);
+  }, [loadMeetings, projectId, meetings]);
+
   const handleDelete = async () => {};
 
   return (
@@ -59,7 +69,9 @@ const MeetingRooms: React.FC<MeetingRoomsProps> = ({
       </Button>
 
       <Container>
-        <RoomCard />
+        {meetings?.map((meeting) => (
+          <RoomCard meetingRoom={meeting} projectId={projectId} />
+        ))}
       </Container>
     </Fragment>
   );
@@ -67,12 +79,14 @@ const MeetingRooms: React.FC<MeetingRoomsProps> = ({
 
 const mapStateToProps = (state: Store) => ({
   project: state.project,
+  meeting: state.meeting,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   clearNavbar: () => dispatch(clearNavbar()),
+  loadMeetings: (projectId: string) => dispatch(loadMeetings(projectId)),
 });
 
 const Container = styled.div`

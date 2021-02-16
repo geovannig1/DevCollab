@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, Redirect, Link } from 'react-router-dom';
+import { useParams, Redirect, Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { History } from 'history';
 
-import { setColor, setRem } from '../styles';
 import { Store } from '../store';
 import { loadProject } from '../actions/projectActions';
 import { ProjectInitialState } from '../reducers/projectReducer';
@@ -17,11 +17,18 @@ import { InputContainer, Form } from '../components/global/FormContainer';
 import SelectMembers from '../components/global/SelectMembers';
 import { Button } from '../components/global/Button';
 import { MeetingTypes } from '../actions/meetingTypes';
+import { createMeeting } from '../actions/meetingActions';
+import Alert from '../components/global/Alert';
 
 interface CreateRoomProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
+  createMeeting: (
+    projectId: string,
+    formData: MeetingTypes,
+    history: History
+  ) => Promise<void>;
   project: ProjectInitialState;
 }
 
@@ -29,9 +36,11 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
+  createMeeting,
   project: { selectedProject, projectError },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
+  const history = useHistory();
 
   useEffect(() => {
     document.title = 'Create Room | DevCollab';
@@ -64,7 +73,7 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(roomData);
+    createMeeting(projectId, roomData, history);
   };
 
   return (
@@ -72,7 +81,7 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
       <Previous
         link={`/projects/${projectId}/meeting-rooms`}
         previousTo='Meeting Rooms'
-        title='Create Room'
+        title={roomData.name.trim() || 'Create Room'}
       />
       <Form onSubmit={handleSubmit}>
         <InputContainer>
@@ -90,7 +99,9 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
         </InputContainer>
 
         <InputContainer>
-          <label>Members</label>
+          <label>
+            Members <span>*</span>
+          </label>
           <SelectContainer>
             <SelectMembers
               selectedProject={selectedProject}
@@ -109,6 +120,8 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
           Cancel
         </StyledButton>
       </Form>
+
+      <Alert />
     </Paper>
   );
 };
@@ -121,6 +134,11 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   clearNavbar: () => dispatch(clearNavbar()),
+  createMeeting: (
+    projectId: string,
+    formData: MeetingTypes,
+    history: History
+  ) => dispatch(createMeeting(projectId, formData, history)),
 });
 
 const StyledButton = styled(Button)`

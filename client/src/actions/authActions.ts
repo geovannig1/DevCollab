@@ -32,6 +32,7 @@ import {
 } from './authTypes';
 import { clearDiscussion } from './discussionActions';
 import { clearProject } from './projectActions';
+import { clearMeeting } from './meetingActions';
 
 //Load User
 export const loadUser = () => async (
@@ -113,8 +114,10 @@ export const signOut = () => async (
 
     await api.get('/auth/signout');
 
+    //Clear all redux data
     dispatch(clearDiscussion());
     dispatch(clearProject());
+    dispatch(clearMeeting);
 
     dispatch({ type: REMOVE_LOADING });
     dispatch({ type: LOGOUT_SUCCESS });

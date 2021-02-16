@@ -55,8 +55,8 @@ const Discussions: React.FC<DiscussionsProps> = ({
   ]);
 
   useEffect(() => {
-    loadDiscussions(projectId);
-  }, [loadDiscussions, projectId]);
+    !discussions && loadDiscussions(projectId);
+  }, [loadDiscussions, projectId, discussions]);
 
   return (
     <Fragment>
@@ -68,7 +68,7 @@ const Discussions: React.FC<DiscussionsProps> = ({
         <AddIcon /> New Discussion
       </Button>
 
-      {discussions.map((discussion) => (
+      {discussions?.map((discussion) => (
         <DiscussionCard
           key={discussion._id}
           discussion={discussion}

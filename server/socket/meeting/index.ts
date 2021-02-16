@@ -1,3 +1,7 @@
 import { Server, Socket } from 'socket.io';
 
-export default (io: Server, socket: Socket) => {};
+import joinRoom from './joinRoom';
+
+export default (io: Server, socket: Socket) => {
+  joinRoom(socket);
+};

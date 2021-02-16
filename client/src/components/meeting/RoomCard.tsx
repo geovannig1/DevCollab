@@ -1,26 +1,36 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 import { setColor, setShadow } from '../../styles';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import PeopleIcon from '@material-ui/icons/People';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import CardMenu from '../global/CardMenu';
+import { MeetingTypes } from '../../actions/meetingTypes';
+import { ReactComponent as Meeting } from '../../assets/meeting2.svg';
 
-interface RoomCardProps {}
+interface RoomCardProps {
+  meetingRoom: MeetingTypes;
+  projectId: string;
+}
 
-const RoomCard: React.FC<RoomCardProps> = ({}) => {
+const RoomCard: React.FC<RoomCardProps> = ({ meetingRoom, projectId }) => {
   return (
     <Container>
-      <CardContainer>
-        <StyledMeetingRoomIcon style={{ fontSize: '100px' }} />
+      <StyledLink
+        to={`/projects/${projectId}/meeting-rooms/${meetingRoom._id}`}
+      >
+        <CardContainer>
+          <StyledMeetingIcon />
 
-        <UserContainer>
-          <PeopleIcon /> <span>2</span>
-        </UserContainer>
+          <UserContainer>
+            <PeopleIcon /> <span>0</span>
+          </UserContainer>
 
-        <H3>Room Name</H3>
-      </CardContainer>
+          <H3>{meetingRoom.name}</H3>
+        </CardContainer>
+      </StyledLink>
 
       <MenuContainer>
         <CardMenu
@@ -35,6 +45,12 @@ const RoomCard: React.FC<RoomCardProps> = ({}) => {
     </Container>
   );
 };
+
+const StyledLink = styled(Link)`
+  color: ${setColor.mainBlack};
+  text-decoration: none;
+  outline: none;
+`;
 
 const Container = styled.div`
   position: relative;
@@ -64,8 +80,11 @@ const CardContainer = styled.div`
   }
 `;
 
-const StyledMeetingRoomIcon = styled(MeetingRoomIcon)`
+const StyledMeetingIcon = styled(Meeting)`
   color: ${setColor.primaryDark};
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
 `;
 
 const UserContainer = styled.div`

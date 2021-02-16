@@ -126,108 +126,113 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <InputContainer>
-        <label htmlFor='name'>
-          Project Name <span>*</span>
-        </label>
-        <input
-          name='name'
-          autoComplete='off'
-          spellCheck='false'
-          id='name'
-          type='text'
-          placeholder='Enter the name of the project'
-          onChange={handleChange}
-          value={projectData.name}
-        />
-      </InputContainer>
-
-      <InputContainer>
-        <label htmlFor='description'>Description</label>
-        <textarea
-          name='description'
-          id='description'
-          rows={8}
-          placeholder='Describe the project'
-          onChange={handleChange}
-          value={projectData.description}
-        />
-      </InputContainer>
-
-      <Fragment>
+    <Fragment>
+      <Form onSubmit={handleSubmit}>
         <InputContainer>
-          <label htmlFor='members'>Invite Members</label>
-          <AddMemberContainer>
-            <input
-              type='email'
-              id='members'
-              name='members'
-              placeholder='Enter member email'
-              onChange={(e) => setMembers(e.target.value)}
-              value={members}
-            />
-            <RoundedButton onClick={handleAddMembers} aria-label='add member'>
-              <AddIcon fontSize='small' />
-            </RoundedButton>
-          </AddMemberContainer>
+          <label htmlFor='name'>
+            Project Name <span>*</span>
+          </label>
+          <input
+            name='name'
+            autoComplete='off'
+            spellCheck='false'
+            id='name'
+            type='text'
+            placeholder='Enter the name of the project'
+            onChange={handleChange}
+            value={projectData.name}
+          />
         </InputContainer>
-        <label htmlFor='members'>
-          Project Access Permission
-          <HelpIcon fontSize='small' />
-        </label>
 
-        <InputContainer id='members'>
-          <MemberEmail>{user?.email}</MemberEmail>
-          <Select disabled style={{ cursor: 'not-allowed' }}>
-            <option value={AccessPermission.Admin}>Admin</option>
-          </Select>
-          {projectData.members.map((member, index) => (
-            <Fragment key={index}>
-              <MemberEmail>{member.email}</MemberEmail>
-              <PermissionContainer>
-                <Select
-                  name={member.email}
-                  defaultValue={
-                    member.accessPermission ?? AccessPermission.ReadOnly
-                  }
-                  onChange={handleChangeEditPermission}
-                >
-                  <option value={AccessPermission.Admin}>Admin</option>
-                  <option value={AccessPermission.ReadWriteDelete}>
-                    Read/Write/Delete
-                  </option>
-                  <option value={AccessPermission.ReadOnly}>Read Only</option>
-                </Select>
-                <RoundedButton
-                  id={member.email}
-                  value={member.email}
-                  onClick={handleDeleteMember}
-                  danger
-                >
-                  <CloseIcon fontSize='small' color='secondary' />
-                </RoundedButton>
-              </PermissionContainer>
-            </Fragment>
-          ))}
+        <InputContainer>
+          <label htmlFor='description'>Description</label>
+          <textarea
+            name='description'
+            id='description'
+            rows={8}
+            placeholder='Describe the project'
+            onChange={handleChange}
+            value={projectData.description}
+          />
         </InputContainer>
-      </Fragment>
+
+        <Fragment>
+          <InputContainer>
+            <label htmlFor='members'>Invite Members</label>
+            <AddMemberContainer>
+              <input
+                type='email'
+                id='members'
+                name='members'
+                placeholder='Enter member email'
+                onChange={(e) => setMembers(e.target.value)}
+                value={members}
+              />
+              <RoundedButton onClick={handleAddMembers} aria-label='add member'>
+                <AddIcon fontSize='small' />
+              </RoundedButton>
+            </AddMemberContainer>
+          </InputContainer>
+          <label htmlFor='members'>
+            Project Access Permission
+            <HelpIcon fontSize='small' />
+          </label>
+
+          <InputContainer id='members'>
+            <MemberEmail>{user?.email}</MemberEmail>
+            <Select disabled style={{ cursor: 'not-allowed' }}>
+              <option value={AccessPermission.Admin}>Admin</option>
+            </Select>
+            {projectData.members.map((member, index) => (
+              <Fragment key={index}>
+                <MemberEmail>{member.email}</MemberEmail>
+                <PermissionContainer>
+                  <Select
+                    name={member.email}
+                    defaultValue={
+                      member.accessPermission ?? AccessPermission.ReadOnly
+                    }
+                    onChange={handleChangeEditPermission}
+                  >
+                    <option value={AccessPermission.Admin}>Admin</option>
+                    <option value={AccessPermission.ReadWriteDelete}>
+                      Read/Write/Delete
+                    </option>
+                    <option value={AccessPermission.ReadOnly}>Read Only</option>
+                  </Select>
+                  <RoundedButton
+                    id={member.email}
+                    value={member.email}
+                    onClick={handleDeleteMember}
+                    danger
+                  >
+                    <CloseIcon fontSize='small' color='secondary' />
+                  </RoundedButton>
+                </PermissionContainer>
+              </Fragment>
+            ))}
+          </InputContainer>
+        </Fragment>
+
+        <StyledButton
+          aria-label='create project'
+          extrasmall={'extrasmall' && 1}
+        >
+          {!update ? 'Create Project' : 'Update Project'}
+        </StyledButton>
+        <StyledButton
+          aria-label='cancel'
+          extrasmall={'extrasmall' && 1}
+          outline={'outline' && 1}
+          as={Link}
+          to='/projects'
+        >
+          Cancel
+        </StyledButton>
+      </Form>
 
       <ALert />
-
-      <StyledButton aria-label='create project' extrasmall={'extrasmall' && 1}>
-        {!update ? 'Create Project' : 'Update Project'}
-      </StyledButton>
-      <StyledButton
-        aria-label='cancel'
-        extrasmall={'extrasmall' && 1}
-        outline={'outline' && 1}
-        as={Link}
-        to='/projects'
-      >
-        Cancel
-      </StyledButton>
-    </Form>
+    </Fragment>
   );
 };
 
@@ -239,7 +244,6 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
 
 const StyledButton = styled(Button)`
   margin-top: 15px;
-  margin-bottom: 10px;
   margin-right: 10px;
 `;
 
