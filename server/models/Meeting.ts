@@ -1,5 +1,13 @@
 import { Schema, model, Document } from 'mongoose';
 
+interface UsersInRoom {
+  [name: string]: string[];
+}
+
+interface UserToRoom {
+  [name: string]: string;
+}
+
 export interface IMeeting extends Document {
   project: string;
   name: string;
@@ -8,6 +16,8 @@ export interface IMeeting extends Document {
     email: string;
     avatar: string;
   }[];
+  usersInRoom?: UsersInRoom;
+  userToRoom?: UserToRoom;
 }
 
 const meetingSchema = new Schema<IMeeting>({
@@ -27,6 +37,14 @@ const meetingSchema = new Schema<IMeeting>({
       },
     },
   ],
+  usersInRoom: {
+    type: Map,
+    of: [String],
+  },
+  userToRoom: {
+    type: Map,
+    of: String,
+  },
   date: {
     type: Date,
     default: Date.now,

@@ -70,7 +70,11 @@ const MeetingRooms: React.FC<MeetingRoomsProps> = ({
 
       <Container>
         {meetings?.map((meeting) => (
-          <RoomCard meetingRoom={meeting} projectId={projectId} />
+          <RoomCard
+            key={meeting._id}
+            meetingRoom={meeting}
+            projectId={projectId}
+          />
         ))}
       </Container>
     </Fragment>
