@@ -4,20 +4,19 @@ interface UsersInRoom {
   [name: string]: string[];
 }
 
-interface UserToRoom {
-  [name: string]: string;
-}
-
 export interface IMeeting extends Document {
   project: string;
   name: string;
   members: {
-    user?: string;
+    user?: {
+      _id: string;
+      firstName: string;
+      lastName: string;
+    };
     email: string;
     avatar: string;
   }[];
   usersInRoom?: UsersInRoom;
-  userToRoom?: UserToRoom;
 }
 
 const meetingSchema = new Schema<IMeeting>({
@@ -41,10 +40,7 @@ const meetingSchema = new Schema<IMeeting>({
     type: Map,
     of: [String],
   },
-  userToRoom: {
-    type: Map,
-    of: String,
-  },
+
   date: {
     type: Date,
     default: Date.now,

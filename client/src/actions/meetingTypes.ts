@@ -11,6 +11,8 @@ export interface Member {
     avatar?: {
       url: string;
     };
+    firstName?: string;
+    lastName?: string;
   };
 }
 

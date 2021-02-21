@@ -2,17 +2,12 @@ import { Socket } from 'socket.io';
 
 import Meeting from '../../models/Meeting';
 
-// interface UsersInRoom {
-//   [name: string]: string[];
-// }
+interface SocketToRoom {
+  [name: string]: { meetingId: string; userId: string } | undefined;
+}
 
-// interface UserToRoom {
-//   [name: string]: string;
-// }
-// //User data in each rooms
-// const usersInRoom: UsersInRoom = {};
-// //user and room relation
-// const userToRoom: UserToRoom = {};
+//Store the socket id with the room id and user id
+const socketToRoom: SocketToRoom = {};
 
 export default (socket: Socket) => {
   socket.on('join room', async (data) => {
@@ -25,7 +20,7 @@ export default (socket: Socket) => {
         const exceptUser = meetingRoom.filter(
           (id: string) => id !== data.userId
         );
-        // usersInRoom[data.meetingId].push(data.userId);
+
         meeting?.set(`usersInRoom.${data.meetingId}`, [
           ...exceptUser,
           data.userId,
@@ -34,15 +29,12 @@ export default (socket: Socket) => {
         meeting?.set(`usersInRoom.${data.meetingId}`, [data.userId]);
       }
 
-      // userToRoom[data.userId] = data.meetingId;
-      meeting?.set(`userToRoom.${data.userId}`, data.meetingId);
-
-      //Users in the room except signed in user
-      // const otherUserInThisRoom = usersInRoom[data.meetingId].filter(
-      //   (id) => id !== data.userId
-      // );
-
       await meeting?.save();
+
+      socketToRoom[socket.id] = {
+        meetingId: data.meetingId,
+        userId: data.userId,
+      };
 
       const otherUserInThisRoom = meeting
         ?.get(`usersInRoom.${data.meetingId}`)
@@ -54,7 +46,24 @@ export default (socket: Socket) => {
     }
   });
 
-  // socket.on('leave room', (data) => {
-  //   socket.leave(data.meetingId);
-  // });
+  socket.on('disconnect', async () => {
+    try {
+      const foundSocket = socketToRoom[socket.id];
+      const meeting = await Meeting.findById(foundSocket?.meetingId);
+
+      let room = meeting?.get(`usersInRoom.${foundSocket?.meetingId}`);
+      if (room) {
+        room = room.filter((id: string) => id !== foundSocket?.userId);
+
+        meeting?.set(`usersInRoom.${foundSocket?.meetingId}`, room);
+
+        meeting?.save();
+        socketToRoom[socket.id] = undefined;
+      }
+
+      socket.broadcast.emit('user left', foundSocket?.userId);
+    } catch (err) {
+      console.error(err.message);
+    }
+  });
 };

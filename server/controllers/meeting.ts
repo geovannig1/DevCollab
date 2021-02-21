@@ -33,11 +33,13 @@ export const getRooms = async (req: Request, res: Response) => {
 //Get a room
 export const getRoom = async (req: Request, res: Response) => {
   try {
-    const meeting = await Meeting.findById(req.params.meetingId);
+    const meeting = await Meeting.findById(
+      req.params.meetingId
+    ).populate('members.user', ['firstName', 'lastName']);
 
     //Only invited user can access
     const userExist = meeting?.members.filter(
-      (member) => member.user?.toString() === req.user
+      (member) => member.user?._id.toString() === req.user
     );
     if (userExist?.length === 0) {
       return res.status(401).json({ msg: 'Unauthorized user' });

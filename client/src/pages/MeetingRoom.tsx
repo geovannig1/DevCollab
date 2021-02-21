@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
@@ -13,11 +13,15 @@ import { MeetingInitialState } from '../reducers/meetingReducer';
 import socket from '../utils/socketio';
 import { AuthInitialState } from '../reducers/authReducer';
 import Video from '../components/meeting/Video';
-
-interface IPeers {
-  peerId: string;
-  peer: Peer.Instance;
-}
+import {
+  StyledVideo,
+  StyledVideoContainer,
+} from '../components/meeting/StyledVideo';
+import { setColor } from '../styles';
+import Controller from '../components/meeting/Controller';
+import { ReactComponent as Logo } from '../assets/logo-white.svg';
+import { IPeers } from '../components/meeting/PeerTypes';
+import MicOffIcon from '@material-ui/icons/MicOff';
 
 interface MeetingRoomProps {
   meeting: MeetingInitialState;
@@ -45,7 +49,7 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
     width: window.innerWidth / 2,
   };
 
-  const [peers, setPeers] = useState<IPeers[]>([]);
+  const [videoPeers, setVideoPeers] = useState<IPeers[]>([]);
   const socketRef = useRef<Socket>();
   const userVideo = useRef<HTMLVideoElement>(null);
   const peersRef = useRef<IPeers[]>([]);
@@ -81,7 +85,7 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
               peers.push({ peerId: userId, peer });
             });
 
-            setPeers(peers);
+            setVideoPeers(peers);
           });
 
           //Receive offer from other user
@@ -92,13 +96,28 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
               peerId: data.callerId,
               peer,
             };
-            setPeers((prevData) => [...prevData, peerObj]);
+
+            setVideoPeers([...videoPeers, peerObj]);
           });
 
           //Receive answer from other
           socketRef.current?.on('receiving returned signal', (data: any) => {
             const item = peersRef.current.find((p) => p.peerId === data.id);
             item?.peer.signal(data.signal);
+          });
+
+          //Handle user left from meeting
+          socketRef.current?.on('user left', (id: string) => {
+            const peerObj = peersRef.current.find((p) => p.peerId === id);
+
+            if (peerObj) {
+              peerObj.peer.destroy();
+            }
+            const peers = peersRef.current.filter((p) => p.peerId !== id);
+
+            peersRef.current = peers;
+
+            setVideoPeers(peers);
           });
         });
     }
@@ -153,13 +172,72 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
     return peer;
   }
 
+  const [mute, setMute] = useState(false);
+  const setAudio = () => {
+    const mediaStream: any = userVideo.current?.srcObject;
+    const enabled = mediaStream?.getAudioTracks()[0].enabled;
+    setMute(mediaStream.getAudioTracks()[0].enabled);
+
+    if (enabled) {
+      mediaStream.getAudioTracks()[0].enabled = false;
+    } else {
+      mediaStream.getAudioTracks()[0].enabled = true;
+    }
+  };
+
+  const [cameraDisable, setCameraDisable] = useState(false);
+  const setVideo = () => {
+    const mediaStream: any = userVideo.current?.srcObject;
+    const enabled = mediaStream?.getVideoTracks()[0].enabled;
+    setCameraDisable(mediaStream.getVideoTracks()[0].enabled);
+
+    if (enabled) {
+      mediaStream.getVideoTracks()[0].enabled = false;
+    } else {
+      mediaStream.getVideoTracks()[0].enabled = true;
+    }
+  };
+
   return (
-    <div>
-      <StyledVideo muted ref={userVideo} autoPlay playsInline />
-      {peers.map((peer, index) => (
-        <Video key={index} peer={peer.peer} />
-      ))}
-    </div>
+    <Fragment>
+      {selectedMeeting && (
+        <Container>
+          <StyledLogo />
+          <VideoContainer>
+            <StyledVideoContainer>
+              <StyledVideo
+                width='420'
+                height='200'
+                muted
+                ref={userVideo}
+                autoPlay
+                playsInline
+              />
+              <span>
+                {mute && <MicOffIcon fontSize='small' />}
+                {user?.firstName} {user?.lastName}
+              </span>
+            </StyledVideoContainer>
+            {videoPeers.map((peer) => (
+              <Video
+                key={peer.peerId}
+                selectedMeeting={selectedMeeting}
+                peer={peer}
+              />
+            ))}
+          </VideoContainer>
+
+          <Controller
+            projectId={projectId}
+            mute={mute}
+            cameraDisable={cameraDisable}
+            setAudio={setAudio}
+            setVideo={setVideo}
+            user={user}
+          />
+        </Container>
+      )}
+    </Fragment>
   );
 };
 
@@ -173,9 +251,26 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
     dispatch(loadMeeting(projectId, meetingId)),
 });
 
-const StyledVideo = styled.video`
-  height: 40%;
-  width: 50%;
+const Container = styled.div`
+  background-color: ${setColor.mainBlack};
+`;
+
+const StyledLogo = styled(Logo)`
+  width: 150px;
+  height: 50px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  user-select: none;
+`;
+
+const VideoContainer = styled.div`
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+
+  flex-wrap: wrap;
+  height: 90vh;
 `;
 
 export default connect(mapStateToProps, mapDispatchToProps)(MeetingRoom);
