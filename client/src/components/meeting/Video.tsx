@@ -1,13 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
 
 import { MeetingTypes } from '../../actions/meetingTypes';
 import { IPeers } from './PeerTypes';
 import { StyledVideo, StyledVideoContainer } from './StyledVideo';
 import MicOffIcon from '@material-ui/icons/MicOff';
-import { setColor } from '../../styles';
 import socket from '../../utils/socketio';
-import { UserType } from '../../actions/authTypes';
 
 interface VideoProps {
   peer: IPeers;
@@ -28,7 +25,7 @@ const Video: React.FC<VideoProps> = ({
 
     socket.on('user audio', (data: { mute: boolean; userId: string }) => {
       if (peerId === data.userId) {
-        setMute(!data.mute);
+        setMute(data.mute);
       }
     });
   }, [peer, peerId]);

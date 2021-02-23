@@ -10,7 +10,6 @@ export const StyledVideoContainer = styled.div`
   width: 420px;
   height: 200px;
   margin: 0 10px;
-  margin-top: 40px;
   margin-bottom: 10px;
   user-select: none;
   span {
@@ -26,7 +25,14 @@ export const StyledVideoContainer = styled.div`
     align-items: center;
     svg {
       color: ${setColor.mainRed};
-      margin: 0 3px;
+      margin-right: 2px;
     }
   }
+`;
+
+export const StyledShareScreen = styled.video`
+  height: 50%;
+  position: absolute;
+  left: 20px;
+  bottom: 80px;
 `;
