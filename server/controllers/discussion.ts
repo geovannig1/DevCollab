@@ -195,7 +195,7 @@ export const deleteDiscussion = async (req: Request, res: Response) => {
     }
 
     //Remove discussion
-    await discussion.remove();
+    await discussion.delete();
 
     res.status(200).json({ msg: 'Discussion deleted' });
   } catch (err) {

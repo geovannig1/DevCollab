@@ -86,3 +86,64 @@ export const createRoom = async (req: Request, res: Response) => {
     res.status(500).send('Server error');
   }
 };
+
+//Update a room
+export const updateRoom = async (req: Request, res: Response) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    //Only user from the project and except user with ReadOnly access permission can update room
+    const userExist = project?.members.filter(
+      (member: any) => member.user?._id.toString() === req.user
+    );
+    if (
+      userExist?.length === 0 ||
+      userExist?.[0].accessPermission === AccessPermission.ReadOnly
+    ) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    const meeting = await Meeting.findById(req.params.meetingId);
+
+    if (!meeting) {
+      return res.status(404).json({ msg: 'Meeting room not exist' });
+    }
+
+    const { name, members } = req.body;
+
+    if (name) meeting.name = name;
+    if (members) meeting.members = members;
+
+    const updatedMeeting = await meeting.save();
+
+    res.status(200).json(updatedMeeting);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
+//Delete a room
+export const deleteRoom = async (req: Request, res: Response) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    //Only user from the project and except user with ReadOnly access permission can delete room
+    const userExist = project?.members.filter(
+      (member: any) => member.user?._id.toString() === req.user
+    );
+    if (
+      userExist?.length === 0 ||
+      userExist?.[0].accessPermission === AccessPermission.ReadOnly
+    ) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    await Meeting.findByIdAndDelete(req.params.meetingId);
+
+    res.status(200).json({ msg: 'Room deleted' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};

@@ -2,6 +2,8 @@ import {
   MEETINGS_LOADED,
   MEETING_LOADED,
   MEETING_CREATED,
+  MEETING_UPDATED,
+  MEETING_DELETED,
   MEETING_FAIL,
   CLEAR_MEETING,
   MeetingDispatchTypes,
@@ -11,7 +13,10 @@ import {
 export interface MeetingInitialState {
   meetings?: MeetingTypes[];
   selectedMeeting?: MeetingTypes;
-  meetingError: object;
+  meetingError: {
+    msg?: string;
+    status?: string;
+  };
 }
 
 const meetingInitialState: MeetingInitialState = {
@@ -31,6 +36,20 @@ const meetingReducer = (
       return {
         ...state,
         meetings: [action.payload, ...(state.meetings ?? [])],
+      };
+    case MEETING_UPDATED:
+      return {
+        ...state,
+        meetings: state.meetings?.map((meeting) =>
+          meeting._id === action.payload._id ? action.payload : meeting
+        ),
+      };
+    case MEETING_DELETED:
+      return {
+        ...state,
+        meetings: state.meetings?.filter(
+          (meeting) => meeting._id !== action.payload
+        ),
       };
     case MEETING_FAIL:
       return { ...state, meetingError: action.payload };

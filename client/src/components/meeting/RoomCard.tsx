@@ -1,21 +1,44 @@
 import React from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
 
 import { setColor, setShadow } from '../../styles';
-import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import PeopleIcon from '@material-ui/icons/People';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import CardMenu from '../global/CardMenu';
 import { MeetingTypes } from '../../actions/meetingTypes';
 import { ReactComponent as Meeting } from '../../assets/meeting2.svg';
+import { deleteMeeting } from '../../actions/meetingActions';
+import { UserType } from '../../actions/authTypes';
+import { AccessPermission, ProjectType } from '../../actions/projectTypes';
 
 interface RoomCardProps {
   meetingRoom: MeetingTypes;
   projectId: string;
+  selectedProject?: ProjectType;
+  user?: UserType;
+  deleteMeeting: (projectId: string, meetingId: string) => Promise<void>;
 }
 
-const RoomCard: React.FC<RoomCardProps> = ({ meetingRoom, projectId }) => {
+const RoomCard: React.FC<RoomCardProps> = ({
+  meetingRoom,
+  projectId,
+  selectedProject,
+  user,
+  deleteMeeting,
+}) => {
+  const handleDelete = () => {
+    deleteMeeting(projectId, meetingRoom._id ?? '');
+  };
+
+  //find user in the project
+  const userProject = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
+
   return (
     <Container>
       <StyledLink
@@ -25,7 +48,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ meetingRoom, projectId }) => {
           <StyledMeetingIcon />
 
           <UserContainer>
-            <PeopleIcon /> <span>0</span>
+            <PeopleIcon /> <span>{meetingRoom.usersInRoom?.length}</span>
           </UserContainer>
 
           <H3>{meetingRoom.name}</H3>
@@ -33,18 +56,25 @@ const RoomCard: React.FC<RoomCardProps> = ({ meetingRoom, projectId }) => {
       </StyledLink>
 
       <MenuContainer>
-        <CardMenu
-          deleteItem={async () => {}}
-          deleteText={`Are you sure want to delete ${''} discussion? this process can't be undone.`}
-          deleteTitle='Delete Room'
-          editLink='/'
-        >
-          <HorizIcon fontSize='large' />
-        </CardMenu>
+        {userProject?.accessPermission !== AccessPermission.ReadOnly && (
+          <CardMenu
+            deleteItem={handleDelete}
+            deleteText={`Are you sure want to delete ${meetingRoom.name} room? this process can't be undone.`}
+            deleteTitle='Delete Room'
+            editLink={`/projects/${projectId}/meeting-rooms/${meetingRoom._id}/edit`}
+          >
+            <HorizIcon fontSize='large' />
+          </CardMenu>
+        )}
       </MenuContainer>
     </Container>
   );
 };
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
+  deleteMeeting: (projectId: string, meetingId: string) =>
+    dispatch(deleteMeeting(projectId, meetingId)),
+});
 
 const StyledLink = styled(Link)`
   color: ${setColor.mainBlack};
@@ -120,4 +150,4 @@ const H3 = styled.h3`
   font-weight: 600;
 `;
 
-export default RoomCard;
+export default connect(null, mapDispatchToProps)(RoomCard);

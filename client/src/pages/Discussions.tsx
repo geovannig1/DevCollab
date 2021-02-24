@@ -15,6 +15,7 @@ import DiscussionCard from '../components/discussion/DiscussionCard';
 import { DiscussionInitialState } from '../reducers/discussionReducer';
 import { loadDiscussions } from '../actions/discussionActions';
 import { AuthInitialState } from '../reducers/authReducer';
+import { AccessPermission } from '../actions/projectTypes';
 
 interface DiscussionsProps {
   loadProject: (projectId: string) => Promise<void>;
@@ -58,15 +59,22 @@ const Discussions: React.FC<DiscussionsProps> = ({
     !discussions && loadDiscussions(projectId);
   }, [loadDiscussions, projectId, discussions]);
 
+  //find user in the project
+  const userProject = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
+
   return (
     <Fragment>
-      <Button
-        as={Link}
-        to={`/projects/${projectId}/create-discussion`}
-        extrasmall={'extrasmall' && 1}
-      >
-        <AddIcon /> New Discussion
-      </Button>
+      {userProject?.accessPermission !== AccessPermission.ReadOnly && (
+        <Button
+          as={Link}
+          to={`/projects/${projectId}/create-discussion`}
+          extrasmall={'extrasmall' && 1}
+        >
+          <AddIcon /> New Discussion
+        </Button>
+      )}
 
       {discussions?.map((discussion) => (
         <DiscussionCard

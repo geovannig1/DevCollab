@@ -15,12 +15,15 @@ import Previous from '../components/global/Previous';
 import { DiscussionType } from '../actions/discussionTypes';
 import { createDiscussion } from '../actions/discussionActions';
 import DiscussionForm from '../components/discussion/DiscussionForm';
+import { AccessPermission } from '../actions/projectTypes';
+import { AuthInitialState } from '../reducers/authReducer';
 
 interface CreateDiscussionProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
   project: ProjectInitialState;
+  auth: AuthInitialState;
   createDiscussion: (
     history: History,
     projectId: string,
@@ -33,8 +36,9 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
-  project: { selectedProject, projectError },
   createDiscussion,
+  project: { selectedProject, projectError },
+  auth: { user },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
   const history = useHistory();
@@ -67,6 +71,15 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({
     createDiscussion(history, projectId, discussionData, attachment);
   };
 
+  //find user in the project
+  const userProject = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
+  //User with read only permission can't access
+  if (userProject?.accessPermission === AccessPermission.ReadOnly) {
+    history.push(`/projects/${projectId}/discussions`);
+  }
+
   return (
     <Paper>
       <Previous
@@ -88,6 +101,7 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({
 
 const mapStateToProps = (state: Store) => ({
   project: state.project,
+  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({

@@ -14,19 +14,11 @@ export default (socket: Socket) => {
     try {
       socket.join(data.userId);
       const meeting = await Meeting.findById(data.meetingId);
-      const meetingRoom = meeting?.get(`usersInRoom.${data.meetingId}`);
 
-      if (meetingRoom) {
-        const exceptUser = meetingRoom.filter(
-          (id: string) => id !== data.userId
-        );
+      const userExist = meeting?.usersInRoom?.find((id) => id === data.userId);
 
-        meeting?.set(`usersInRoom.${data.meetingId}`, [
-          ...exceptUser,
-          data.userId,
-        ]);
-      } else {
-        meeting?.set(`usersInRoom.${data.meetingId}`, [data.userId]);
+      if (!userExist) {
+        meeting?.usersInRoom?.push(data.userId);
       }
 
       await meeting?.save();
@@ -36,9 +28,9 @@ export default (socket: Socket) => {
         userId: data.userId,
       };
 
-      const otherUserInThisRoom = meeting
-        ?.get(`usersInRoom.${data.meetingId}`)
-        .filter((id: string) => id !== data.userId);
+      const otherUserInThisRoom = meeting?.usersInRoom?.filter(
+        (id: string) => id !== data.userId
+      );
 
       socket.emit('all users', otherUserInThisRoom);
     } catch (err) {
@@ -51,11 +43,12 @@ export default (socket: Socket) => {
       const foundSocket = socketToRoom[socket.id];
       const meeting = await Meeting.findById(foundSocket?.meetingId);
 
-      let room = meeting?.get(`usersInRoom.${foundSocket?.meetingId}`);
-      if (room) {
-        room = room.filter((id: string) => id !== foundSocket?.userId);
+      if (meeting) {
+        const updatedMeetng = meeting?.usersInRoom?.filter(
+          (id: string) => id !== foundSocket?.userId
+        );
 
-        meeting?.set(`usersInRoom.${foundSocket?.meetingId}`, room);
+        meeting.usersInRoom = updatedMeetng;
 
         meeting?.save();
         socketToRoom[socket.id] = undefined;

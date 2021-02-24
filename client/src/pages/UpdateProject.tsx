@@ -34,7 +34,7 @@ const UpdateProject: React.FC<UpdateProjectProps> = ({
   updateProject,
 }) => {
   useEffect(() => {
-    document.title = 'Update project | DevCollab';
+    document.title = 'Update Project | DevCollab';
     !projects && loadProjects();
   }, [projects, loadProjects]);
 

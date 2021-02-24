@@ -5,6 +5,7 @@ import projectReducer from './projectReducer';
 import navbarReducer from './navbarReducer';
 import discussionReducer from './discussionReducer';
 import meetingReducer from './meetingReducer';
+import displayReducer from './displayReducer';
 
 export default combineReducers({
   auth: authReducer,
@@ -13,4 +14,5 @@ export default combineReducers({
   navbar: navbarReducer,
   discussion: discussionReducer,
   meeting: meetingReducer,
+  display: displayReducer,
 });

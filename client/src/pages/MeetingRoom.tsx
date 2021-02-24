@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 import styled from 'styled-components';
 
@@ -28,15 +28,20 @@ import {
   addPeerScreen,
   createPeerScreen,
 } from '../components/meeting/peer';
+import { setFullscreen, clearFullscreen } from '../actions/displayActions';
 
 interface MeetingRoomProps {
   meeting: MeetingInitialState;
   auth: AuthInitialState;
   loadMeeting: (projectId: string, meetingId: string) => Promise<void>;
+  setFullscreen: (fullscreen: boolean) => void;
+  clearFullscreen: () => void;
 }
 
 const MeetingRoom: React.FC<MeetingRoomProps> = ({
-  meeting: { selectedMeeting },
+  meeting: { selectedMeeting, meetingError },
+  setFullscreen,
+  clearFullscreen,
   loadMeeting,
   auth: { user },
 }) => {
@@ -44,15 +49,25 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
     projectId: string;
     meetingId: string;
   }>();
+  const history = useHistory();
 
   useEffect(() => {
     document.title = 'Meeting Room | DevCollab';
     loadMeeting(projectId, meetingId);
-  }, [loadMeeting, projectId, meetingId]);
+
+    setFullscreen(true);
+
+    return () => clearFullscreen();
+  }, [loadMeeting, projectId, meetingId, setFullscreen, clearFullscreen]);
+
+  //Redirect unauthorized user
+  if (meetingError.msg === 'Unauthorized') {
+    history.push(`/projects/${projectId}/meeting-rooms`);
+  }
 
   const videoConstraints = {
-    height: window.innerHeight / 2,
-    width: window.innerWidth / 2,
+    width: 420,
+    height: 200,
   };
 
   const [videoPeers, setVideoPeers] = useState<IPeers[]>([]);
@@ -304,6 +319,8 @@ const mapStateToProps = (state: Store) => ({
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadMeeting: (projectId: string, meetingId: string) =>
     dispatch(loadMeeting(projectId, meetingId)),
+  setFullscreen: (fullscreen: boolean) => dispatch(setFullscreen(fullscreen)),
+  clearFullscreen: () => dispatch(clearFullscreen()),
 });
 
 const Container = styled.div`

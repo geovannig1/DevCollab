@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, Redirect, Link, useHistory } from 'react-router-dom';
-import styled from 'styled-components';
+import { useParams, Redirect, useHistory } from 'react-router-dom';
 import { History } from 'history';
 
 import { Store } from '../store';
@@ -13,12 +12,11 @@ import { setNavbar, clearNavbar } from '../actions/navbarAction';
 import { SelectedType } from '../actions/navbarTypes';
 import Paper from '../components/global/Paper';
 import Previous from '../components/global/Previous';
-import { InputContainer, Form } from '../components/global/FormContainer';
-import SelectMembers from '../components/global/SelectMembers';
-import { Button } from '../components/global/Button';
 import { MeetingTypes } from '../actions/meetingTypes';
 import { createMeeting } from '../actions/meetingActions';
-import Alert from '../components/global/Alert';
+import MeetingForm from '../components/meeting/MeetingForm';
+import { AuthInitialState } from '../reducers/authReducer';
+import { AccessPermission } from '../actions/projectTypes';
 
 interface CreateRoomProps {
   loadProject: (projectId: string) => Promise<void>;
@@ -30,6 +28,7 @@ interface CreateRoomProps {
     history: History
   ) => Promise<void>;
   project: ProjectInitialState;
+  auth: AuthInitialState;
 }
 
 const CreateRoom: React.FC<CreateRoomProps> = ({
@@ -38,6 +37,7 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
   clearNavbar,
   createMeeting,
   project: { selectedProject, projectError },
+  auth: { user },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
   const history = useHistory();
@@ -64,17 +64,19 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
     members: [],
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRoomData((prevData) => ({
-      ...prevData,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     createMeeting(projectId, roomData, history);
   };
+
+  //find user in the project
+  const userProject = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
+  //User with read only permission can't access
+  if (userProject?.accessPermission === AccessPermission.ReadOnly) {
+    history.push(`/projects/${projectId}/meeting-rooms`);
+  }
 
   return (
     <Paper>
@@ -83,51 +85,20 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
         previousTo='Meeting Rooms'
         title={roomData.name.trim() || 'Create Room'}
       />
-      <Form onSubmit={handleSubmit}>
-        <InputContainer>
-          <label htmlFor='name'>
-            Room Name <span>*</span>
-          </label>
-          <input
-            type='text'
-            id='name'
-            name='name'
-            placeholder='Room Name'
-            onChange={handleChange}
-            value={roomData.name}
-          />
-        </InputContainer>
-
-        <InputContainer>
-          <label>
-            Members <span>*</span>
-          </label>
-          <SelectContainer>
-            <SelectMembers
-              selectedProject={selectedProject}
-              setData={setRoomData}
-            />
-          </SelectContainer>
-        </InputContainer>
-
-        <StyledButton extrasmall>Create Room</StyledButton>
-        <StyledButton
-          as={Link}
-          to={`/projects/${projectId}/meeting-rooms`}
-          extrasmall={'extrasmall' && 1}
-          outline={'outline' && 1}
-        >
-          Cancel
-        </StyledButton>
-      </Form>
-
-      <Alert />
+      <MeetingForm
+        projectId={projectId}
+        selectedProject={selectedProject}
+        handleSubmit={handleSubmit}
+        roomData={roomData}
+        setRoomData={setRoomData}
+      />
     </Paper>
   );
 };
 
 const mapStateToProps = (state: Store) => ({
   project: state.project,
+  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
@@ -140,14 +111,5 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
     history: History
   ) => dispatch(createMeeting(projectId, formData, history)),
 });
-
-const StyledButton = styled(Button)`
-  margin-top: 5px;
-  margin-right: 10px;
-`;
-
-const SelectContainer = styled.div`
-  width: 45vw;
-`;
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateRoom);

@@ -24,12 +24,14 @@ import { updateUser, deleteUser } from '../actions/authActions';
 import { AlertInitialState } from '../reducers/alertReducer';
 import { MessageType } from '../actions/alertTypes';
 import AlertDialog from '../components/global/AlertDialog';
+import { clearProject } from '../actions/projectActions';
 
 interface UpdateUserProps {
   auth: AuthInitialState;
   alert: AlertInitialState;
   updateUser: (userData: UserData, image?: File) => Promise<void>;
   deleteUser: () => Promise<void>;
+  clearProject: () => void;
 }
 
 const UpdateUser: React.FC<UpdateUserProps> = ({
@@ -37,10 +39,12 @@ const UpdateUser: React.FC<UpdateUserProps> = ({
   alert,
   updateUser,
   deleteUser,
+  clearProject,
 }) => {
   useEffect(() => {
     document.title = 'User Settings | DevCollab';
-  }, []);
+    clearProject();
+  }, [clearProject]);
 
   const [updatePassword, setUpdatePassword] = useState(false);
   useEffect(() => {
@@ -265,6 +269,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   updateUser: (userData: UserData, image?: File) =>
     dispatch(updateUser(userData, image)),
   deleteUser: () => dispatch(deleteUser()),
+  clearProject: () => dispatch(clearProject()),
 });
 
 const Header = styled.div`

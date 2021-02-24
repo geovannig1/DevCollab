@@ -11,11 +11,13 @@ import { AuthInitialState } from '../../reducers/authReducer';
 import { ProjectInitialState } from '../../reducers/projectReducer';
 import Navbar from '../global/Navbar';
 import { MeetingInitialState } from '../../reducers/meetingReducer';
+import { DisplayInitialState } from '../../reducers/displayReducer';
 
 interface BaseComponentProps {
   auth: AuthInitialState;
   project: ProjectInitialState;
   meeting: MeetingInitialState;
+  display: DisplayInitialState;
 }
 
 const BaseComponent: React.FC<BaseComponentProps> = ({
@@ -23,10 +25,11 @@ const BaseComponent: React.FC<BaseComponentProps> = ({
   auth: { isAuthenticated, notFound },
   project: { selectedProject },
   meeting: { selectedMeeting },
+  display: { fullscreen },
 }) => {
   return (
     <Fragment>
-      {isAuthenticated && !notFound && !selectedMeeting ? (
+      {isAuthenticated && !notFound && (!selectedMeeting || !fullscreen) ? (
         <Container>
           <Sidebar />
           <ChildrenContainer>
@@ -56,6 +59,7 @@ const mapStateToProps = (state: Store) => ({
   auth: state.auth,
   project: state.project,
   meeting: state.meeting,
+  display: state.display,
 });
 
 const Container = styled.div`

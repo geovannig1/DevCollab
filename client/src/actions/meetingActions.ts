@@ -7,6 +7,8 @@ import {
   MEETINGS_LOADED,
   MEETING_LOADED,
   MEETING_CREATED,
+  MEETING_UPDATED,
+  MEETING_DELETED,
   MEETING_FAIL,
   CLEAR_MEETING,
   MeetingDispatchTypes,
@@ -70,6 +72,52 @@ export const createMeeting = (
         payload: { msg: err.response.statusText, status: err.response.status },
       });
     }
+  }
+};
+
+//Update meeting room
+export const updateMeeting = (
+  projectId: string,
+  meetingId: string,
+  formData: MeetingTypes,
+  history: History
+) => async (dispatch: ThunkDispatch<{}, {}, MeetingDispatchTypes>) => {
+  try {
+    dispatch(removeAlert());
+    const res = await api.patch(
+      `/projects/${projectId}/meetings/${meetingId}`,
+      formData
+    );
+
+    dispatch({ type: MEETING_UPDATED, payload: res.data });
+    history.push(`/projects/${projectId}/meeting-rooms`);
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error: any) =>
+        dispatch(setAlert(error.msg, MessageType.Fail, error.param))
+      );
+
+      dispatch({
+        type: MEETING_FAIL,
+        payload: { msg: err.response.statusText, status: err.response.status },
+      });
+    }
+  }
+};
+
+//Delete a meeting room
+export const deleteMeeting = (projectId: string, meetingId: string) => async (
+  dispatch: Dispatch<MeetingDispatchTypes>
+) => {
+  try {
+    await api.delete(`/projects/${projectId}/meetings/${meetingId}`);
+    dispatch({ type: MEETING_DELETED, payload: meetingId });
+  } catch (err) {
+    dispatch({
+      type: MEETING_FAIL,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
   }
 };
 

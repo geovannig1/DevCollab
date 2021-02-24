@@ -135,7 +135,7 @@ export const deleteUser = async (req: Request, res: Response) => {
       await project.save();
     }
 
-    await user?.remove();
+    await user?.delete();
     res.status(200).clearCookie('access_token').json({ msg: 'User deleted' });
   } catch (err) {
     console.error(err.message);

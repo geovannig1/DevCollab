@@ -1,6 +1,8 @@
 export const MEETINGS_LOADED = 'MEETINGS_LOADED';
 export const MEETING_LOADED = 'MEETING_LOADED';
 export const MEETING_CREATED = 'MEETING_CREATED';
+export const MEETING_UPDATED = 'MEETING_UPDATED';
+export const MEETING_DELETED = 'MEETING_DELETED';
 export const MEETING_FAIL = 'MEETING_FAIL';
 export const CLEAR_MEETING = 'CLEAR_MEETING';
 
@@ -20,6 +22,7 @@ export interface MeetingTypes {
   _id?: string;
   name: string;
   members: Member[];
+  usersInRoom?: string[];
 }
 
 export interface MeetingsLoaded {
@@ -35,6 +38,16 @@ export interface MeetingLoaded {
 export interface MeetingCreated {
   type: typeof MEETING_CREATED;
   payload: MeetingTypes;
+}
+
+export interface MeetingUpdated {
+  type: typeof MEETING_UPDATED;
+  payload: MeetingTypes;
+}
+
+export interface MeetingDeleted {
+  type: typeof MEETING_DELETED;
+  payload: string;
 }
 
 export interface MeetingFail {
@@ -53,5 +66,7 @@ export type MeetingDispatchTypes =
   | MeetingsLoaded
   | MeetingLoaded
   | MeetingCreated
+  | MeetingUpdated
+  | MeetingDeleted
   | MeetingFail
   | ClearMeeting;

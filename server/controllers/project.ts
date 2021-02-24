@@ -206,7 +206,7 @@ export const deleteProject = async (req: Request, res: Response) => {
       return res.status(401).json({ errors: { msg: 'Unauthorized user' } });
     }
 
-    await project?.remove();
+    await project?.delete();
 
     res.status(200).json({ msg: 'Project deleted' });
   } catch (err) {

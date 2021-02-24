@@ -15,6 +15,8 @@ import AddIcon from '@material-ui/icons/Add';
 import RoomCard from '../components/meeting/RoomCard';
 import { loadMeetings } from '../actions/meetingActions';
 import { MeetingInitialState } from '../reducers/meetingReducer';
+import { AuthInitialState } from '../reducers/authReducer';
+import { AccessPermission } from '../actions/projectTypes';
 
 interface MeetingRoomsProps {
   loadProject: (projectId: string) => Promise<void>;
@@ -23,6 +25,7 @@ interface MeetingRoomsProps {
   loadMeetings: (projectId: string) => Promise<void>;
   project: ProjectInitialState;
   meeting: MeetingInitialState;
+  auth: AuthInitialState;
 }
 
 const MeetingRooms: React.FC<MeetingRoomsProps> = ({
@@ -32,6 +35,7 @@ const MeetingRooms: React.FC<MeetingRoomsProps> = ({
   loadMeetings,
   project: { selectedProject, projectError },
   meeting: { meetings },
+  auth: { user },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
 
@@ -56,27 +60,47 @@ const MeetingRooms: React.FC<MeetingRoomsProps> = ({
     !meetings && loadMeetings(projectId);
   }, [loadMeetings, projectId, meetings]);
 
-  const handleDelete = async () => {};
+  //find user in the project
+  const userProject = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
 
   return (
     <Fragment>
-      <Button
-        as={Link}
-        to={`/projects/${projectId}/create-room`}
-        extrasmall={'extrasmall' && 1}
-      >
-        <AddIcon /> New Room
-      </Button>
+      {meetings && (
+        <Fragment>
+          {userProject?.accessPermission !== AccessPermission.ReadOnly && (
+            <Button
+              as={Link}
+              to={`/projects/${projectId}/create-room`}
+              extrasmall={'extrasmall' && 1}
+            >
+              <AddIcon /> New Room
+            </Button>
+          )}
 
-      <Container>
-        {meetings?.map((meeting) => (
-          <RoomCard
-            key={meeting._id}
-            meetingRoom={meeting}
-            projectId={projectId}
-          />
-        ))}
-      </Container>
+          <Container>
+            {meetings?.map((meeting) => {
+              //Check if the user is the member of the meeting
+              const userExist = meeting.members.find(
+                (member: any) => member.user === user?._id
+              );
+              return (
+                <Fragment key={meeting._id}>
+                  {userExist && (
+                    <RoomCard
+                      meetingRoom={meeting}
+                      selectedProject={selectedProject}
+                      user={user}
+                      projectId={projectId}
+                    />
+                  )}
+                </Fragment>
+              );
+            })}
+          </Container>
+        </Fragment>
+      )}
     </Fragment>
   );
 };
@@ -84,6 +108,7 @@ const MeetingRooms: React.FC<MeetingRoomsProps> = ({
 const mapStateToProps = (state: Store) => ({
   project: state.project,
   meeting: state.meeting,
+  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
