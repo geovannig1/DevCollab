@@ -5,9 +5,9 @@ import path from 'path';
 import connectDB from './config/db';
 import { Server, Socket } from 'socket.io';
 import dotenv from 'dotenv';
-if (process.env.NODE_ENV !== 'production')
+if (process.env.NODE_ENV !== 'production') {
   dotenv.config({ path: path.join(__dirname, 'config', '.env') });
-
+}
 import joinProject from './socket/joinProject';
 import taskSocket from './socket/task';
 import discussionSocket from './socket/discussion';

@@ -120,7 +120,7 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
               path='/projects/:projectId/meeting-rooms/:meetingId/edit'
               component={UpdateMeeting}
             />
-            <Route exact path='*' component={NotFound} />
+            {/* <Route exact path='*' component={NotFound} /> */}
           </Switch>
         </BaseComponent>
       </Router>
