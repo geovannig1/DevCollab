@@ -1,5 +1,6 @@
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import { History } from 'history';
 
 import api from '../api';
 import { setAlert } from './alertActions';
@@ -59,9 +60,10 @@ export const loadProject = (projectId: string) => async (
 };
 
 //Create new project
-export const createProject = (projectData: ProjectData, history: any) => async (
-  dispatch: ThunkDispatch<{}, {}, ProjectDispatchTypes>
-) => {
+export const createProject = (
+  projectData: ProjectData,
+  history: History
+) => async (dispatch: ThunkDispatch<{}, {}, ProjectDispatchTypes>) => {
   try {
     const res = await api.post('/projects', projectData);
 
@@ -87,7 +89,7 @@ export const createProject = (projectData: ProjectData, history: any) => async (
 export const updateProject = (
   projectData: ProjectData,
   projectId: string,
-  history: any
+  history: History
 ) => async (dispatch: ThunkDispatch<{}, {}, ProjectDispatchTypes>) => {
   try {
     const res = await api.patch(`/projects/${projectId}`, projectData);

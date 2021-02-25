@@ -1,4 +1,5 @@
 import { ThunkDispatch } from 'redux-thunk';
+import { History } from 'history';
 
 import { removeAlert, setAlert } from './alertActions';
 import { MessageType } from './alertTypes';
@@ -51,7 +52,7 @@ export const loadMeeting = (projectId: string, meetingId: string) => async (
 export const createMeeting = (
   projectId: string,
   formData: MeetingTypes,
-  history: any
+  history: History
 ) => async (dispatch: ThunkDispatch<{}, {}, MeetingDispatchTypes>) => {
   try {
     dispatch(removeAlert());
@@ -79,7 +80,7 @@ export const updateMeeting = (
   projectId: string,
   meetingId: string,
   formData: MeetingTypes,
-  history: any
+  history: History
 ) => async (dispatch: ThunkDispatch<{}, {}, MeetingDispatchTypes>) => {
   try {
     dispatch(removeAlert());

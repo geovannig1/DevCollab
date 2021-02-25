@@ -1,4 +1,5 @@
 import { ThunkDispatch } from 'redux-thunk';
+import { History } from 'history';
 
 import {
   DiscussionType,
@@ -53,7 +54,7 @@ export const loadDiscussion = (
 
 //Create a new discussion
 export const createDiscussion = (
-  history: any,
+  history: History,
   projectId: string,
   formData: DiscussionType,
   attachment?: File
@@ -90,7 +91,7 @@ export const createDiscussion = (
 
 //Update a discussion
 export const updateDiscussion = (
-  history: any,
+  history: History,
   projectId: string,
   discussionId: string,
   formData: DiscussionType,
