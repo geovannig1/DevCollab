@@ -51,7 +51,7 @@ export const loadMeeting = (projectId: string, meetingId: string) => async (
 export const createMeeting = (
   projectId: string,
   formData: MeetingTypes,
-  history: History
+  history: any
 ) => async (dispatch: ThunkDispatch<{}, {}, MeetingDispatchTypes>) => {
   try {
     dispatch(removeAlert());
@@ -79,7 +79,7 @@ export const updateMeeting = (
   projectId: string,
   meetingId: string,
   formData: MeetingTypes,
-  history: History
+  history: any
 ) => async (dispatch: ThunkDispatch<{}, {}, MeetingDispatchTypes>) => {
   try {
     dispatch(removeAlert());
