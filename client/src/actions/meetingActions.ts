@@ -1,5 +1,4 @@
 import { ThunkDispatch } from 'redux-thunk';
-import { History } from 'history';
 
 import { removeAlert, setAlert } from './alertActions';
 import { MessageType } from './alertTypes';
