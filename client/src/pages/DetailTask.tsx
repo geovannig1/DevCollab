@@ -235,7 +235,7 @@ const DetailTask: React.FC<DetailTaskProps> = ({
               taskDataMembers?.map((member) => (
                 <MembersContainer key={member.user._id}>
                   <Avatar
-                    src={member.user?.avatar.url ?? avatar}
+                    src={member.user?.avatar?.url ?? avatar}
                     alt='profile'
                   />
                   <Text>{member.user.email}</Text>

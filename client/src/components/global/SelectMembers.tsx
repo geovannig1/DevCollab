@@ -37,7 +37,7 @@ const SelectMembers: React.FC<SelectMembersProps> = ({
           label: (
             <LabelContainer style={{ display: 'flex', alignItems: 'center' }}>
               <Avatar
-                src={member.user.avatar.url ?? avatar}
+                src={member.user.avatar?.url ?? avatar}
                 alt='user profile'
               />
               <label>{member.user.email}</label>

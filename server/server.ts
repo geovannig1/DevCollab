@@ -8,10 +8,6 @@ import dotenv from 'dotenv';
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config({ path: path.join(__dirname, 'config', '.env') });
 }
-import joinProject from './socket/joinProject';
-import taskSocket from './socket/task';
-import discussionSocket from './socket/discussion';
-import meetingSocket from './socket/meeting';
 
 import auth from './routes/api/auth';
 import user from './routes/api/user';
@@ -20,7 +16,14 @@ import task from './routes/api/task';
 import discussion from './routes/api/discussion';
 import meeting from './routes/api/meeting';
 
+import joinProject from './socket/joinProject';
+import taskSocket from './socket/task';
+import discussionSocket from './socket/discussion';
+import meetingSocket from './socket/meeting';
+
 const app = express();
+
+app.enable('trust proxy');
 
 const httpServer = createServer(app);
 

@@ -15,6 +15,7 @@ import Signup from './pages/Signup';
 import Project from './pages/Project';
 import CreateProject from './pages/CreateProject';
 import UpdateProject from './pages/UpdateProject';
+import NotFound from './pages/NotFound';
 import UpdateUser from './pages/UpdateUser';
 import Activity from './pages/Activity';
 import Task from './pages/Task';
@@ -119,6 +120,7 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
               path='/projects/:projectId/meeting-rooms/:meetingId/edit'
               component={UpdateMeeting}
             />
+            <Route exact path='*' component={NotFound} />
           </Switch>
         </BaseComponent>
       </Router>

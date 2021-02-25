@@ -142,8 +142,8 @@ const UpdateUser: React.FC<UpdateUserProps> = ({
               src={
                 imagePreview
                   ? imagePreview?.toString()
-                  : user?.avatar.url
-                  ? user.avatar.url
+                  : user?.avatar?.url
+                  ? user.avatar?.url
                   : avatar
               }
               alt='profile-avatar'

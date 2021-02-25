@@ -64,7 +64,7 @@ const DiscussionComment: React.FC<DiscussionCommentProps> = ({
       {findUser?.accessPermission !== AccessPermission.ReadOnly && (
         <form onSubmit={handleSubmit}>
           <InputComment>
-            <Avatar size='40' src={user?.avatar.url ?? avatar} alt='profile' />
+            <Avatar size='40' src={user?.avatar?.url ?? avatar} alt='profile' />
             <input
               type='text'
               name='comment'
