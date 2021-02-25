@@ -23,7 +23,7 @@ export default (
 
     let url: string;
     if (process.env.NODE_ENV === 'production') {
-      url = `http://<something>/api/projects/invitation/${token}`;
+      url = `https://devcollabapp.herokuapp.com/api/projects/invitation/${token}`;
     } else {
       url = `http://localhost:3000/api/projects/invitation/${token}`;
     }
