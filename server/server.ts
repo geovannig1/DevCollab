@@ -1,5 +1,5 @@
 import { createServer } from 'http';
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import connectDB from './config/db';
@@ -61,7 +61,7 @@ if (process.env.NODE_ENV === 'production') {
   //Set static folder
   app.use(express.static('client/build'));
 
-  app.get('*', (req, res) => {
+  app.get('*', (req: Request, res: Response) => {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
 }
