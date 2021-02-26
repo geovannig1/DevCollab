@@ -49,6 +49,15 @@ io.on('connection', (socket: Socket) => {
   meetingSocket(io, socket);
 });
 
+//Middleware SSL Redirect
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.header('x-forwarded-proto') !== 'https')
+      res.redirect(`https://${req.header('host')}${req.url}`);
+    else next();
+  });
+}
+
 //Define Routes
 app.use('/api/auth', auth);
 app.use('/api/user', user);

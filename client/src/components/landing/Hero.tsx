@@ -59,7 +59,7 @@ const LeftContainer = styled.div`
     font-size: ${setRem(60)};
   }
   p {
-    color: ${setColor.primaryLight};
+    color: ${setColor.primary};
     font-weight: 500;
     margin: 20px 0;
     padding-right: 100px;
