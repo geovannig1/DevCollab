@@ -28,65 +28,86 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
   return (
     <Container>
-      <StyledLink
-        to={`/projects/${selectedProject?._id}/activity`}
-        selected={navbar.selected === SelectedType.Activity}
-      >
-        <ImportExportIcon />
-        <Text>Activity</Text>
-        <div />
-      </StyledLink>
+      <ul>
+        <li>
+          <StyledLink
+            to={`/projects/${selectedProject?._id}/activity`}
+            selected={navbar.selected === SelectedType.Activity}
+          >
+            <ImportExportIcon />
+            <Text>Activity</Text>
+            <div />
+          </StyledLink>
+        </li>
 
-      <StyledLink
-        to={`/projects/${selectedProject?._id}/tasks`}
-        selected={navbar.selected === SelectedType.Task}
-      >
-        <PlaylistAddCheckIcon />
-        <Text>Tasks</Text>
-        <div />
-      </StyledLink>
+        <li>
+          <StyledLink
+            to={`/projects/${selectedProject?._id}/tasks`}
+            selected={navbar.selected === SelectedType.Task}
+          >
+            <PlaylistAddCheckIcon />
+            <Text>Tasks</Text>
+            <div />
+          </StyledLink>
+        </li>
 
-      <StyledLink
-        to={`/projects/${selectedProject?._id}/discussions`}
-        selected={navbar.selected === SelectedType.Discussions}
-      >
-        <QuestionAnswerIcon />
-        <Text>Discussions</Text>
-        <div />
-      </StyledLink>
+        <li>
+          <StyledLink
+            to={`/projects/${selectedProject?._id}/discussions`}
+            selected={navbar.selected === SelectedType.Discussions}
+          >
+            <QuestionAnswerIcon />
+            <Text>Discussions</Text>
+            <div />
+          </StyledLink>
+        </li>
 
-      <StyledLink
-        to={`/projects/${selectedProject?._id}/meeting-rooms`}
-        selected={navbar.selected === SelectedType.Meeting}
-      >
-        <VideocamIcon />
-        <Text>Meeting Rooms</Text>
-        <div />
-      </StyledLink>
+        <li>
+          <StyledLink
+            to={`/projects/${selectedProject?._id}/meeting-rooms`}
+            selected={navbar.selected === SelectedType.Meeting}
+          >
+            <VideocamIcon />
+            <Text>Meeting Rooms</Text>
+            <div />
+          </StyledLink>
+        </li>
 
-      <StyledLink to='#' selected={navbar.selected === SelectedType.Github}>
-        <GitHubIcon />
-        <Text>GitHub Activity</Text>
-        <div />
-      </StyledLink>
+        <li>
+          <StyledLink to='#' selected={navbar.selected === SelectedType.Github}>
+            <GitHubIcon />
+            <Text>GitHub Activity</Text>
+            <div />
+          </StyledLink>
+        </li>
 
-      <StyledLink to='#' selected={navbar.selected === SelectedType.Notes}>
-        <NoteAddIcon />
-        <Text>Notes</Text>
-        <div />
-      </StyledLink>
+        <li>
+          <StyledLink
+            to={`/projects/${selectedProject?._id}/notes`}
+            selected={navbar.selected === SelectedType.Notes}
+          >
+            <NoteAddIcon />
+            <Text>Notes</Text>
+            <div />
+          </StyledLink>
+        </li>
 
-      <StyledLink to='#' selected={navbar.selected === SelectedType.Files}>
-        <AttachFileIcon />
-        <Text>Files</Text>
-        <div />
-      </StyledLink>
+        <li>
+          <StyledLink to='#' selected={navbar.selected === SelectedType.Files}>
+            <AttachFileIcon />
+            <Text>Files</Text>
+            <div />
+          </StyledLink>
+        </li>
 
-      <StyledLink to='#'>
-        <SettingsIcon />
-        <Text>Settings</Text>
-        <div />
-      </StyledLink>
+        <li>
+          <StyledLink to={`/projects/${selectedProject?._id}/edit`}>
+            <SettingsIcon />
+            <Text>Settings</Text>
+            <div />
+          </StyledLink>
+        </li>
+      </ul>
     </Container>
   );
 };
@@ -97,14 +118,24 @@ const mapStateToProps = (state: Store) => ({
 });
 
 const Container = styled.nav`
-  display: flex;
-  justify-content: space-evenly;
   background-color: ${setColor.mainWhite};
   box-shadow: ${setShadow.main};
   width: 100%;
-  height: 70px;
   margin: 20px 0;
   border-radius: 10px;
+
+  ul {
+    display: flex;
+    justify-content: space-evenly;
+    height: 70px;
+  }
+  li {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 const StyledLink = styled(Link)<{ selected?: boolean }>`
