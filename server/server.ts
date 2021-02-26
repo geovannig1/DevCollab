@@ -23,8 +23,6 @@ import meetingSocket from './socket/meeting';
 
 const app = express();
 
-app.enable('trust proxy');
-
 const httpServer = createServer(app);
 
 //Add cors when in development
