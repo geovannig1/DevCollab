@@ -4,7 +4,7 @@ export const setColor = {
   mainGrey: '#F0F0F0',
   darkGrey: ' #D0D0D0',
   mainBlack: '#272727',
-  mediumBlack: '#3b3b3b',
+  mediumBlack: '#2f2f2f',
   lightBlack: '#9F9F9F',
   mainRed: '#f50000',
   darkRed: '#871818',

@@ -123,6 +123,8 @@ const StyledLink = styled.a`
   text-decoration: none;
   height: 100%;
   width: 260px;
+  user-select: none;
+  outline: none;
 `;
 
 export default Controller;

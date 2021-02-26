@@ -3,6 +3,7 @@ import { setColor } from '../../styles';
 
 export const StyledVideo = styled.video`
   margin: 0 10px;
+  background-color: ${setColor.mediumBlack};
 `;
 
 export const StyledVideoContainer = styled.div`

@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import connectDB from './config/db';
+import sslRedirect from './middlewares/sslRedirect';
 import { Server, Socket } from 'socket.io';
 import dotenv from 'dotenv';
 if (process.env.NODE_ENV !== 'production') {
@@ -49,13 +50,9 @@ io.on('connection', (socket: Socket) => {
   meetingSocket(io, socket);
 });
 
-//Middleware SSL Redirect
+//Heroku Middleware SSL Redirect
 if (process.env.NODE_ENV === 'production') {
-  app.use((req, res, next) => {
-    if (req.header('x-forwarded-proto') !== 'https')
-      res.redirect(`https://${req.header('host')}${req.url}`);
-    else next();
-  });
+  app.use(sslRedirect);
 }
 
 //Define Routes
