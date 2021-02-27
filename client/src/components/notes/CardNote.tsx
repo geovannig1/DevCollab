@@ -1,22 +1,41 @@
 import React from 'react';
 import styled from 'styled-components';
+import day from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import CardMenu from '../global/CardMenu';
 
 import { setColor, setShadow, setRem } from '../../styles';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import { NoteTypes } from '../../actions/noteTypes';
 
-interface CardNoteProps {}
+interface CardNoteProps {
+  note: NoteTypes;
+  projectId: string;
+}
 
-const CardNote: React.FC<CardNoteProps> = ({}) => {
+const CardNote: React.FC<CardNoteProps> = ({ note, projectId }) => {
+  //extends relativetime
+  day.extend(relativeTime);
+
   return (
     <Container>
       <CardContainer>
-        <Title>Notes Title</Title>
+        <Title>{note.title}</Title>
         <Content>
-          <Creator>By John Doe</Creator>
-          <Date>1 hour ago</Date>
+          <Creator>By {note.user?.firstName}</Creator>
+          <Date>{day().fromNow()}</Date>
         </Content>
       </CardContainer>
-      <StyledHoriz fontSize='large' />
+      <MenuContainer>
+        <CardMenu
+          deleteTitle='Delete Note'
+          deleteText={`Are you sure want to delete ${''} room? this process can't be undone.`}
+          deleteItem={() => {}}
+          editLink={`/projects/${projectId}/notes/${note._id}/edit`}
+        >
+          <StyledHoriz fontSize='large' />
+        </CardMenu>
+      </MenuContainer>
     </Container>
   );
 };
@@ -47,6 +66,14 @@ const CardContainer = styled.div`
   }
 `;
 
+const MenuContainer = styled.div`
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  margin-right: 10px;
+  cursor: pointer;
+`;
+
 const Title = styled.h4`
   font-weight: 600;
 `;
@@ -67,13 +94,11 @@ const Date = styled.span`
 `;
 
 const StyledHoriz = styled(MoreHorizIcon)`
-  position: absolute;
-  top: 5px;
-  right: 10px;
   cursor: pointer;
   color: ${setColor.lightBlack};
   transition: 0.2s ease-in-out;
   &:hover {
+    transition: 0.2s ease-in-out;
     color: ${setColor.mainBlack};
   }
   &:active {

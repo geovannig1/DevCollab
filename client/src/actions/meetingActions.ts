@@ -1,5 +1,6 @@
 import { ThunkDispatch } from 'redux-thunk';
 import { History } from 'history';
+import { Dispatch } from 'redux';
 
 import { removeAlert, setAlert } from './alertActions';
 import { MessageType } from './alertTypes';
@@ -15,7 +16,6 @@ import {
   MeetingTypes,
 } from './meetingTypes';
 import api from '../api';
-import { Dispatch } from 'redux';
 
 //Load all the meeting rooms
 export const loadMeetings = (projectId: string) => async (

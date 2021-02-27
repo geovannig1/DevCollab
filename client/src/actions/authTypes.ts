@@ -57,7 +57,7 @@ export interface LogoutFail {
 
 export interface AuthError {
   type: typeof AUTH_ERROR;
-  payload: { msg: string; status: string };
+  payload: { msg: string; status: number };
 }
 
 export interface NotFound {

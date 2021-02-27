@@ -31,6 +31,7 @@ import MeetingRoom from './pages/MeetingRoom';
 import UpdateMeeting from './pages/UpdateMeeting';
 import Notes from './pages/Notes';
 import CreateNote from './pages/CreateNote';
+import UpdateNote from './pages/UpdateNote';
 
 interface AppProps {
   loadUser: () => Promise<void>;
@@ -131,6 +132,11 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
               exact
               path='/projects/:projectId/create-note'
               component={CreateNote}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/notes/:noteId/edit'
+              component={UpdateNote}
             />
             <Route exact path='*' component={NotFound} />
           </Switch>

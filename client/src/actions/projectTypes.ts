@@ -61,7 +61,7 @@ export interface ProjectError {
   type: typeof PROJECT_ERROR;
   payload: {
     msg: string;
-    status: string;
+    status: number;
   };
 }
 

@@ -62,7 +62,7 @@ export interface DiscussionDeleted {
 
 export interface DiscussionFail {
   type: typeof DISCUSSION_FAIL;
-  payload: { msg: string; status: string };
+  payload: { msg: string; status: number };
 }
 
 export interface ClearDiscussion {

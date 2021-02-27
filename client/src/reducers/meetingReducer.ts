@@ -15,7 +15,7 @@ export interface MeetingInitialState {
   selectedMeeting?: MeetingTypes;
   meetingError: {
     msg?: string;
-    status?: string;
+    status?: number;
   };
 }
 

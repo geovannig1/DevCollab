@@ -54,7 +54,7 @@ export interface MeetingFail {
   type: typeof MEETING_FAIL;
   payload: {
     msg: string;
-    status: string;
+    status: number;
   };
 }
 

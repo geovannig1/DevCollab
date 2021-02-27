@@ -16,6 +16,7 @@ import project from './routes/api/project';
 import task from './routes/api/task';
 import discussion from './routes/api/discussion';
 import meeting from './routes/api/meeting';
+import note from './routes/api/note';
 
 import joinProject from './socket/joinProject';
 import taskSocket from './socket/task';
@@ -62,6 +63,7 @@ app.use('/api/projects', project);
 app.use('/api/projects', task);
 app.use('/api/projects', discussion);
 app.use('/api/projects', meeting);
+app.use('/api/projects', note);
 
 //Serve static assets in productiion
 if (process.env.NODE_ENV === 'production') {
