@@ -13,7 +13,11 @@ import { Store } from '../store';
 import DiscussionForm from '../components/discussion/DiscussionForm';
 import Paper from '../components/global/Paper';
 import { DiscussionType } from '../actions/discussionTypes';
-import { loadDiscussion, updateDiscussion } from '../actions/discussionActions';
+import {
+  loadDiscussion,
+  updateDiscussion,
+  clearSelectedDiscussion,
+} from '../actions/discussionActions';
 import Previous from '../components/global/Previous';
 import { DiscussionInitialState } from '../reducers/discussionReducer';
 import { AuthInitialState } from '../reducers/authReducer';
@@ -31,6 +35,7 @@ interface UpdateDiscussionProps {
     formData: DiscussionType,
     attachment?: File
   ) => Promise<void>;
+  clearSelectedDiscussion: () => void;
   discussion: DiscussionInitialState;
   project: ProjectInitialState;
   auth: AuthInitialState;
@@ -40,11 +45,12 @@ const UpdateDiscussion: React.FC<UpdateDiscussionProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
+  loadDiscussion,
+  updateDiscussion,
+  clearSelectedDiscussion,
   project: { selectedProject, projectError },
   auth: { user },
-  loadDiscussion,
   discussion: { selectedDiscussion },
-  updateDiscussion,
 }) => {
   const { projectId, discussionId } = useParams<{
     projectId: string;
@@ -59,7 +65,10 @@ const UpdateDiscussion: React.FC<UpdateDiscussionProps> = ({
     !selectedProject && loadProject(projectId);
     projectError && <Redirect to='/projects' />;
 
-    return () => clearNavbar();
+    return () => {
+      clearNavbar();
+      clearSelectedDiscussion();
+    };
   }, [
     loadProject,
     projectId,
@@ -67,30 +76,17 @@ const UpdateDiscussion: React.FC<UpdateDiscussionProps> = ({
     projectError,
     setNavbar,
     clearNavbar,
+    clearSelectedDiscussion,
   ]);
 
   useEffect(() => {
     loadDiscussion(projectId, discussionId);
   }, [loadDiscussion, projectId, discussionId]);
 
-  const [attachment, setAttachment] = useState<File>();
-  const [discussionData, setDiscussionData] = useState<DiscussionType>({
-    title: '',
-    description: '',
-  });
-
-  //Set the update form value
-  useEffect(() => {
-    if (selectedDiscussion) {
-      setDiscussionData({
-        title: selectedDiscussion.title,
-        description: selectedDiscussion.description,
-      });
-    }
-  }, [selectedDiscussion]);
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleDiscussionSubmit = (
+    discussionData: DiscussionType,
+    attachment?: File
+  ) => {
     updateDiscussion(
       history,
       projectId,
@@ -112,21 +108,26 @@ const UpdateDiscussion: React.FC<UpdateDiscussionProps> = ({
     }
   }, [projectId, selectedProject?.members, user?._id, history]);
 
+  const [title, setTitle] = useState('');
+
+  useEffect(() => {
+    selectedDiscussion && setTitle(selectedDiscussion.title);
+  }, [selectedDiscussion]);
+
   return (
     <Fragment>
       {selectedDiscussion && (
         <Paper>
           <Previous
-            title={discussionData.title.trim() || 'update discussion'}
+            title={title.trim() || 'Update Discussion'}
             link={`/projects/${projectId}/discussions`}
             previousTo='Discussions'
           />
           <DiscussionForm
-            handleSubmit={handleSubmit}
             projectId={projectId}
-            setAttachment={setAttachment}
-            setDiscussionData={setDiscussionData}
-            discussionData={discussionData}
+            handleDiscussionSubmit={handleDiscussionSubmit}
+            setTitle={setTitle}
+            selectedDiscussion={selectedDiscussion}
             update
           />
         </Paper>
@@ -157,6 +158,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
     dispatch(
       updateDiscussion(history, projectId, discussionId, formData, attachment)
     ),
+  clearSelectedDiscussion: () => dispatch(clearSelectedDiscussion()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UpdateDiscussion);

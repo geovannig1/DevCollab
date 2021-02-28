@@ -12,6 +12,7 @@ import {
   MEETING_DELETED,
   MEETING_FAIL,
   CLEAR_MEETING,
+  CLEAR_SELECTED_MEETING,
   MeetingDispatchTypes,
   MeetingTypes,
 } from './meetingTypes';
@@ -126,4 +127,11 @@ export const clearMeeting = () => (
   dispatch: Dispatch<MeetingDispatchTypes>
 ) => {
   dispatch({ type: CLEAR_MEETING });
+};
+
+//Clear selected meeting
+export const clearSelectedMeeting = () => (
+  dispatch: Dispatch<MeetingDispatchTypes>
+) => {
+  dispatch({ type: CLEAR_SELECTED_MEETING });
 };

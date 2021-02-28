@@ -6,6 +6,7 @@ export const DISCUSSION_DELETED = 'DISCUSSION_DELETED';
 export const DISCUSSION_FAIL = 'DISCUSSION_FAIL';
 export const COMMENT_RECEIVED = 'COMMENT_RECEIVED';
 export const CLEAR_DISCUSSION = 'CLEAR_DISCUSSION';
+export const CLEAR_SELECTED_DISCUSSION = 'CLEAR_SELECTED_DISCUSSION';
 
 export interface DiscussionType {
   _id?: string;
@@ -69,6 +70,10 @@ export interface ClearDiscussion {
   type: typeof CLEAR_DISCUSSION;
 }
 
+export interface ClearSelectedDiscussion {
+  type: typeof CLEAR_SELECTED_DISCUSSION;
+}
+
 export type DiscussionDispatchTypes =
   | DiscussionsLoaded
   | DiscussionLoaded
@@ -77,4 +82,5 @@ export type DiscussionDispatchTypes =
   | DiscussionDeleted
   | CommentReceived
   | DiscussionFail
-  | ClearDiscussion;
+  | ClearDiscussion
+  | ClearSelectedDiscussion;

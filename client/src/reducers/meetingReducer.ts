@@ -6,6 +6,7 @@ import {
   MEETING_DELETED,
   MEETING_FAIL,
   CLEAR_MEETING,
+  CLEAR_SELECTED_MEETING,
   MeetingDispatchTypes,
   MeetingTypes,
 } from '../actions/meetingTypes';
@@ -31,7 +32,7 @@ const meetingReducer = (
     case MEETINGS_LOADED:
       return { ...state, meetings: action.payload, selectedMeeting: undefined };
     case MEETING_LOADED:
-      return { ...state, meetings: undefined, selectedMeeting: action.payload };
+      return { ...state, selectedMeeting: action.payload };
     case MEETING_CREATED:
       return {
         ...state,
@@ -57,6 +58,11 @@ const meetingReducer = (
       return {
         meetingError: {},
         meetings: undefined,
+        selectedMeeting: undefined,
+      };
+    case CLEAR_SELECTED_MEETING:
+      return {
+        ...state,
         selectedMeeting: undefined,
       };
     default:

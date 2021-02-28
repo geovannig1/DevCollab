@@ -32,6 +32,9 @@ import UpdateMeeting from './pages/UpdateMeeting';
 import Notes from './pages/Notes';
 import CreateNote from './pages/CreateNote';
 import UpdateNote from './pages/UpdateNote';
+import Note from './pages/Note';
+import Files from './pages/Files';
+import CreateFile from './pages/CreateFile';
 
 interface AppProps {
   loadUser: () => Promise<void>;
@@ -137,6 +140,21 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
               exact
               path='/projects/:projectId/notes/:noteId/edit'
               component={UpdateNote}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/notes/:noteId'
+              component={Note}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/files'
+              component={Files}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/create-file'
+              component={CreateFile}
             />
             <Route exact path='*' component={NotFound} />
           </Switch>

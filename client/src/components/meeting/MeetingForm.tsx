@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
@@ -7,32 +7,49 @@ import { Form, InputContainer } from '../global/FormContainer';
 import Alert from '../global/Alert';
 import { MeetingTypes } from '../../actions/meetingTypes';
 import SelectMembers from '../global/SelectMembers';
-import { Member, ProjectType } from '../../actions/projectTypes';
+import { ProjectType } from '../../actions/projectTypes';
 
 interface MeetingFormProps {
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  roomData: MeetingTypes;
-  setRoomData: React.Dispatch<React.SetStateAction<MeetingTypes>>;
   projectId: string;
   selectedProject?: ProjectType;
   update?: boolean;
-  selectData?: Member[];
+  selectedMeeting?: MeetingTypes;
+  handleMeetingSubmit: (roomData: MeetingTypes) => void;
+  setName: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const MeetingForm: React.FC<MeetingFormProps> = ({
-  handleSubmit,
-  roomData,
-  setRoomData,
   projectId,
   selectedProject,
   update,
-  selectData,
+  selectedMeeting,
+  handleMeetingSubmit,
+  setName,
 }) => {
+  //Get the meeting members with avatar, access permission and email
+  const roomMemberIds = selectedMeeting?.members.map(
+    (member) => member.user._id
+  );
+  const roomMembers = selectedProject?.members.filter((member) =>
+    roomMemberIds?.includes(member.user._id.toString())
+  );
+
+  const [roomData, setRoomData] = useState<MeetingTypes>({
+    name: selectedMeeting?.name ?? '',
+    members: selectedMeeting?.members ?? [],
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRoomData((prevData) => ({
       ...prevData,
       [e.target.name]: e.target.value,
     }));
+    if (e.target.name === 'name') setName(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleMeetingSubmit(roomData);
   };
 
   return (
@@ -60,7 +77,7 @@ const MeetingForm: React.FC<MeetingFormProps> = ({
             <SelectMembers
               selectedProject={selectedProject}
               setData={setRoomData}
-              selectData={selectData}
+              selectData={roomMembers}
             />
           </SelectContainer>
         </InputContainer>

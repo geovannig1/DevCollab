@@ -5,6 +5,7 @@ export const MEETING_UPDATED = 'MEETING_UPDATED';
 export const MEETING_DELETED = 'MEETING_DELETED';
 export const MEETING_FAIL = 'MEETING_FAIL';
 export const CLEAR_MEETING = 'CLEAR_MEETING';
+export const CLEAR_SELECTED_MEETING = 'CLEAR_SELECTED_MEETING';
 
 export interface Member {
   user: {
@@ -62,6 +63,10 @@ export interface ClearMeeting {
   type: typeof CLEAR_MEETING;
 }
 
+export interface ClearSelectedMeeting {
+  type: typeof CLEAR_SELECTED_MEETING;
+}
+
 export type MeetingDispatchTypes =
   | MeetingsLoaded
   | MeetingLoaded
@@ -69,4 +74,5 @@ export type MeetingDispatchTypes =
   | MeetingUpdated
   | MeetingDeleted
   | MeetingFail
-  | ClearMeeting;
+  | ClearMeeting
+  | ClearSelectedMeeting;

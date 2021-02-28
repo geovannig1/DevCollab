@@ -9,13 +9,22 @@ import Alert from '../global/Alert';
 
 interface NoteFormProps {
   handleSubmitNote: (noteData: NoteTypes) => void;
+  loadedNoteData?: NoteTypes;
   projectId: string;
+  update?: boolean;
+  setTitle: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const NoteForm: React.FC<NoteFormProps> = ({ handleSubmitNote, projectId }) => {
+const NoteForm: React.FC<NoteFormProps> = ({
+  handleSubmitNote,
+  projectId,
+  loadedNoteData,
+  update,
+  setTitle,
+}) => {
   const [noteData, setNoteData] = useState<NoteTypes>({
-    contents: '',
-    title: '',
+    title: loadedNoteData?.title ?? '',
+    contents: loadedNoteData?.contents ?? '',
   });
 
   const handleChange = (
@@ -25,6 +34,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ handleSubmitNote, projectId }) => {
       ...prevData,
       [e.target.name]: e.target.value,
     }));
+    if (e.target.name === 'title') setTitle(e.target.value);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -61,7 +71,9 @@ const NoteForm: React.FC<NoteFormProps> = ({ handleSubmitNote, projectId }) => {
             onChange={handleChange}
           />
         </InputContainer>
-        <StyledButton extrasmall>Create Note</StyledButton>
+        <StyledButton extrasmall>
+          {update ? 'Update Note' : 'Create Note'}
+        </StyledButton>
         <StyledButton
           as={Link}
           extrasmall={'extrasmall' && 1}

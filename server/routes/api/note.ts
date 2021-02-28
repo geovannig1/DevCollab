@@ -5,7 +5,13 @@ import { check } from 'express-validator';
 import auth from '../../middlewares/auth';
 import validateInput from '../../middlewares/validateInput';
 import checkObjectId from '../../middlewares/checkObjectId';
-import { createNote, getNotes, updateNote } from '../../controllers/note';
+import {
+  createNote,
+  deleteNote,
+  getNote,
+  getNotes,
+  updateNote,
+} from '../../controllers/note';
 
 /**
  *  @route GET api/projects/:projectId/notes
@@ -13,6 +19,18 @@ import { createNote, getNotes, updateNote } from '../../controllers/note';
  *  @access Private
  */
 router.get('/:projectId/notes', auth, checkObjectId('projectId'), getNotes);
+
+/**
+ *  @route GET api/projects/:projectId/notes/:projectId
+ *  @desc Load a project note
+ *  @access Private
+ */
+router.get(
+  '/:projectId/notes/:noteId',
+  auth,
+  [checkObjectId('projectId'), checkObjectId('noteId')],
+  getNote
+);
 
 /**
  *  @route POST api/projects/:projectId/notes
@@ -46,6 +64,18 @@ router.patch(
   [checkObjectId('projectId'), checkObjectId('noteId')],
   validateInput,
   updateNote
+);
+
+/**
+ *  @route DELETE api/projects/:projectId/notes/:noteId
+ *  @desc Delete a note
+ *  @access Private
+ */
+router.delete(
+  '/:projectId/notes/:noteId',
+  auth,
+  [checkObjectId('projectId'), checkObjectId('noteId')],
+  deleteNote
 );
 
 export default router;

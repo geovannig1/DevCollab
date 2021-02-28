@@ -7,6 +7,7 @@ import {
   DISCUSSION_DELETED,
   COMMENT_RECEIVED,
   CLEAR_DISCUSSION,
+  CLEAR_SELECTED_DISCUSSION,
   DiscussionDispatchTypes,
   DiscussionType,
 } from '../actions/discussionTypes';
@@ -37,7 +38,6 @@ const discussionReducer = (
       return {
         ...state,
         selectedDiscussion: action.payload,
-        discussions: undefined,
       };
     case DISCUSSION_CREATED:
       return {
@@ -64,6 +64,11 @@ const discussionReducer = (
       return {
         discussions: undefined,
         discussionFail: {},
+        selectedDiscussion: undefined,
+      };
+    case CLEAR_SELECTED_DISCUSSION:
+      return {
+        ...state,
         selectedDiscussion: undefined,
       };
     default:

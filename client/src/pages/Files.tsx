@@ -5,6 +5,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { useParams, Redirect, Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { setColor } from '../styles';
 import { Store } from '../store';
 import { loadProject } from '../actions/projectActions';
 import { ProjectInitialState } from '../reducers/projectReducer';
@@ -12,32 +13,26 @@ import { setNavbar, clearNavbar } from '../actions/navbarAction';
 import { SelectedType } from '../actions/navbarTypes';
 import { Button } from '../components/global/Button';
 import AddIcon from '@material-ui/icons/Add';
-import CardNote from '../components/notes/CardNote';
-import { loadNotes } from '../actions/noteActions';
-import { NoteInitialState } from '../reducers/noteReducer';
+import FileCard from '../components/file/FileCard';
 
-interface NotesProps {
+interface FilesProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
-  loadNotes: (projectId: string) => Promise<void>;
   project: ProjectInitialState;
-  note: NoteInitialState;
 }
 
-const Notes: React.FC<NotesProps> = ({
+const Files: React.FC<FilesProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
-  loadNotes,
   project: { selectedProject, projectError },
-  note: { notes },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
 
   useEffect(() => {
-    document.title = 'Notes | DevCollab';
-    setNavbar(SelectedType.Notes);
+    document.title = 'Files | DevCollab';
+    setNavbar(SelectedType.Files);
 
     !selectedProject && loadProject(projectId);
     projectError && <Redirect to='/projects' />;
@@ -51,24 +46,18 @@ const Notes: React.FC<NotesProps> = ({
     setNavbar,
     clearNavbar,
   ]);
-
-  useEffect(() => {
-    !notes && loadNotes(projectId);
-  }, [loadNotes, projectId, notes]);
-
   return (
     <Fragment>
       <Button
-        extrasmall={'extrasmall' && 1}
         as={Link}
-        to={`/projects/${projectId}/create-note`}
+        to={`/projects/${projectId}/create-file`}
+        extrasmall={'extrasmall' && 1}
       >
-        <AddIcon /> New Note
+        <AddIcon /> New File
       </Button>
+
       <Container>
-        {notes?.map((note) => (
-          <CardNote key={note._id} note={note} projectId={projectId} />
-        ))}
+        <FileCard projectId={projectId} />
       </Container>
     </Fragment>
   );
@@ -76,14 +65,12 @@ const Notes: React.FC<NotesProps> = ({
 
 const mapStateToProps = (state: Store) => ({
   project: state.project,
-  note: state.note,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   clearNavbar: () => dispatch(clearNavbar()),
-  loadNotes: (projectId: string) => dispatch(loadNotes(projectId)),
 });
 
 const Container = styled.div`
@@ -93,4 +80,4 @@ const Container = styled.div`
   gap: 50px 20px;
 `;
 
-export default connect(mapStateToProps, mapDispatchToProps)(Notes);
+export default connect(mapStateToProps, mapDispatchToProps)(Files);

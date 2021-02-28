@@ -11,6 +11,7 @@ import {
   DISCUSSION_FAIL,
   DISCUSSION_CREATED,
   CLEAR_DISCUSSION,
+  CLEAR_SELECTED_DISCUSSION,
   DiscussionDispatchTypes,
 } from './discussionTypes';
 import api from '../api';
@@ -166,4 +167,11 @@ export const clearDiscussion = () => (
   dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>
 ) => {
   dispatch({ type: CLEAR_DISCUSSION });
+};
+
+//Clear selected disucssion
+export const clearSelectedDiscussion = () => (
+  dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>
+) => {
+  dispatch({ type: CLEAR_SELECTED_DISCUSSION });
 };

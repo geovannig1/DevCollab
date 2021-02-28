@@ -13,7 +13,11 @@ import { SelectedType } from '../actions/navbarTypes';
 import Paper from '../components/global/Paper';
 import Previous from '../components/global/Previous';
 import { MeetingTypes } from '../actions/meetingTypes';
-import { loadMeeting, updateMeeting } from '../actions/meetingActions';
+import {
+  loadMeeting,
+  updateMeeting,
+  clearSelectedMeeting,
+} from '../actions/meetingActions';
 import MeetingForm from '../components/meeting/MeetingForm';
 import { setFullscreen, clearFullscreen } from '../actions/displayActions';
 import { MeetingInitialState } from '../reducers/meetingReducer';
@@ -27,6 +31,7 @@ interface UpdateMeetingProps {
   loadMeeting: (projectId: string, meetingId: string) => Promise<void>;
   setFullscreen: (fullscreen: boolean) => void;
   clearFullscreen: () => void;
+  clearSelectedMeeting: () => void;
   updateMeeting: (
     projectId: string,
     meetingId: string,
@@ -46,6 +51,7 @@ const UpdateMeeting: React.FC<UpdateMeetingProps> = ({
   setFullscreen,
   clearFullscreen,
   updateMeeting,
+  clearSelectedMeeting,
   project: { selectedProject, projectError },
   meeting: { selectedMeeting },
   auth: { user },
@@ -69,6 +75,7 @@ const UpdateMeeting: React.FC<UpdateMeetingProps> = ({
     return () => {
       clearNavbar();
       clearFullscreen();
+      clearSelectedMeeting();
     };
   }, [
     loadProject,
@@ -81,35 +88,12 @@ const UpdateMeeting: React.FC<UpdateMeetingProps> = ({
     meetingId,
     setFullscreen,
     clearFullscreen,
+    clearSelectedMeeting,
   ]);
 
-  const [roomData, setRoomData] = useState<MeetingTypes>({
-    name: '',
-    members: [],
-  });
-
-  //Set the update form value
-  useEffect(() => {
-    if (selectedMeeting) {
-      setRoomData({
-        name: selectedMeeting.name,
-        members: selectedMeeting.members,
-      });
-    }
-  }, [selectedMeeting]);
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleMeetingSubmit = (roomData: MeetingTypes) => {
     updateMeeting(projectId, meetingId, roomData, history);
   };
-
-  //Get the meeting members with avatar, access permission and email
-  const roomMemberIds = selectedMeeting?.members.map(
-    (member) => member.user._id
-  );
-  const roomMembers = selectedProject?.members.filter((member) =>
-    roomMemberIds?.includes(member.user._id.toString())
-  );
 
   //find user in the project
   const userProject = selectedProject?.members.find(
@@ -120,6 +104,12 @@ const UpdateMeeting: React.FC<UpdateMeetingProps> = ({
     history.push(`/projects/${projectId}/meeting-rooms`);
   }
 
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+    selectedMeeting && setName(selectedMeeting.name);
+  }, [selectedMeeting]);
+
   return (
     <Fragment>
       {selectedMeeting && (
@@ -127,15 +117,14 @@ const UpdateMeeting: React.FC<UpdateMeetingProps> = ({
           <Previous
             link={`/projects/${projectId}/meeting-rooms`}
             previousTo='Meeting Rooms'
-            title={roomData.name || 'Update Meeting'}
+            title={name.trim() || 'Update Meeting'}
           />
           <MeetingForm
             projectId={projectId}
             selectedProject={selectedProject}
-            handleSubmit={handleSubmit}
-            roomData={roomData}
-            setRoomData={setRoomData}
-            selectData={roomMembers}
+            selectedMeeting={selectedMeeting}
+            handleMeetingSubmit={handleMeetingSubmit}
+            setName={setName}
             update
           />
         </Paper>
@@ -164,6 +153,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
     formData: MeetingTypes,
     history: History
   ) => dispatch(updateMeeting(projectId, meetingId, formData, history)),
+  clearSelectedMeeting: () => dispatch(clearSelectedMeeting()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UpdateMeeting);

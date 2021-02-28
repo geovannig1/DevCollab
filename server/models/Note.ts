@@ -1,16 +1,16 @@
 import { Schema, model, Document } from 'mongoose';
 
-interface Note extends Document {
+interface INote extends Document {
   project: string;
   title: string;
   contents: string;
   user: string;
 }
 
-const noteSchema = new Schema<Note>({
+const noteSchema = new Schema<INote>({
   project: {
     type: Schema.Types.ObjectId,
-    required: true,
+    ref: 'Project',
   },
   title: {
     type: String,
@@ -30,4 +30,4 @@ const noteSchema = new Schema<Note>({
   },
 });
 
-export default model<Note>('Note', noteSchema);
+export default model<INote>('Note', noteSchema);

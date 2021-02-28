@@ -26,6 +26,28 @@ export const getNotes = async (req: Request, res: Response) => {
   }
 };
 
+//Get a note
+export const getNote = async (req: Request, res: Response) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    //Only user from the project can the note
+    const userExist = project?.members.filter(
+      (member: any) => member.user?._id.toString() === req.user
+    );
+    if (userExist?.length === 0) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    const note = await Note.findById(req.params.noteId);
+
+    res.status(200).json(note);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
 //Create a new note
 export const createNote = async (req: Request, res: Response) => {
   try {
@@ -51,7 +73,11 @@ export const createNote = async (req: Request, res: Response) => {
       contents,
     });
 
-    res.status(201).json(note);
+    const newNote = await note
+      .populate({ path: 'user', select: ['firstName', 'lastName'] })
+      .execPopulate();
+
+    res.status(201).json(newNote);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
@@ -74,7 +100,10 @@ export const updateNote = async (req: Request, res: Response) => {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
-    const note = await Note.findById(req.params.noteId);
+    const note = await Note.findById(req.params.noteId).populate('user', [
+      'firstName',
+      'lastName',
+    ]);
 
     if (!note) {
       return res.json(404).json({ msg: 'Note not found' });
@@ -88,6 +117,37 @@ export const updateNote = async (req: Request, res: Response) => {
     const updatedNote = await note.save();
 
     res.status(200).json(updatedNote);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
+//Delete a note
+export const deleteNote = async (req: Request, res: Response) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    //Only user from the project and except user with ReadOnly access permission can delete note
+    const userExist = project?.members.filter(
+      (member: any) => member.user?._id.toString() === req.user
+    );
+    if (
+      userExist?.length === 0 ||
+      userExist?.[0].accessPermission === AccessPermission.ReadOnly
+    ) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    const note = await Note.findById(req.params.noteId);
+
+    if (!note) {
+      return res.status(404).json({ msg: 'Note not found' });
+    }
+
+    note.delete();
+
+    res.status(200).json({ msg: 'Note deleted' });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');

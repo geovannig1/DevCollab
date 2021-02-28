@@ -12,35 +12,27 @@ import { setNavbar, clearNavbar } from '../actions/navbarAction';
 import { SelectedType } from '../actions/navbarTypes';
 import Paper from '../components/global/Paper';
 import Previous from '../components/global/Previous';
-import NoteForm from '../components/notes/NoteForm';
-import { NoteTypes } from '../actions/noteTypes';
-import { createNote } from '../actions/noteActions';
+import FileForm from '../components/file/FileForm';
 
-interface CreateNoteProps {
+interface CreateFileProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
-  createNote: (
-    projectId: string,
-    noteData: NoteTypes,
-    history: History
-  ) => Promise<void>;
   project: ProjectInitialState;
 }
 
-const CreateNote: React.FC<CreateNoteProps> = ({
+const CreateFile: React.FC<CreateFileProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
-  createNote,
   project: { selectedProject, projectError },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
   const history = useHistory();
 
   useEffect(() => {
-    document.title = 'Create Note | DevCollab';
-    setNavbar(SelectedType.Notes);
+    document.title = 'Create File | DevCollab';
+    setNavbar(SelectedType.Files);
 
     !selectedProject && loadProject(projectId);
     projectError && <Redirect to='/projects' />;
@@ -55,24 +47,18 @@ const CreateNote: React.FC<CreateNoteProps> = ({
     clearNavbar,
   ]);
 
-  const handleSubmitNote = (noteData: NoteTypes) => {
-    createNote(projectId, noteData, history);
+  const handleFileSubmit = (name: string, file?: File) => {
+    console.log(name, file);
   };
-
-  const [title, setTitle] = useState('');
 
   return (
     <Paper>
       <Previous
-        link={`/projects/${projectId}/notes`}
-        previousTo='Notes'
-        title={title.trim() || 'Create Note'}
+        link={`/projects/${projectId}/files`}
+        previousTo='Files'
+        title={'Create File'}
       />
-      <NoteForm
-        handleSubmitNote={handleSubmitNote}
-        projectId={projectId}
-        setTitle={setTitle}
-      />
+      <FileForm projectId={projectId} handleFileSubmit={handleFileSubmit} />
     </Paper>
   );
 };
@@ -85,8 +71,6 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   clearNavbar: () => dispatch(clearNavbar()),
-  createNote: (projectId: string, noteData: NoteTypes, history: History) =>
-    dispatch(createNote(projectId, noteData, history)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateNote);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateFile);

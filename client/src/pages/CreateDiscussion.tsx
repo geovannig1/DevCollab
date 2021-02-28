@@ -60,14 +60,10 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({
     clearNavbar,
   ]);
 
-  const [attachment, setAttachment] = useState<File>();
-  const [discussionData, setDiscussionData] = useState<DiscussionType>({
-    title: '',
-    description: '',
-  });
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleDiscussionSubmit = (
+    discussionData: DiscussionType,
+    attachment?: File
+  ) => {
     createDiscussion(history, projectId, discussionData, attachment);
   };
 
@@ -80,20 +76,20 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({
     history.push(`/projects/${projectId}/discussions`);
   }
 
+  const [title, setTitle] = useState('');
+
   return (
     <Paper>
       <Previous
         link={`/projects/${projectId}/discussions`}
         previousTo='Discussions'
-        title={discussionData.title.trim() || 'Create Discussion'}
+        title={title.trim() || 'Create Discussion'}
       />
 
       <DiscussionForm
-        handleSubmit={handleSubmit}
         projectId={projectId}
-        setAttachment={setAttachment}
-        setDiscussionData={setDiscussionData}
-        discussionData={discussionData}
+        handleDiscussionSubmit={handleDiscussionSubmit}
+        setTitle={setTitle}
       />
     </Paper>
   );

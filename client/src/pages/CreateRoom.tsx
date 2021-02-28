@@ -59,13 +59,7 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
     clearNavbar,
   ]);
 
-  const [roomData, setRoomData] = useState<MeetingTypes>({
-    name: '',
-    members: [],
-  });
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleMeetingSubmit = (roomData: MeetingTypes) => {
     createMeeting(projectId, roomData, history);
   };
 
@@ -78,19 +72,20 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
     history.push(`/projects/${projectId}/meeting-rooms`);
   }
 
+  const [name, setName] = useState('');
+
   return (
     <Paper>
       <Previous
         link={`/projects/${projectId}/meeting-rooms`}
         previousTo='Meeting Rooms'
-        title={roomData.name.trim() || 'Create Room'}
+        title={name.trim() || 'Create Room'}
       />
       <MeetingForm
         projectId={projectId}
         selectedProject={selectedProject}
-        handleSubmit={handleSubmit}
-        roomData={roomData}
-        setRoomData={setRoomData}
+        handleMeetingSubmit={handleMeetingSubmit}
+        setName={setName}
       />
     </Paper>
   );

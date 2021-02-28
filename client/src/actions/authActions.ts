@@ -33,6 +33,7 @@ import {
 import { clearDiscussion } from './discussionActions';
 import { clearProject } from './projectActions';
 import { clearMeeting } from './meetingActions';
+import { clearNote } from './noteActions';
 
 //Load User
 export const loadUser = () => async (
@@ -117,7 +118,8 @@ export const signOut = () => async (
     //Clear all redux data
     dispatch(clearDiscussion());
     dispatch(clearProject());
-    dispatch(clearMeeting);
+    dispatch(clearMeeting());
+    dispatch(clearNote());
 
     dispatch({ type: REMOVE_LOADING });
     dispatch({ type: LOGOUT_SUCCESS });

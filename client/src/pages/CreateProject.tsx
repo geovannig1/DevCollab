@@ -15,6 +15,7 @@ import { createProject, loadProjects } from '../actions/projectActions';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import Paper from '../components/global/Paper';
 import ProjectForm from '../components/project/ProjectForm';
+import { loadNotes } from '../actions/noteActions';
 
 interface CreateProjectProps {
   auth: AuthInitialState;
@@ -81,6 +82,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   createProject: (projectData: ProjectData, history: History) =>
     dispatch(createProject(projectData, history)),
   loadProjects: () => dispatch(loadProjects()),
+  loadNotes: (projectId: string) => dispatch(loadNotes(projectId)),
 });
 
 const Header = styled.div`

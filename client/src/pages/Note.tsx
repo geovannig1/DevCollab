@@ -1,9 +1,9 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, Redirect, useHistory } from 'react-router-dom';
-import { History } from 'history';
+import { useParams, Redirect } from 'react-router-dom';
+import styled from 'styled-components';
 
 import { Store } from '../store';
 import { loadProject } from '../actions/projectActions';
@@ -12,37 +12,24 @@ import { setNavbar, clearNavbar } from '../actions/navbarAction';
 import { SelectedType } from '../actions/navbarTypes';
 import Paper from '../components/global/Paper';
 import Previous from '../components/global/Previous';
-import NoteForm from '../components/notes/NoteForm';
-import { NoteTypes } from '../actions/noteTypes';
-import {
-  loadNote,
-  updateNote,
-  clearSelectedNote,
-} from '../actions/noteActions';
+import { loadNote, clearSelectedNote } from '../actions/noteActions';
 import { NoteInitialState } from '../reducers/noteReducer';
 
-interface UpdateNoteProps {
+interface NoteProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
   loadNote: (projectId: string, noteId: string) => Promise<void>;
-  updateNote: (
-    projectId: string,
-    noteId: string,
-    noteData: NoteTypes,
-    history: History
-  ) => Promise<void>;
   clearSelectedNote: () => void;
   project: ProjectInitialState;
   note: NoteInitialState;
 }
 
-const UpdateNote: React.FC<UpdateNoteProps> = ({
+const Note: React.FC<NoteProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
   loadNote,
-  updateNote,
   clearSelectedNote,
   project: { selectedProject, projectError },
   note: { selectedNote },
@@ -51,10 +38,9 @@ const UpdateNote: React.FC<UpdateNoteProps> = ({
     projectId: string;
     noteId: string;
   }>();
-  const history = useHistory();
 
   useEffect(() => {
-    document.title = 'Update Note | DevCollab';
+    document.title = 'Note | DevCollab';
     setNavbar(SelectedType.Notes);
 
     !selectedProject && loadProject(projectId);
@@ -78,32 +64,18 @@ const UpdateNote: React.FC<UpdateNoteProps> = ({
     loadNote(projectId, noteId);
   }, [loadNote, projectId, noteId]);
 
-  const handleSubmitNote = (noteData: NoteTypes) => {
-    updateNote(projectId, noteId, noteData, history);
-  };
-
-  const [title, setTitle] = useState('');
-
-  useEffect(() => {
-    selectedNote && setTitle(selectedNote.title);
-  }, [selectedNote]);
-
   return (
     <Fragment>
       {selectedNote && (
         <Paper>
           <Previous
-            title={title.trim() || 'Update Note'}
             link={`/projects/${projectId}/notes`}
             previousTo='Notes'
+            title={selectedNote?.title ?? ''}
           />
-          <NoteForm
-            handleSubmitNote={handleSubmitNote}
-            projectId={projectId}
-            loadedNoteData={selectedNote}
-            setTitle={setTitle}
-            update
-          />
+          <Container>
+            <p>{selectedNote?.contents}</p>
+          </Container>
         </Paper>
       )}
     </Fragment>
@@ -121,13 +93,11 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   clearNavbar: () => dispatch(clearNavbar()),
   loadNote: (projectId: string, noteId: string) =>
     dispatch(loadNote(projectId, noteId)),
-  updateNote: (
-    projectId: string,
-    noteId: string,
-    noteData: NoteTypes,
-    history: History
-  ) => dispatch(updateNote(projectId, noteId, noteData, history)),
   clearSelectedNote: () => dispatch(clearSelectedNote()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UpdateNote);
+const Container = styled.div`
+  margin: 15px 0;
+`;
+
+export default connect(mapStateToProps, mapDispatchToProps)(Note);

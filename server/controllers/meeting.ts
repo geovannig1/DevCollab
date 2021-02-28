@@ -139,7 +139,13 @@ export const deleteRoom = async (req: Request, res: Response) => {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
-    await Meeting.findByIdAndDelete(req.params.meetingId);
+    const meeting = await Meeting.findById(req.params.meetingId);
+
+    if (!meeting) {
+      return res.status(404).json({ msg: 'Meeting not found' });
+    }
+
+    meeting.delete();
 
     res.status(200).json({ msg: 'Room deleted' });
   } catch (err) {

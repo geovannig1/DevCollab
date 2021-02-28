@@ -4,7 +4,7 @@ import { check } from 'express-validator';
 
 import auth from '../../middlewares/auth';
 import validateInput from '../../middlewares/validateInput';
-import Upload from '../../middlewares/upload';
+import upload from '../../middlewares/upload';
 import {
   createDiscussion,
   getDiscussions,
@@ -47,7 +47,7 @@ router.post(
   '/:projectId/discussions',
   auth,
   check('projectId'),
-  Upload.single('attachment'),
+  upload.single('attachment'),
   check('title', "Title can't be empty").notEmpty(),
   validateInput,
   createDiscussion
@@ -62,7 +62,7 @@ router.patch(
   '/:projectId/discussions/:discussionId',
   auth,
   [checkObjectId('projectId'), checkObjectId('discussionId')],
-  Upload.single('attachment'),
+  upload.single('attachment'),
   check('title', "Title can't be empty").notEmpty(),
   validateInput,
   updateDiscussion

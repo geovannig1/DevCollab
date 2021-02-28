@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
@@ -8,22 +8,29 @@ import { Button } from '../global/Button';
 import Alert from '../global/Alert';
 
 interface DiscussionFormProps {
-  setDiscussionData: React.Dispatch<React.SetStateAction<DiscussionType>>;
-  discussionData: DiscussionType;
-  setAttachment: React.Dispatch<React.SetStateAction<File | undefined>>;
   projectId: string;
-  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   update?: boolean;
+  selectedDiscussion?: DiscussionType;
+  handleDiscussionSubmit: (
+    discussionData: DiscussionType,
+    attachment?: File
+  ) => void;
+  setTitle: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const DiscussionForm: React.FC<DiscussionFormProps> = ({
-  setDiscussionData,
-  setAttachment,
-  discussionData,
   projectId,
-  handleSubmit,
   update,
+  handleDiscussionSubmit,
+  selectedDiscussion,
+  setTitle,
 }) => {
+  const [attachment, setAttachment] = useState<File>();
+  const [discussionData, setDiscussionData] = useState<DiscussionType>({
+    title: selectedDiscussion?.title ?? '',
+    description: selectedDiscussion?.description ?? '',
+  });
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -31,10 +38,16 @@ const DiscussionForm: React.FC<DiscussionFormProps> = ({
       ...prevData,
       [e.target.name]: e.target.value,
     }));
+    if (e.target.name === 'title') setTitle(e.target.value);
   };
 
   const handleAttachmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAttachment(e.target.files?.[0]);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleDiscussionSubmit(discussionData, attachment);
   };
 
   return (

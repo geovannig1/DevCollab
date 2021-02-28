@@ -14,7 +14,10 @@ import { setNavbar, clearNavbar } from '../actions/navbarAction';
 import { SelectedType } from '../actions/navbarTypes';
 import Paper from '../components/global/Paper';
 import Previous from '../components/global/Previous';
-import { loadDiscussion } from '../actions/discussionActions';
+import {
+  loadDiscussion,
+  clearSelectedDiscussion,
+} from '../actions/discussionActions';
 import { DiscussionInitialState } from '../reducers/discussionReducer';
 import AttachmentIcon from '@material-ui/icons/Attachment';
 import DiscussionComment from '../components/discussion/DiscussionComment';
@@ -25,19 +28,21 @@ interface DiscussionProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
+  loadDiscussion: (projectId: string, discussionId: string) => Promise<void>;
+  clearSelectedDiscussion: () => void;
   project: ProjectInitialState;
   discussion: DiscussionInitialState;
   auth: AuthInitialState;
-  loadDiscussion: (projectId: string, discussionId: string) => Promise<void>;
 }
 
 const Discussion: React.FC<DiscussionProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
+  loadDiscussion,
+  clearSelectedDiscussion,
   project: { selectedProject, projectError },
   discussion: { selectedDiscussion },
-  loadDiscussion,
   auth: { user },
 }) => {
   const { projectId, discussionId } = useParams<{
@@ -52,7 +57,10 @@ const Discussion: React.FC<DiscussionProps> = ({
     !selectedProject && loadProject(projectId);
     projectError && <Redirect to='/projects' />;
 
-    return () => clearNavbar();
+    return () => {
+      clearNavbar();
+      clearSelectedDiscussion();
+    };
   }, [
     loadProject,
     projectId,
@@ -60,6 +68,7 @@ const Discussion: React.FC<DiscussionProps> = ({
     projectError,
     setNavbar,
     clearNavbar,
+    clearSelectedDiscussion,
   ]);
 
   useEffect(() => {
@@ -128,6 +137,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   clearNavbar: () => dispatch(clearNavbar()),
   loadDiscussion: (projectId: string, discussionId: string) =>
     dispatch(loadDiscussion(projectId, discussionId)),
+  clearSelectedDiscussion: () => dispatch(clearSelectedDiscussion()),
 });
 
 const Container = styled.div`

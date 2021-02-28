@@ -13,37 +13,31 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { NoteTypes } from '../../actions/noteTypes';
 import { deleteNote } from '../../actions/noteActions';
 
-interface CardNoteProps {
-  note: NoteTypes;
+interface FileCardProps {
   projectId: string;
-  deleteNote: (projectId: string, noteId: string) => Promise<void>;
 }
 
-const CardNote: React.FC<CardNoteProps> = ({ note, projectId, deleteNote }) => {
+const FileCard: React.FC<FileCardProps> = ({ projectId }) => {
   //extends relativetime
   day.extend(relativeTime);
 
-  const handleDelete = () => {
-    deleteNote(projectId, note?._id ?? '');
-  };
-
   return (
     <Container>
-      <StyledLink to={`/projects/${projectId}/notes/${note._id}`}>
+      <StyledLink to={`/projects/${projectId}/notes/${''}`}>
         <CardContainer>
-          <Title>{note.title}</Title>
+          <Title>Supp</Title>
           <Content>
-            <Creator>By {note.user?.firstName}</Creator>
-            <Date>{day(note.date).fromNow()}</Date>
+            <Creator>By John doe</Creator>
+            <Date>{day().fromNow()}</Date>
           </Content>
         </CardContainer>
       </StyledLink>
       <MenuContainer>
         <CardMenu
-          deleteTitle='Delete Note'
-          deleteText={`Are you sure want to delete ${note.title} note? this process can't be undone.`}
-          deleteItem={handleDelete}
-          editLink={`/projects/${projectId}/notes/${note._id}/edit`}
+          deleteTitle='Delete File'
+          deleteText={`Are you sure want to delete ${''} file? this process can't be undone.`}
+          deleteItem={() => {}}
+          editLink={`/`}
         >
           <StyledHoriz fontSize='large' />
         </CardMenu>
@@ -51,11 +45,6 @@ const CardNote: React.FC<CardNoteProps> = ({ note, projectId, deleteNote }) => {
     </Container>
   );
 };
-
-const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
-  deleteNote: (projectId: string, noteId: string) =>
-    dispatch(deleteNote(projectId, noteId)),
-});
 
 const Container = styled.div`
   height: 100px;
@@ -130,4 +119,4 @@ const StyledHoriz = styled(MoreHorizIcon)`
   }
 `;
 
-export default connect(null, mapDispatchToProps)(CardNote);
+export default FileCard;

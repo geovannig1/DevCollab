@@ -93,7 +93,10 @@ const Navbar: React.FC<NavbarProps> = ({
         </li>
 
         <li>
-          <StyledLink to='#' selected={navbar.selected === SelectedType.Files}>
+          <StyledLink
+            to={`/projects/${selectedProject?._id}/files`}
+            selected={navbar.selected === SelectedType.Files}
+          >
             <AttachFileIcon />
             <Text>Files</Text>
             <div />
