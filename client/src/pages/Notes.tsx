@@ -15,6 +15,8 @@ import AddIcon from '@material-ui/icons/Add';
 import CardNote from '../components/notes/CardNote';
 import { loadNotes } from '../actions/noteActions';
 import { NoteInitialState } from '../reducers/noteReducer';
+import { AuthInitialState } from '../reducers/authReducer';
+import { AccessPermission } from '../actions/projectTypes';
 
 interface NotesProps {
   loadProject: (projectId: string) => Promise<void>;
@@ -23,6 +25,7 @@ interface NotesProps {
   loadNotes: (projectId: string) => Promise<void>;
   project: ProjectInitialState;
   note: NoteInitialState;
+  auth: AuthInitialState;
 }
 
 const Notes: React.FC<NotesProps> = ({
@@ -32,6 +35,7 @@ const Notes: React.FC<NotesProps> = ({
   loadNotes,
   project: { selectedProject, projectError },
   note: { notes },
+  auth: { user },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
 
@@ -56,15 +60,22 @@ const Notes: React.FC<NotesProps> = ({
     !notes && loadNotes(projectId);
   }, [loadNotes, projectId, notes]);
 
+  //find user in the project
+  const userProject = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
+
   return (
     <Fragment>
-      <Button
-        extrasmall={'extrasmall' && 1}
-        as={Link}
-        to={`/projects/${projectId}/create-note`}
-      >
-        <AddIcon /> New Note
-      </Button>
+      {userProject?.accessPermission !== AccessPermission.ReadOnly && (
+        <Button
+          extrasmall={'extrasmall' && 1}
+          as={Link}
+          to={`/projects/${projectId}/create-note`}
+        >
+          <AddIcon /> New Note
+        </Button>
+      )}
       <Container>
         {notes?.map((note) => (
           <CardNote key={note._id} note={note} projectId={projectId} />
@@ -77,6 +88,7 @@ const Notes: React.FC<NotesProps> = ({
 const mapStateToProps = (state: Store) => ({
   project: state.project,
   note: state.note,
+  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({

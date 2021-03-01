@@ -5,20 +5,30 @@ import { Link } from 'react-router-dom';
 import { Form, InputContainer, FileContainer } from '../global/FormContainer';
 import { Button } from '../global/Button';
 import Alert from '../global/Alert';
+import { FileTypes } from '../../actions/fileTypes';
 
 interface FileFormProps {
   projectId: string;
   update?: boolean;
+  selectedFile?: FileTypes;
+  setTitle: React.Dispatch<React.SetStateAction<string>>;
   handleFileSubmit: (name: string, file?: File) => void;
 }
 
 const FileForm: React.FC<FileFormProps> = ({
   projectId,
   update,
+  selectedFile,
+  setTitle,
   handleFileSubmit,
 }) => {
-  const [name, setName] = useState('');
+  const [name, setName] = useState(selectedFile?.name ?? '');
   const [file, setFile] = useState<File>();
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+    setTitle(e.target.value);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFile(e.target.files?.[0]);
@@ -41,7 +51,7 @@ const FileForm: React.FC<FileFormProps> = ({
             name='name'
             id='name'
             placeholder='File name'
-            onChange={(e) => setName(e.target.value)}
+            onChange={handleNameChange}
             value={name}
           />
         </InputContainer>
@@ -56,6 +66,7 @@ const FileForm: React.FC<FileFormProps> = ({
             onChange={handleFileChange}
             accept='application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,
       text/plain, application/pdf, image/*'
+            required={!update}
           />
         </FileContainer>
 

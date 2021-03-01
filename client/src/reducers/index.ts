@@ -7,6 +7,7 @@ import discussionReducer from './discussionReducer';
 import meetingReducer from './meetingReducer';
 import displayReducer from './displayReducer';
 import noteReducer from './noteReducer';
+import fileReducer from './fileReducer';
 
 export default combineReducers({
   auth: authReducer,
@@ -17,4 +18,5 @@ export default combineReducers({
   meeting: meetingReducer,
   display: displayReducer,
   note: noteReducer,
+  file: fileReducer,
 });

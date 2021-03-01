@@ -35,6 +35,7 @@ import UpdateNote from './pages/UpdateNote';
 import Note from './pages/Note';
 import Files from './pages/Files';
 import CreateFile from './pages/CreateFile';
+import UpdateFile from './pages/UpdateFile';
 
 interface AppProps {
   loadUser: () => Promise<void>;
@@ -155,6 +156,11 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
               exact
               path='/projects/:projectId/create-file'
               component={CreateFile}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/files/:fileId'
+              component={UpdateFile}
             />
             <Route exact path='*' component={NotFound} />
           </Switch>

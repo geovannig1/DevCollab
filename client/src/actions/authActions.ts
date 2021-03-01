@@ -34,6 +34,7 @@ import { clearDiscussion } from './discussionActions';
 import { clearProject } from './projectActions';
 import { clearMeeting } from './meetingActions';
 import { clearNote } from './noteActions';
+import { clearFile } from './fileActions';
 
 //Load User
 export const loadUser = () => async (
@@ -115,11 +116,12 @@ export const signOut = () => async (
 
     await api.get('/auth/signout');
 
-    //Clear all redux data
+    //Clear all state
     dispatch(clearDiscussion());
     dispatch(clearProject());
     dispatch(clearMeeting());
     dispatch(clearNote());
+    dispatch(clearFile());
 
     dispatch({ type: REMOVE_LOADING });
     dispatch({ type: LOGOUT_SUCCESS });

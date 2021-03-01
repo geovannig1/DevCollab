@@ -5,7 +5,6 @@ import { ThunkDispatch } from 'redux-thunk';
 import { useParams, Redirect, Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { setColor } from '../styles';
 import { Store } from '../store';
 import { loadProject } from '../actions/projectActions';
 import { ProjectInitialState } from '../reducers/projectReducer';
@@ -14,19 +13,29 @@ import { SelectedType } from '../actions/navbarTypes';
 import { Button } from '../components/global/Button';
 import AddIcon from '@material-ui/icons/Add';
 import FileCard from '../components/file/FileCard';
+import { loadFiles } from '../actions/fileActions';
+import { FileInitialState } from '../reducers/fileReducer';
+import { AuthInitialState } from '../reducers/authReducer';
+import { AccessPermission } from '../actions/projectTypes';
 
 interface FilesProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
+  loadFiles: (projectId: string) => Promise<void>;
+  auth: AuthInitialState;
   project: ProjectInitialState;
+  file: FileInitialState;
 }
 
 const Files: React.FC<FilesProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
+  loadFiles,
   project: { selectedProject, projectError },
+  file: { files },
+  auth: { user },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
 
@@ -46,18 +55,32 @@ const Files: React.FC<FilesProps> = ({
     setNavbar,
     clearNavbar,
   ]);
+
+  useEffect(() => {
+    !files && loadFiles(projectId);
+  }, [projectId, loadFiles, files]);
+
+  //find user in the project
+  const userProject = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
+
   return (
     <Fragment>
-      <Button
-        as={Link}
-        to={`/projects/${projectId}/create-file`}
-        extrasmall={'extrasmall' && 1}
-      >
-        <AddIcon /> New File
-      </Button>
+      {userProject?.accessPermission !== AccessPermission.ReadOnly && (
+        <Button
+          as={Link}
+          to={`/projects/${projectId}/create-file`}
+          extrasmall={'extrasmall' && 1}
+        >
+          <AddIcon /> New File
+        </Button>
+      )}
 
       <Container>
-        <FileCard projectId={projectId} />
+        {files?.map((file) => (
+          <FileCard projectId={projectId} file={file} />
+        ))}
       </Container>
     </Fragment>
   );
@@ -65,12 +88,15 @@ const Files: React.FC<FilesProps> = ({
 
 const mapStateToProps = (state: Store) => ({
   project: state.project,
+  file: state.file,
+  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   clearNavbar: () => dispatch(clearNavbar()),
+  loadFiles: (projectId: string) => dispatch(loadFiles(projectId)),
 });
 
 const Container = styled.div`

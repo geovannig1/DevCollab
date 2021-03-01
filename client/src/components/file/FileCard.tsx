@@ -1,50 +1,90 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import day from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import CardMenu from '../global/CardMenu';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { setColor, setShadow, setRem } from '../../styles';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import { NoteTypes } from '../../actions/noteTypes';
-import { deleteNote } from '../../actions/noteActions';
+import { FileTypes } from '../../actions/fileTypes';
+import { deleteFile } from '../../actions/fileActions';
+import { Store } from '../../store';
+import { AuthInitialState } from '../../reducers/authReducer';
+import { ProjectInitialState } from '../../reducers/projectReducer';
+import { AccessPermission } from '../../actions/projectTypes';
 
 interface FileCardProps {
+  deleteFile: (projectId: string, fileId: string) => Promise<void>;
   projectId: string;
+  file: FileTypes;
+  auth: AuthInitialState;
+  project: ProjectInitialState;
 }
 
-const FileCard: React.FC<FileCardProps> = ({ projectId }) => {
+const FileCard: React.FC<FileCardProps> = ({
+  deleteFile,
+  projectId,
+  file,
+  auth: { user },
+  project: { selectedProject },
+}) => {
   //extends relativetime
   day.extend(relativeTime);
 
+  const handleDelete = () => {
+    deleteFile(projectId, file._id ?? '');
+  };
+
+  //find user in the project
+  const userProject = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
+
   return (
-    <Container>
-      <StyledLink to={`/projects/${projectId}/notes/${''}`}>
-        <CardContainer>
-          <Title>Supp</Title>
-          <Content>
-            <Creator>By John doe</Creator>
-            <Date>{day().fromNow()}</Date>
-          </Content>
-        </CardContainer>
-      </StyledLink>
-      <MenuContainer>
-        <CardMenu
-          deleteTitle='Delete File'
-          deleteText={`Are you sure want to delete ${''} file? this process can't be undone.`}
-          deleteItem={() => {}}
-          editLink={`/`}
+    <Fragment>
+      <Container>
+        <Link
+          target='_blank'
+          rel='noopener noreferrer'
+          href={`${file.file.url}`}
         >
-          <StyledHoriz fontSize='large' />
-        </CardMenu>
-      </MenuContainer>
-    </Container>
+          <CardContainer>
+            <Title>{file.name}</Title>
+            <Content>
+              <Creator>By {file.user?.firstName}</Creator>
+              <Date>{day(file.date).fromNow()}</Date>
+            </Content>
+          </CardContainer>
+        </Link>
+        {userProject?.accessPermission !== AccessPermission.ReadOnly && (
+          <MenuContainer>
+            <CardMenu
+              deleteTitle='Delete File'
+              deleteText={`Are you sure want to delete ${file.name} file? this process can't be undone.`}
+              deleteItem={handleDelete}
+              editLink={`/projects/${projectId}/files/${file._id}`}
+            >
+              <StyledHoriz fontSize='large' />
+            </CardMenu>
+          </MenuContainer>
+        )}
+      </Container>
+    </Fragment>
   );
 };
+
+const mapStateToProps = (state: Store) => ({
+  auth: state.auth,
+  project: state.project,
+});
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
+  deleteFile: (projectId: string, fileId: string) =>
+    dispatch(deleteFile(projectId, fileId)),
+});
 
 const Container = styled.div`
   height: 100px;
@@ -52,7 +92,7 @@ const Container = styled.div`
   position: relative;
 `;
 
-const StyledLink = styled(Link)`
+const Link = styled.a`
   color: ${setColor.mainBlack};
   text-decoration: none;
   outline: none;
@@ -119,4 +159,4 @@ const StyledHoriz = styled(MoreHorizIcon)`
   }
 `;
 
-export default FileCard;
+export default connect(mapStateToProps, mapDispatchToProps)(FileCard);

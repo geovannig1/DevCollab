@@ -5,6 +5,67 @@ import Project, { AccessPermission } from '../models/Project';
 import File from '../models/File';
 import cloudinary from '../config/cloudinaryConfig';
 
+//Load all files
+export const getFiles = async (req: Request, res: Response) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    //Only user from the project and can load files
+    const userExist = project?.members.filter(
+      (member: any) => member.user?._id.toString() === req.user
+    );
+    if (userExist?.length === 0) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    const file = await File.find({
+      project: req.params.projectId,
+    })
+      .populate('user', ['firstName', 'lastName'])
+      .sort({
+        date: '-1',
+      });
+
+    if (!file) {
+      return res.status(404).json({ msg: 'File not found' });
+    }
+
+    res.status(200).json(file);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
+//Load a file
+export const getFile = async (req: Request, res: Response) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    //Only user from the project and can load a file
+    const userExist = project?.members.filter(
+      (member: any) => member.user?._id.toString() === req.user
+    );
+    if (userExist?.length === 0) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    const file = await File.findById(req.params.fileId).populate('user', [
+      'firstName',
+      'lastName',
+    ]);
+
+    if (!file) {
+      return res.status(404).json({ msg: 'File not found' });
+    }
+
+    res.status(200).json(file);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
 //Create a new file
 export const createFile = async (req: Request, res: Response) => {
   try {
@@ -30,13 +91,12 @@ export const createFile = async (req: Request, res: Response) => {
         publicId: '',
         url: '',
       },
+      user: req.user?.toString() ?? '',
     });
 
     if (req.file) {
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'file',
-        resource_type: 'image',
-        format: 'png',
       });
 
       newFile.file!.url = result?.secure_url;
@@ -48,6 +108,97 @@ export const createFile = async (req: Request, res: Response) => {
     }
 
     res.status(201).json(newFile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
+//Update a file
+export const updateFile = async (req: Request, res: Response) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    //Only user from the project and except user with ReadOnly access permission can update file
+    const userExist = project?.members.filter(
+      (member: any) => member.user?._id.toString() === req.user
+    );
+    if (
+      userExist?.length === 0 ||
+      userExist?.[0].accessPermission === AccessPermission.ReadOnly
+    ) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    const updateFile = await File.findById(req.params.fileId);
+
+    if (!updateFile) {
+      return res.status(404).json({ msg: 'File not found' });
+    }
+
+    const { name } = req.body;
+
+    if (name) updateFile.name = name;
+
+    if (req.file) {
+      //Delete previous file
+      await cloudinary.uploader.destroy(updateFile.file.publicId);
+
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'file',
+      });
+
+      updateFile.file!.url = result?.secure_url;
+      updateFile.file!.publicId = result?.public_id;
+      await updateFile.save();
+
+      //Delete file in the upload folder
+      await fs.unlink(req.file.path);
+    }
+
+    const updatedFile = await (await updateFile.save())
+      .populate({
+        path: 'user',
+        select: ['firstName', 'lastName'],
+      })
+      .execPopulate();
+
+    res.status(200).json(updatedFile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
+//Delete a file
+export const deleteFile = async (req: Request, res: Response) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    //Only user from the project and except user with ReadOnly access permission can delete file
+    const userExist = project?.members.filter(
+      (member: any) => member.user?._id.toString() === req.user
+    );
+    if (
+      userExist?.length === 0 ||
+      userExist?.[0].accessPermission === AccessPermission.ReadOnly
+    ) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    const deletedFile = await File.findById(req.params.fileId);
+
+    if (!deletedFile) {
+      return res.status(404).json({ msg: 'File not found' });
+    }
+
+    //Delete file in the cloudinary
+    await cloudinary.uploader.destroy(deletedFile.file.publicId);
+
+    //Delete the file
+    await deletedFile.delete();
+
+    res.status(200).json({ msg: 'File deleted' });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');

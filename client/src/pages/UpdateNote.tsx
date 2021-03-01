@@ -20,6 +20,8 @@ import {
   clearSelectedNote,
 } from '../actions/noteActions';
 import { NoteInitialState } from '../reducers/noteReducer';
+import { AccessPermission } from '../actions/projectTypes';
+import { AuthInitialState } from '../reducers/authReducer';
 
 interface UpdateNoteProps {
   loadProject: (projectId: string) => Promise<void>;
@@ -35,6 +37,7 @@ interface UpdateNoteProps {
   clearSelectedNote: () => void;
   project: ProjectInitialState;
   note: NoteInitialState;
+  auth: AuthInitialState;
 }
 
 const UpdateNote: React.FC<UpdateNoteProps> = ({
@@ -46,6 +49,7 @@ const UpdateNote: React.FC<UpdateNoteProps> = ({
   clearSelectedNote,
   project: { selectedProject, projectError },
   note: { selectedNote },
+  auth: { user },
 }) => {
   const { projectId, noteId } = useParams<{
     projectId: string;
@@ -82,6 +86,15 @@ const UpdateNote: React.FC<UpdateNoteProps> = ({
     updateNote(projectId, noteId, noteData, history);
   };
 
+  //find user in the project
+  const userProject = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
+  //User with read only permission can't access
+  if (userProject?.accessPermission === AccessPermission.ReadOnly) {
+    history.push(`/projects/${projectId}/notes`);
+  }
+
   const [title, setTitle] = useState('');
 
   useEffect(() => {
@@ -113,6 +126,7 @@ const UpdateNote: React.FC<UpdateNoteProps> = ({
 const mapStateToProps = (state: Store) => ({
   project: state.project,
   note: state.note,
+  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({

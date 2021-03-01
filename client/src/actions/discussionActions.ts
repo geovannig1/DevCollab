@@ -15,7 +15,7 @@ import {
   DiscussionDispatchTypes,
 } from './discussionTypes';
 import api from '../api';
-import { setAlert } from './alertActions';
+import { setAlert, removeAlert } from './alertActions';
 import { MessageType } from './alertTypes';
 
 //Get all discussions
@@ -61,6 +61,7 @@ export const createDiscussion = (
   attachment?: File
 ) => async (dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>) => {
   try {
+    dispatch(removeAlert());
     //Create multipart/form-data
     const fd = new FormData();
 
@@ -99,6 +100,8 @@ export const updateDiscussion = (
   attachment?: File
 ) => async (dispatch: ThunkDispatch<{}, {}, DiscussionDispatchTypes>) => {
   try {
+    dispatch(removeAlert());
+
     //Create multipart/form-data
     const fd = new FormData();
 

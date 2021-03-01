@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -13,43 +13,61 @@ import { SelectedType } from '../actions/navbarTypes';
 import Paper from '../components/global/Paper';
 import Previous from '../components/global/Previous';
 import FileForm from '../components/file/FileForm';
-import { createFile } from '../actions/fileActions';
+import {
+  loadFile,
+  updateFile,
+  clearSelectedFile,
+} from '../actions/fileActions';
+import { FileInitialState } from '../reducers/fileReducer';
 import { AccessPermission } from '../actions/projectTypes';
 import { AuthInitialState } from '../reducers/authReducer';
 
-interface CreateFileProps {
+interface UpdateFileProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
-  createFile: (
+  loadFile: (projectId: string, fileId: string) => Promise<void>;
+  updateFile: (
     projectId: string,
+    fileId: string,
     history: History,
     name: string,
     file?: File
   ) => Promise<void>;
+  clearSelectedFile: () => void;
   project: ProjectInitialState;
+  file: FileInitialState;
   auth: AuthInitialState;
 }
 
-const CreateFile: React.FC<CreateFileProps> = ({
+const UpdateFile: React.FC<UpdateFileProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
-  createFile,
+  loadFile,
+  updateFile,
+  clearSelectedFile,
   project: { selectedProject, projectError },
+  file: { selectedFile },
   auth: { user },
 }) => {
-  const { projectId } = useParams<{ projectId: string }>();
+  const { projectId, fileId } = useParams<{
+    projectId: string;
+    fileId: string;
+  }>();
   const history = useHistory();
 
   useEffect(() => {
-    document.title = 'Create File | DevCollab';
+    document.title = 'Update File | DevCollab';
     setNavbar(SelectedType.Files);
 
     !selectedProject && loadProject(projectId);
     projectError && <Redirect to='/projects' />;
 
-    return () => clearNavbar();
+    return () => {
+      clearNavbar();
+      clearSelectedFile();
+    };
   }, [
     loadProject,
     projectId,
@@ -57,10 +75,15 @@ const CreateFile: React.FC<CreateFileProps> = ({
     projectError,
     setNavbar,
     clearNavbar,
+    clearSelectedFile,
   ]);
 
+  useEffect(() => {
+    loadFile(projectId, fileId);
+  }, [loadFile, projectId, fileId]);
+
   const handleFileSubmit = (name: string, file?: File) => {
-    createFile(projectId, history, name, file);
+    updateFile(projectId, fileId, history, name, file);
   };
 
   //find user in the project
@@ -74,24 +97,35 @@ const CreateFile: React.FC<CreateFileProps> = ({
 
   const [title, setTitle] = useState('');
 
+  useEffect(() => {
+    selectedFile && setTitle(selectedFile.name);
+  }, [selectedFile]);
+
   return (
-    <Paper>
-      <Previous
-        link={`/projects/${projectId}/files`}
-        previousTo='Files'
-        title={title.trim() || 'Create File'}
-      />
-      <FileForm
-        projectId={projectId}
-        handleFileSubmit={handleFileSubmit}
-        setTitle={setTitle}
-      />
-    </Paper>
+    <Fragment>
+      {selectedFile && (
+        <Paper>
+          <Previous
+            title={title.trim() || 'Update File'}
+            link={`/projects/${projectId}/files`}
+            previousTo='Files'
+          />
+          <FileForm
+            projectId={projectId}
+            selectedFile={selectedFile}
+            handleFileSubmit={handleFileSubmit}
+            setTitle={setTitle}
+            update
+          />
+        </Paper>
+      )}
+    </Fragment>
   );
 };
 
 const mapStateToProps = (state: Store) => ({
   project: state.project,
+  file: state.file,
   auth: state.auth,
 });
 
@@ -99,12 +133,16 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   clearNavbar: () => dispatch(clearNavbar()),
-  createFile: (
+  loadFile: (projectId: string, fileId: string) =>
+    dispatch(loadFile(projectId, fileId)),
+  updateFile: (
     projectId: string,
+    fileId: string,
     history: History,
     name: string,
     file?: File
-  ) => dispatch(createFile(projectId, history, name, file)),
+  ) => dispatch(updateFile(projectId, fileId, history, name, file)),
+  clearSelectedFile: () => dispatch(clearSelectedFile()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateFile);
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateFile);

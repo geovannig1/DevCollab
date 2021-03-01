@@ -12,20 +12,37 @@ import { setColor, setShadow, setRem } from '../../styles';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { NoteTypes } from '../../actions/noteTypes';
 import { deleteNote } from '../../actions/noteActions';
+import { Store } from '../../store';
+import { AuthInitialState } from '../../reducers/authReducer';
+import { ProjectInitialState } from '../../reducers/projectReducer';
+import { AccessPermission } from '../../actions/projectTypes';
 
 interface CardNoteProps {
   note: NoteTypes;
   projectId: string;
+  auth: AuthInitialState;
+  project: ProjectInitialState;
   deleteNote: (projectId: string, noteId: string) => Promise<void>;
 }
 
-const CardNote: React.FC<CardNoteProps> = ({ note, projectId, deleteNote }) => {
+const CardNote: React.FC<CardNoteProps> = ({
+  note,
+  auth: { user },
+  project: { selectedProject },
+  projectId,
+  deleteNote,
+}) => {
   //extends relativetime
   day.extend(relativeTime);
 
   const handleDelete = () => {
     deleteNote(projectId, note?._id ?? '');
   };
+
+  //find user in the project
+  const userProject = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
 
   return (
     <Container>
@@ -38,19 +55,26 @@ const CardNote: React.FC<CardNoteProps> = ({ note, projectId, deleteNote }) => {
           </Content>
         </CardContainer>
       </StyledLink>
-      <MenuContainer>
-        <CardMenu
-          deleteTitle='Delete Note'
-          deleteText={`Are you sure want to delete ${note.title} note? this process can't be undone.`}
-          deleteItem={handleDelete}
-          editLink={`/projects/${projectId}/notes/${note._id}/edit`}
-        >
-          <StyledHoriz fontSize='large' />
-        </CardMenu>
-      </MenuContainer>
+      {userProject?.accessPermission !== AccessPermission.ReadOnly && (
+        <MenuContainer>
+          <CardMenu
+            deleteTitle='Delete Note'
+            deleteText={`Are you sure want to delete ${note.title} note? this process can't be undone.`}
+            deleteItem={handleDelete}
+            editLink={`/projects/${projectId}/notes/${note._id}/edit`}
+          >
+            <StyledHoriz fontSize='large' />
+          </CardMenu>
+        </MenuContainer>
+      )}
     </Container>
   );
 };
+
+const mapStateToProps = (state: Store) => ({
+  auth: state.auth,
+  project: state.project,
+});
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   deleteNote: (projectId: string, noteId: string) =>
@@ -130,4 +154,4 @@ const StyledHoriz = styled(MoreHorizIcon)`
   }
 `;
 
-export default connect(null, mapDispatchToProps)(CardNote);
+export default connect(mapStateToProps, mapDispatchToProps)(CardNote);

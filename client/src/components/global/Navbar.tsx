@@ -16,16 +16,25 @@ import { Store } from '../../store';
 import { NavbarInitialState } from '../../reducers/navbarReducer';
 import { SelectedType } from '../../actions/navbarTypes';
 import { ProjectInitialState } from '../../reducers/projectReducer';
+import { AuthInitialState } from '../../reducers/authReducer';
+import { AccessPermission } from '../../actions/projectTypes';
 
 interface NavbarProps {
   navbar: NavbarInitialState;
   project: ProjectInitialState;
+  auth: AuthInitialState;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
   navbar,
   project: { selectedProject },
+  auth: { user },
 }) => {
+  //find user in the project
+  const userProject = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
+
   return (
     <Container>
       <ul>
@@ -102,14 +111,15 @@ const Navbar: React.FC<NavbarProps> = ({
             <div />
           </StyledLink>
         </li>
-
-        <li>
-          <StyledLink to={`/projects/${selectedProject?._id}/edit`}>
-            <SettingsIcon />
-            <Text>Settings</Text>
-            <div />
-          </StyledLink>
-        </li>
+        {userProject?.accessPermission === AccessPermission.Admin && (
+          <li>
+            <StyledLink to={`/projects/${selectedProject?._id}/edit`}>
+              <SettingsIcon />
+              <Text>Settings</Text>
+              <div />
+            </StyledLink>
+          </li>
+        )}
       </ul>
     </Container>
   );
@@ -118,6 +128,7 @@ const Navbar: React.FC<NavbarProps> = ({
 const mapStateToProps = (state: Store) => ({
   navbar: state.navbar,
   project: state.project,
+  auth: state.auth,
 });
 
 const Container = styled.nav`

@@ -35,6 +35,7 @@ const PreviousContainer = styled(Link)`
   text-decoration: none;
   transition: 0.2s ease-in-out;
   user-select: none;
+  outline: none;
   span {
     font-weight: 600;
   }

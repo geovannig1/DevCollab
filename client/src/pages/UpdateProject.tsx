@@ -10,7 +10,7 @@ import { setColor } from '../styles';
 import { Store } from '../store';
 import { AuthInitialState } from '../reducers/authReducer';
 import { ProjectInitialState } from '../reducers/projectReducer';
-import { ProjectData } from '../actions/projectTypes';
+import { AccessPermission, ProjectData } from '../actions/projectTypes';
 import { loadProjects, updateProject } from '../actions/projectActions';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import Paper from '../components/global/Paper';
@@ -64,9 +64,17 @@ const UpdateProject: React.FC<UpdateProjectProps> = ({
   //Submit form data
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     updateProject(projectData, projectId, history);
   };
+
+  //find user in the project
+  const userProject = updateProjectData?.members.find(
+    (member) => member.user._id === user?._id
+  );
+  //User with read only permission can't access
+  if (projects && userProject?.accessPermission !== AccessPermission.Admin) {
+    history.push(`/projects`);
+  }
 
   return (
     <Fragment>

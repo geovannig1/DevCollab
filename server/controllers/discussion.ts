@@ -94,8 +94,6 @@ export const createDiscussion = async (req: Request, res: Response) => {
     if (req.file) {
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'attachment',
-        resource_type: 'image',
-        format: 'png',
       });
 
       newDiscussion.attachment!.url = result?.secure_url;
@@ -145,8 +143,6 @@ export const updateDiscussion = async (req: Request, res: Response) => {
 
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'attachment',
-        resource_type: 'image',
-        format: 'png',
       });
 
       if (discussion.attachment) discussion.attachment.url = result?.secure_url;

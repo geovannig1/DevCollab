@@ -15,6 +15,8 @@ import Previous from '../components/global/Previous';
 import NoteForm from '../components/notes/NoteForm';
 import { NoteTypes } from '../actions/noteTypes';
 import { createNote } from '../actions/noteActions';
+import { AccessPermission } from '../actions/projectTypes';
+import { AuthInitialState } from '../reducers/authReducer';
 
 interface CreateNoteProps {
   loadProject: (projectId: string) => Promise<void>;
@@ -25,6 +27,7 @@ interface CreateNoteProps {
     noteData: NoteTypes,
     history: History
   ) => Promise<void>;
+  auth: AuthInitialState;
   project: ProjectInitialState;
 }
 
@@ -34,6 +37,7 @@ const CreateNote: React.FC<CreateNoteProps> = ({
   clearNavbar,
   createNote,
   project: { selectedProject, projectError },
+  auth: { user },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
   const history = useHistory();
@@ -59,6 +63,15 @@ const CreateNote: React.FC<CreateNoteProps> = ({
     createNote(projectId, noteData, history);
   };
 
+  //find user in the project
+  const userProject = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
+  //User with read only permission can't access
+  if (userProject?.accessPermission === AccessPermission.ReadOnly) {
+    history.push(`/projects/${projectId}/notes`);
+  }
+
   const [title, setTitle] = useState('');
 
   return (
@@ -79,6 +92,7 @@ const CreateNote: React.FC<CreateNoteProps> = ({
 
 const mapStateToProps = (state: Store) => ({
   project: state.project,
+  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({

@@ -7,6 +7,7 @@ interface IFile extends Document {
     url: string;
     publicId: string;
   };
+  user: string;
 }
 
 const fileSchema = new Schema<IFile>({
@@ -21,6 +22,14 @@ const fileSchema = new Schema<IFile>({
   file: {
     url: String,
     publicId: String,
+  },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  date: {
+    type: Date,
+    default: Date.now,
   },
 });
 
