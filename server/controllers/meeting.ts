@@ -111,8 +111,9 @@ export const updateRoom = async (req: Request, res: Response) => {
 
     const { name, members } = req.body;
 
-    if (name) meeting.name = name;
-    if (members) meeting.members = members;
+    //Update meeting room
+    if (typeof name !== 'undefined') meeting.name = name;
+    if (typeof members !== 'undefined') meeting.members = members;
 
     const updatedMeeting = await meeting.save();
 

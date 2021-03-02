@@ -48,9 +48,9 @@ export const editUser = async (req: Request, res: Response) => {
     }
 
     //Edit user data
-    if (firstName) user.firstName = firstName.trim();
-    if (lastName) user.lastName = lastName.trim();
-    if (email && email !== user.email) {
+    if (typeof firstName !== 'undefined') user.firstName = firstName.trim();
+    if (typeof lastName !== 'undefined') user.lastName = lastName.trim();
+    if (typeof email !== 'undefined' && email !== user.email) {
       const users = await User.findOne({ email });
       if (users && email !== user.email) {
         return res

@@ -61,7 +61,6 @@ export const getProjects = async (req: Request, res: Response) => {
     //Check if user with the email exist
     if (projectsEmail.length > 0) {
       for (const project of projectsEmail) {
-        //Save the current user as a member data
         const userMember = project.members.filter(
           (member) => member.email === user?.email
         )[0];
@@ -85,6 +84,12 @@ export const getProjects = async (req: Request, res: Response) => {
 
       return res.status(200).json(projects);
     }
+
+    //Only show members that have account
+    projects.forEach((project) => {
+      const projectMember = project.members.filter((member) => member.user);
+      project.members = projectMember;
+    });
 
     res.status(200).json(projects);
   } catch (err) {
@@ -112,6 +117,10 @@ export const getProject = async (req: Request, res: Response) => {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
+    //Only show members that have account
+    const filteredMember = project.members.filter((member) => member.user);
+    project.members = filteredMember;
+
     res.status(200).json(project);
   } catch (err) {
     console.error(err.message);
@@ -131,7 +140,7 @@ export const updateProject = async (req: Request, res: Response) => {
       return res.status(404).json({ msg: 'Project not found' });
     }
 
-    //Check if the update request from the admin project
+    //Check if the update request is from the admin
     const member = project?.members.find(
       (member) => member.user?.toString() === req.user
     );
@@ -149,35 +158,54 @@ export const updateProject = async (req: Request, res: Response) => {
       (member: any) => member.user.email
     );
     //find new user from request body
-    const newMembers = members.filter(
+    const newMembers = members?.filter(
       (member: any) => !projectEmail.includes(member.email)
     );
 
     //Send email to new members
-    if (newMembers.length > 0) {
+    if (newMembers?.length > 0) {
       sendEmail(newMembers, user, name, project);
     }
 
     //find current updated member from request body
     let currentMembers: Member[];
-    if (members.length > 0) {
+    let removedMembers: Member[] = [];
+    if (members?.length > 0) {
+      //Update access permission
       currentMembers = project.members.filter((projectMember: any) => {
-        return members.map((member: any) => {
-          if (member.email.includes(projectMember.user.email)) {
-            return (projectMember.accessPermission = member.accessPermission);
+        return members.map((requestMember: any) => {
+          if (requestMember.email === projectMember.user.email) {
+            projectMember.accessPermission = requestMember.accessPermission;
+
+            //Add member that are not in the request body
+          } else if (projectMember.user.id !== req.user) {
+            const membersEmail = members.map((member: any) => member.email);
+            if (!membersEmail.includes(projectMember.user.email)) {
+              removedMembers.push(projectMember);
+            }
           }
         });
       });
+
+      //Remove members
+      removedMembers.forEach((removedMember: any) => {
+        currentMembers = currentMembers.filter(
+          (currentMember: any) =>
+            currentMember.user.email !== removedMember.user.email
+        );
+      });
     } else {
+      //All members removed except owner
       currentMembers = project.members.filter(
         (member: any) => member.user.id === req.user
       );
     }
 
     //Update data
-    if (name) project.name = name.trim();
-    if (description) project.description = description.trim();
-    if (currentMembers) project.members = currentMembers;
+    if (typeof name !== 'undefined') project.name = name.trim();
+    if (typeof description !== 'undefined')
+      project.description = description.trim();
+    if (typeof currentMembers !== 'undefined') project.members = currentMembers;
 
     const updatedProject = await (await project?.save())
       .populate({

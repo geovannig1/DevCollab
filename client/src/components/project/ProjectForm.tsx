@@ -98,17 +98,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       changePermission.accessPermission = value;
     }
 
-    //Find the index of member
-    const index = projectData.members
-      .map((member) => member.accessPermission)
-      .indexOf(value);
-
-    if (changePermission !== undefined) {
-      setProjectData({
-        ...projectData,
-        members: [...projectData.members.splice(index, 1, changePermission)],
-      });
-    }
+    setProjectData({
+      ...projectData,
+      members: projectData.members.map((member) =>
+        member.email === e.target.name ? changePermission ?? member : member
+      ),
+    });
   };
 
   //Handle delete member on the list

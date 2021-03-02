@@ -18,11 +18,13 @@ import discussion from './routes/api/discussion';
 import meeting from './routes/api/meeting';
 import note from './routes/api/note';
 import file from './routes/api/file';
+import activity from './routes/api/activity';
 
 import joinProject from './socket/joinProject';
 import taskSocket from './socket/task';
 import discussionSocket from './socket/discussion';
 import meetingSocket from './socket/meeting';
+import activitySocket from './socket/activity';
 
 const app = express();
 
@@ -50,6 +52,7 @@ io.on('connection', (socket: Socket) => {
   taskSocket(io, socket);
   discussionSocket(io, socket);
   meetingSocket(io, socket);
+  activitySocket(io, socket);
 });
 
 //Heroku Middleware SSL Redirect
@@ -66,8 +69,9 @@ app.use('/api/projects', discussion);
 app.use('/api/projects', meeting);
 app.use('/api/projects', note);
 app.use('/api/projects', file);
+app.use('/api/projects', activity);
 
-//Serve static assets in productiion
+//Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
   //Set static folder
   app.use(express.static(path.resolve(process.cwd(), 'client', 'build')));

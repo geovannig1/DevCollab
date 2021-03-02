@@ -134,8 +134,10 @@ export const updateDiscussion = async (req: Request, res: Response) => {
       return res.status(404).json({ msg: 'Discussion not exist' });
     }
 
-    if (title) discussion.title = title;
-    if (description) discussion.description = description;
+    //Update discussion
+    if (typeof title !== 'undefined') discussion.title = title;
+    if (typeof description !== 'undefined')
+      discussion.description = description;
 
     //Update attachment
     if (req.file) {

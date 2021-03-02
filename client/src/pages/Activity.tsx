@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -12,12 +12,17 @@ import { ProjectInitialState } from '../reducers/projectReducer';
 import { setNavbar, clearNavbar } from '../actions/navbarAction';
 import { SelectedType } from '../actions/navbarTypes';
 import Paper from '../components/global/Paper';
+import { RoundedButton } from '../components/global/Button';
+import SendIcon from '@material-ui/icons/Send';
+import socket from '../utils/socketio';
+import { AuthInitialState } from '../reducers/authReducer';
 
 interface ActivityProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
   project: ProjectInitialState;
+  auth: AuthInitialState;
 }
 
 const Activity: React.FC<ActivityProps> = ({
@@ -25,6 +30,7 @@ const Activity: React.FC<ActivityProps> = ({
   setNavbar,
   clearNavbar,
   project: { selectedProject, projectError },
+  auth: { user },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
 
@@ -45,11 +51,48 @@ const Activity: React.FC<ActivityProps> = ({
     clearNavbar,
   ]);
 
+  useEffect(() => {
+    socket.emit('join project', { projectId: selectedProject?._id });
+
+    //Listen to new messages
+    socket.on('receive activity message', (data: string) => {
+      console.log(data);
+    });
+
+    return () => {
+      socket.emit('leave project', { projectId: selectedProject?._id });
+    };
+  }, [selectedProject?._id]);
+
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (message.trim().length > 0) {
+      socket.emit('send activity message', { projectId, user, message });
+      setMessage('');
+    }
+  };
+
   return (
     <Paper>
       <Container>
         <Content />
-        <Input placeholder='Write a message...' />
+        <form onSubmit={handleSubmit}>
+          <InputContainer>
+            <Input
+              placeholder='Write a message...'
+              name='message'
+              id='message'
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              autoComplete='off'
+            />
+            <RoundedButton size='45'>
+              <SendIcon />
+            </RoundedButton>
+          </InputContainer>
+        </form>
       </Container>
     </Paper>
   );
@@ -57,6 +100,7 @@ const Activity: React.FC<ActivityProps> = ({
 
 const mapStateToProps = (state: Store) => ({
   project: state.project,
+  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
@@ -73,6 +117,10 @@ const Container = styled.div`
 `;
 
 const Content = styled.div``;
+
+const InputContainer = styled.div`
+  display: flex;
+`;
 
 const Input = styled.input`
   width: 100%;

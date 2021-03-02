@@ -91,18 +91,32 @@ export const updateFile = (
   name: string,
   file?: File
 ) => async (dispatch: ThunkDispatch<{}, {}, FileDispatchTypes>) => {
-  dispatch(removeAlert());
+  try {
+    dispatch(removeAlert());
 
-  //Create multipart/form-data
-  const fd = new FormData();
+    //Create multipart/form-data
+    const fd = new FormData();
 
-  fd.append('name', name);
-  if (file) fd.append('file', file);
+    fd.append('name', name);
+    if (file) fd.append('file', file);
 
-  const res = await api.patch(`/projects/${projectId}/files/${fileId}`, fd);
-  dispatch({ type: FILE_UPDATED, payload: res.data });
+    const res = await api.patch(`/projects/${projectId}/files/${fileId}`, fd);
+    dispatch({ type: FILE_UPDATED, payload: res.data });
 
-  history.push(`/projects/${projectId}/files`);
+    history.push(`/projects/${projectId}/files`);
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error: any) =>
+        dispatch(setAlert(error.msg, MessageType.Fail, error.param))
+      );
+
+      dispatch({
+        type: FILE_FAIL,
+        payload: { msg: err.response.statusText, status: err.response.status },
+      });
+    }
+  }
 };
 
 //Delete a file

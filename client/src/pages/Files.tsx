@@ -79,7 +79,7 @@ const Files: React.FC<FilesProps> = ({
 
       <Container>
         {files?.map((file) => (
-          <FileCard projectId={projectId} file={file} />
+          <FileCard key={file._id} projectId={projectId} file={file} />
         ))}
       </Container>
     </Fragment>

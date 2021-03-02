@@ -111,8 +111,9 @@ export const updateNote = async (req: Request, res: Response) => {
 
     const { title, contents } = req.body;
 
-    if (title) note.title = title;
-    if (contents) note.contents = contents;
+    //update note
+    if (typeof title !== 'undefined') note.title = title;
+    if (typeof contents !== 'undefined') note.contents = contents;
 
     const updatedNote = await note.save();
 

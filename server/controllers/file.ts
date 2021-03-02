@@ -138,7 +138,7 @@ export const updateFile = async (req: Request, res: Response) => {
 
     const { name } = req.body;
 
-    if (name) updateFile.name = name;
+    if (typeof name !== 'undefined') updateFile.name = name;
 
     if (req.file) {
       //Delete previous file
