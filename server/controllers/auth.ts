@@ -13,7 +13,7 @@ export const googleCallback = (req: Request, res: Response) => {
       .cookie('access_token', token, { maxAge: 3 * 24 * 60 * 60 * 1000 })
       .redirect('/projects');
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server Error');
   }
 };
@@ -57,7 +57,7 @@ export const register = async (req: Request, res: Response) => {
       .cookie('access_token', token, { maxAge: 3 * 24 * 60 * 60 * 1000 })
       .json({ msg: 'User Registered' });
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server Error');
   }
 };
@@ -92,7 +92,7 @@ export const login = async (req: Request, res: Response) => {
       .cookie('access_token', token, { maxAge: 3 * 24 * 60 * 60 * 1000 })
       .json({ msg: 'User Authenticated' });
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server Error');
   }
 };
@@ -105,7 +105,7 @@ export const logout = (req: Request, res: Response) => {
       .clearCookie('access_token')
       .json({ msg: 'User signed out' });
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server Error');
   }
 };

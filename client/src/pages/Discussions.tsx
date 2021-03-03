@@ -82,6 +82,7 @@ const Discussions: React.FC<DiscussionsProps> = ({
           discussion={discussion}
           totalDiscussions={discussion.comments?.length ?? 0}
           selectedProject={selectedProject}
+          projectId={projectId}
           user={user}
         />
       ))}

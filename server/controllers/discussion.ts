@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import fs from 'fs/promises';
 
 import cloudinary from '../config/cloudinaryConfig';
-import Project, { AccessPermission } from '../models/Project';
+import { userExist, existNotReadOnly } from '../services/checkPermission';
+import Project from '../models/Project';
 import Discussion from '../models/Discussion';
 import User from '../models/User';
 
@@ -11,11 +12,13 @@ export const getDiscussions = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
+
     //Only user from the project can access
-    const userExist = project?.members.filter(
-      (member: any) => member.user?._id.toString() === req.user
-    );
-    if (userExist?.length === 0) {
+    const permission = userExist(project, req.user);
+    if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
@@ -31,7 +34,7 @@ export const getDiscussions = async (req: Request, res: Response) => {
 
     res.status(200).json(discussions);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -41,17 +44,18 @@ export const getDiscussion = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
     //Only user from the project can access
-    const userExist = project?.members.filter(
-      (member: any) => member.user?._id.toString() === req.user
-    );
-    if (userExist?.length === 0) {
+    const permission = userExist(project, req.user);
+    if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
     const discussion = await Discussion.findById(
       req.params.discussionId
-    ).populate('comments.user', ['avatar', 'email']);
+    ).populate('comments.user', ['avatar', 'firstName', 'lastName']);
 
     if (!discussion) {
       return res.status(404).json({ msg: 'Discussion not found' });
@@ -59,7 +63,7 @@ export const getDiscussion = async (req: Request, res: Response) => {
 
     res.status(200).json(discussion);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -70,14 +74,12 @@ export const createDiscussion = async (req: Request, res: Response) => {
     const project = await Project.findById(req.params.projectId);
     const user = await User.findById(req.user);
 
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
     //Only user from the project and except user with ReadOnly access permission can create discussion
-    const userExist = project?.members.filter(
-      (member: any) => member.user?._id.toString() === req.user
-    );
-    if (
-      userExist?.length === 0 ||
-      userExist?.[0].accessPermission === AccessPermission.ReadOnly
-    ) {
+    const permission = existNotReadOnly(project, req.user);
+    if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
@@ -106,7 +108,7 @@ export const createDiscussion = async (req: Request, res: Response) => {
 
     res.status(201).json(newDiscussion);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -116,14 +118,12 @@ export const updateDiscussion = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
     //Only user from the project and except user with ReadOnly access permission can update discussion
-    const userExist = project?.members.filter(
-      (member: any) => member.user?._id.toString() === req.user
-    );
-    if (
-      userExist?.length === 0 ||
-      userExist?.[0].accessPermission === AccessPermission.ReadOnly
-    ) {
+    const permission = existNotReadOnly(project, req.user);
+    if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
@@ -161,7 +161,7 @@ export const updateDiscussion = async (req: Request, res: Response) => {
 
     res.status(200).json(updatedDiscussion);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -171,14 +171,12 @@ export const deleteDiscussion = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
-    //Only user from the project and except user with ReadOnly access permission can update discussion
-    const userExist = project?.members.filter(
-      (member: any) => member.user?._id.toString() === req.user
-    );
-    if (
-      userExist?.length === 0 ||
-      userExist?.[0].accessPermission === AccessPermission.ReadOnly
-    ) {
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
+    //Only user from the project and except user with ReadOnly access permission can delete discussion
+    const permission = existNotReadOnly(project, req.user);
+    if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
@@ -197,7 +195,7 @@ export const deleteDiscussion = async (req: Request, res: Response) => {
 
     res.status(200).json({ msg: 'Discussion deleted' });
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };

@@ -33,7 +33,7 @@ export default (socket: Socket) => {
         socket.to(data.projectId).emit('updated selected task', selectedTask);
       }
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 };

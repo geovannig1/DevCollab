@@ -51,7 +51,7 @@ io.on('connection', (socket: Socket) => {
   joinProject(socket);
   taskSocket(io, socket);
   discussionSocket(io, socket);
-  meetingSocket(io, socket);
+  meetingSocket(socket);
   activitySocket(io, socket);
 });
 

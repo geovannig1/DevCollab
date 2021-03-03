@@ -17,7 +17,7 @@ export default (io: Server, socket: Socket) => {
         const updatedTaskProject = await (await taskProject.save())
           .populate({
             path: 'tasks.$*.comments.user',
-            select: ['email', 'avatar'],
+            select: ['firstName', 'lastName', 'avatar'],
           })
           .populate({
             path: 'tasks.$*.members.user',
@@ -30,7 +30,7 @@ export default (io: Server, socket: Socket) => {
         io.in(data.projectId).emit('receive task comment', selectedTask);
       }
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 
@@ -51,7 +51,7 @@ export default (io: Server, socket: Socket) => {
         const updatedTaskProject = await (await taskProject.save())
           .populate({
             path: 'tasks.$*.comments.user',
-            select: ['email', 'avatar'],
+            select: ['firstName', 'lastName', 'avatar'],
           })
           .populate({
             path: 'tasks.$*.members.user',
@@ -64,7 +64,7 @@ export default (io: Server, socket: Socket) => {
         io.in(data.projectId).emit('updated delete task comment', selectedTask);
       }
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 };

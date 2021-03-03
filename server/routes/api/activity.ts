@@ -3,7 +3,7 @@ const router = express.Router();
 
 import auth from '../../middlewares/auth';
 import checkObjectId from '../../middlewares/checkObjectId';
-import { getActivities } from '../../controllers/activity';
+import { getActivity } from '../../controllers/activity';
 
 /**
  *  @route GET api/projects/:projectId/activities
@@ -11,10 +11,10 @@ import { getActivities } from '../../controllers/activity';
  *  @access Private
  */
 router.get(
-  '/:projectId/activities',
+  '/:projectId/activity',
   auth,
   checkObjectId('projectId'),
-  getActivities
+  getActivity
 );
 
 export default router;

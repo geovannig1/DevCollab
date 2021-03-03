@@ -6,11 +6,14 @@ import { DiscussionType } from '../../actions/discussionTypes';
 import { Form, InputContainer, FileContainer } from '../global/FormContainer';
 import { Button } from '../global/Button';
 import Alert from '../global/Alert';
+import socket from '../../utils/socketio';
+import { UserType } from '../../actions/authTypes';
 
 interface DiscussionFormProps {
   projectId: string;
   update?: boolean;
   selectedDiscussion?: DiscussionType;
+  user?: UserType;
   handleDiscussionSubmit: (
     discussionData: DiscussionType,
     attachment?: File
@@ -21,8 +24,9 @@ interface DiscussionFormProps {
 const DiscussionForm: React.FC<DiscussionFormProps> = ({
   projectId,
   update,
-  handleDiscussionSubmit,
+  user,
   selectedDiscussion,
+  handleDiscussionSubmit,
   setTitle,
 }) => {
   const [attachment, setAttachment] = useState<File>();
@@ -48,6 +52,15 @@ const DiscussionForm: React.FC<DiscussionFormProps> = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleDiscussionSubmit(discussionData, attachment);
+
+    //Send discussion activity
+    if (discussionData.title) {
+      socket.emit(`${update ? 'update' : 'create'} activity discussion`, {
+        projectId,
+        discussionName: discussionData.title,
+        userName: `${user?.firstName} ${user?.lastName}`,
+      });
+    }
   };
 
   return (

@@ -16,7 +16,8 @@ interface CommentProps {
     date: Date;
     user: {
       _id: string;
-      email?: string;
+      firstName?: string;
+      lastName?: string;
       avatar?: {
         url: string;
       };
@@ -52,7 +53,9 @@ const Comment: React.FC<CommentProps> = ({
       <Avatar src={comment.user.avatar?.url ?? avatar} alt='avatar' size='40' />
       <CommentContainer>
         <Header>
-          <h5>{comment.user.email}</h5>
+          <h5>
+            {comment.user.firstName} {comment.user.lastName}
+          </h5>
           <span>{dayjs(comment.date).fromNow()}</span>
         </Header>
 

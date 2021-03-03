@@ -128,6 +128,7 @@ const UpdateDiscussion: React.FC<UpdateDiscussionProps> = ({
             handleDiscussionSubmit={handleDiscussionSubmit}
             setTitle={setTitle}
             selectedDiscussion={selectedDiscussion}
+            user={user}
             update
           />
         </Paper>

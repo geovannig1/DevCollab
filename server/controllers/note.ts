@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import Note from '../models/Note';
+import { existNotReadOnly, userExist } from '../services/checkPermission';
 import Project, { AccessPermission } from '../models/Project';
 
 //Get all notes
@@ -8,11 +9,12 @@ export const getNotes = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
     //Only user from the project can see notes
-    const userExist = project?.members.filter(
-      (member: any) => member.user?._id.toString() === req.user
-    );
-    if (userExist?.length === 0) {
+    const permission = userExist(project, req.user);
+    if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
@@ -21,7 +23,7 @@ export const getNotes = async (req: Request, res: Response) => {
     }).populate('user', ['firstName', 'lastName']);
     res.status(200).json(note);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -31,11 +33,12 @@ export const getNote = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
-    //Only user from the project can the note
-    const userExist = project?.members.filter(
-      (member: any) => member.user?._id.toString() === req.user
-    );
-    if (userExist?.length === 0) {
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
+    //Only user from the project can see the note
+    const permission = userExist(project, req.user);
+    if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
@@ -43,7 +46,7 @@ export const getNote = async (req: Request, res: Response) => {
 
     res.status(200).json(note);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -53,14 +56,12 @@ export const createNote = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
     //Only user from the project and except user with ReadOnly access permission can create note
-    const userExist = project?.members.filter(
-      (member: any) => member.user?._id.toString() === req.user
-    );
-    if (
-      userExist?.length === 0 ||
-      userExist?.[0].accessPermission === AccessPermission.ReadOnly
-    ) {
+    const permission = existNotReadOnly(project, req.user);
+    if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
@@ -79,7 +80,7 @@ export const createNote = async (req: Request, res: Response) => {
 
     res.status(201).json(newNote);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -89,14 +90,12 @@ export const updateNote = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
     //Only user from the project and except user with ReadOnly access permission can update note
-    const userExist = project?.members.filter(
-      (member: any) => member.user?._id.toString() === req.user
-    );
-    if (
-      userExist?.length === 0 ||
-      userExist?.[0].accessPermission === AccessPermission.ReadOnly
-    ) {
+    const permission = existNotReadOnly(project, req.user);
+    if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
@@ -119,7 +118,7 @@ export const updateNote = async (req: Request, res: Response) => {
 
     res.status(200).json(updatedNote);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -129,14 +128,12 @@ export const deleteNote = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
     //Only user from the project and except user with ReadOnly access permission can delete note
-    const userExist = project?.members.filter(
-      (member: any) => member.user?._id.toString() === req.user
-    );
-    if (
-      userExist?.length === 0 ||
-      userExist?.[0].accessPermission === AccessPermission.ReadOnly
-    ) {
+    const permission = existNotReadOnly(project, req.user);
+    if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
@@ -150,7 +147,7 @@ export const deleteNote = async (req: Request, res: Response) => {
 
     res.status(200).json({ msg: 'Note deleted' });
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };

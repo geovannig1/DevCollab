@@ -8,7 +8,7 @@ export default (socket: Socket) => {
         callerId: data.callerId,
       });
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 
@@ -19,7 +19,7 @@ export default (socket: Socket) => {
         id: data.userId,
       });
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 
@@ -27,7 +27,7 @@ export default (socket: Socket) => {
     try {
       socket.to(data.peerId).emit('share screen ended');
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 };

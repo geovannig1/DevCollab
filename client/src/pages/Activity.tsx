@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -16,21 +16,31 @@ import { RoundedButton } from '../components/global/Button';
 import SendIcon from '@material-ui/icons/Send';
 import socket from '../utils/socketio';
 import { AuthInitialState } from '../reducers/authReducer';
+import { loadActivity, receiveActivity } from '../actions/activityActions';
+import { ActivityInitialState } from '../reducers/activityReducer';
+import ActivityContent from '../components/activity/ActivityContent';
+import { ActivityTypes } from '../actions/activityTypes';
 
 interface ActivityProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
+  loadActivity: (projectId: string) => Promise<void>;
+  receiveActivity: (activityData: ActivityTypes) => void;
   project: ProjectInitialState;
   auth: AuthInitialState;
+  activity: ActivityInitialState;
 }
 
 const Activity: React.FC<ActivityProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
+  loadActivity,
+  receiveActivity,
   project: { selectedProject, projectError },
   auth: { user },
+  activity: { activity },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
 
@@ -52,17 +62,20 @@ const Activity: React.FC<ActivityProps> = ({
   ]);
 
   useEffect(() => {
+    //Load the activity
+    loadActivity(projectId);
+
     socket.emit('join project', { projectId: selectedProject?._id });
 
     //Listen to new messages
-    socket.on('receive activity message', (data: string) => {
-      console.log(data);
+    socket.on('receive activity message', (data: ActivityTypes) => {
+      receiveActivity(data);
     });
 
     return () => {
       socket.emit('leave project', { projectId: selectedProject?._id });
     };
-  }, [selectedProject?._id]);
+  }, [selectedProject?._id, loadActivity, receiveActivity, projectId]);
 
   const [message, setMessage] = useState('');
 
@@ -75,48 +88,58 @@ const Activity: React.FC<ActivityProps> = ({
   };
 
   return (
-    <Paper>
-      <Container>
-        <Content />
-        <form onSubmit={handleSubmit}>
-          <InputContainer>
-            <Input
-              placeholder='Write a message...'
-              name='message'
-              id='message'
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              autoComplete='off'
+    <Fragment>
+      {activity && (
+        <Paper>
+          <Container>
+            <ActivityContent
+              activity={activity}
+              user={user}
+              projectId={projectId}
             />
-            <RoundedButton size='45'>
-              <SendIcon />
-            </RoundedButton>
-          </InputContainer>
-        </form>
-      </Container>
-    </Paper>
+            <form onSubmit={handleSubmit}>
+              <InputContainer>
+                <Input
+                  placeholder='Write a message...'
+                  name='message'
+                  id='message'
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  autoComplete='off'
+                />
+                <RoundedButton size='45'>
+                  <SendIcon />
+                </RoundedButton>
+              </InputContainer>
+            </form>
+          </Container>
+        </Paper>
+      )}
+    </Fragment>
   );
 };
 
 const mapStateToProps = (state: Store) => ({
   project: state.project,
   auth: state.auth,
+  activity: state.activity,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   clearNavbar: () => dispatch(clearNavbar()),
+  loadActivity: (projectId: string) => dispatch(loadActivity(projectId)),
+  receiveActivity: (activityData: ActivityTypes) =>
+    dispatch(receiveActivity(activityData)),
 });
 
 const Container = styled.div`
-  min-height: 68vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow: hidden;
 `;
-
-const Content = styled.div``;
 
 const InputContainer = styled.div`
   display: flex;

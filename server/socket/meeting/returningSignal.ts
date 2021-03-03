@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
 
-export default (io: Server, socket: Socket) => {
+export default (socket: Socket) => {
   socket.on('returning signal', (data) => {
     try {
       socket.to(data.callerId).emit('receiving returned signal', {
@@ -8,7 +8,7 @@ export default (io: Server, socket: Socket) => {
         id: data.userId,
       });
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 };

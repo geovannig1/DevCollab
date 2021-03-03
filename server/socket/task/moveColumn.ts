@@ -24,7 +24,7 @@ export default (socket: Socket) => {
         socket.to(data.projectId).emit('move column update', newColumnOrder);
       }
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 };

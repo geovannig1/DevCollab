@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
-import Project, { AccessPermission } from '../models/Project';
+import Project from '../models/Project';
+import { existNotReadOnly, userExist } from '../services/checkPermission';
 import Meeting from '../models/Meeting';
 
 //Load all rooms
@@ -8,11 +9,12 @@ export const getRooms = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
-    //Only user from the project can see the rooms
-    const userExist = project?.members.filter(
-      (member: any) => member.user?._id.toString() === req.user
-    );
-    if (userExist?.length === 0) {
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
+    //Only user from the project can access rooms
+    const permission = userExist(project, req.user);
+    if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
@@ -25,7 +27,7 @@ export const getRooms = async (req: Request, res: Response) => {
 
     res.status(200).json(meeting);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -47,7 +49,7 @@ export const getRoom = async (req: Request, res: Response) => {
 
     res.status(200).json(meeting);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -57,14 +59,12 @@ export const createRoom = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
     //Only user from the project and except user with ReadOnly access permission can create room
-    const userExist = project?.members.filter(
-      (member: any) => member.user?._id.toString() === req.user
-    );
-    if (
-      userExist?.length === 0 ||
-      userExist?.[0].accessPermission === AccessPermission.ReadOnly
-    ) {
+    const permission = existNotReadOnly(project, req.user);
+    if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
@@ -82,7 +82,7 @@ export const createRoom = async (req: Request, res: Response) => {
 
     res.status(201).json(newMeetingRoom);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -92,14 +92,12 @@ export const updateRoom = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
     //Only user from the project and except user with ReadOnly access permission can update room
-    const userExist = project?.members.filter(
-      (member: any) => member.user?._id.toString() === req.user
-    );
-    if (
-      userExist?.length === 0 ||
-      userExist?.[0].accessPermission === AccessPermission.ReadOnly
-    ) {
+    const permission = existNotReadOnly(project, req.user);
+    if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
@@ -119,7 +117,7 @@ export const updateRoom = async (req: Request, res: Response) => {
 
     res.status(200).json(updatedMeeting);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -129,14 +127,12 @@ export const deleteRoom = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
     //Only user from the project and except user with ReadOnly access permission can delete room
-    const userExist = project?.members.filter(
-      (member: any) => member.user?._id.toString() === req.user
-    );
-    if (
-      userExist?.length === 0 ||
-      userExist?.[0].accessPermission === AccessPermission.ReadOnly
-    ) {
+    const permission = existNotReadOnly(project, req.user);
+    if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
@@ -150,7 +146,7 @@ export const deleteRoom = async (req: Request, res: Response) => {
 
     res.status(200).json({ msg: 'Room deleted' });
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };

@@ -27,7 +27,7 @@ export default (socket: Socket) => {
           .emit('move task same column update', updateTaskProject);
       }
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 
@@ -57,7 +57,7 @@ export default (socket: Socket) => {
           .emit('move task another column update', updateTaskProject);
       }
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 };

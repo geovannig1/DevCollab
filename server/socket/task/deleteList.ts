@@ -37,7 +37,7 @@ export default (io: Server, socket: Socket) => {
         io.in(data.projectId).emit('update delete list', updatedProject);
       }
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 };

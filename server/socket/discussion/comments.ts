@@ -14,7 +14,7 @@ export default (io: Server, socket: Socket) => {
         await (await discussion.save())
           .populate({
             path: 'comments.user',
-            select: ['avatar', 'email'],
+            select: ['avatar', 'firstName', 'lastName'],
           })
           .execPopulate();
       }
@@ -39,14 +39,14 @@ export default (io: Server, socket: Socket) => {
         await (await discussion.save())
           .populate({
             path: 'comments.user',
-            select: ['avatar', 'email'],
+            select: ['avatar', 'firstName', 'lastName'],
           })
           .execPopulate();
       }
 
       io.in(data.projectId).emit('receive discussion comment', discussion);
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 };

@@ -41,7 +41,7 @@ export const createProject = async (req: Request, res: Response) => {
 
     res.status(201).json(project);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -93,7 +93,7 @@ export const getProjects = async (req: Request, res: Response) => {
 
     res.status(200).json(projects);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -123,7 +123,7 @@ export const getProject = async (req: Request, res: Response) => {
 
     res.status(200).json(project);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -155,7 +155,7 @@ export const updateProject = async (req: Request, res: Response) => {
     //---- Find new user from request body and send invitation email----//
     //Get project members email
     const projectEmail = project.members.map(
-      (member: any) => member.user.email
+      (member: any) => member.user?.email
     );
     //find new user from request body
     const newMembers = members?.filter(
@@ -174,13 +174,16 @@ export const updateProject = async (req: Request, res: Response) => {
       //Update access permission
       currentMembers = project.members.filter((projectMember: any) => {
         return members.map((requestMember: any) => {
-          if (requestMember.email === projectMember.user.email) {
+          if (requestMember.email === projectMember.user?.email) {
             projectMember.accessPermission = requestMember.accessPermission;
 
             //Add member that are not in the request body
-          } else if (projectMember.user.id !== req.user) {
+          } else if (projectMember.user?.id !== req.user) {
             const membersEmail = members.map((member: any) => member.email);
-            if (!membersEmail.includes(projectMember.user.email)) {
+            if (
+              typeof projectMember.user !== 'undefined' &&
+              !membersEmail.includes(projectMember.user?.email)
+            ) {
               removedMembers.push(projectMember);
             }
           }
@@ -191,13 +194,13 @@ export const updateProject = async (req: Request, res: Response) => {
       removedMembers.forEach((removedMember: any) => {
         currentMembers = currentMembers.filter(
           (currentMember: any) =>
-            currentMember.user.email !== removedMember.user.email
+            currentMember.user?.email !== removedMember.user?.email
         );
       });
     } else {
       //All members removed except owner
       currentMembers = project.members.filter(
-        (member: any) => member.user.id === req.user
+        (member: any) => member.user?.id === req.user
       );
     }
 
@@ -214,9 +217,15 @@ export const updateProject = async (req: Request, res: Response) => {
       })
       .execPopulate();
 
+    //Only show members that have account
+    const filteredMember = updatedProject.members.filter(
+      (member) => member.user
+    );
+    updatedProject.members = filteredMember;
+
     res.status(200).json(updatedProject);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -238,7 +247,7 @@ export const deleteProject = async (req: Request, res: Response) => {
 
     res.status(200).json({ msg: 'Project deleted' });
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };
@@ -283,7 +292,7 @@ export const confirmInvitation = async (req: Request, res: Response) => {
     await project?.save();
     res.status(200).redirect(`/projects/${member.projectId}/activity`);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };

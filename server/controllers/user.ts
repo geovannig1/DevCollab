@@ -16,7 +16,7 @@ export const getUser = async (req: Request, res: Response) => {
 
     res.status(200).json(user);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server Error');
   }
 };
@@ -113,7 +113,7 @@ export const editUser = async (req: Request, res: Response) => {
 
     res.status(200).json(updatedUser);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server Error');
   }
 };
@@ -138,7 +138,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     await user?.delete();
     res.status(200).clearCookie('access_token').json({ msg: 'User deleted' });
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };

@@ -86,6 +86,7 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
         selectedProject={selectedProject}
         handleMeetingSubmit={handleMeetingSubmit}
         setName={setName}
+        user={user}
       />
     </Paper>
   );

@@ -125,6 +125,7 @@ const UpdateMeeting: React.FC<UpdateMeetingProps> = ({
             selectedMeeting={selectedMeeting}
             handleMeetingSubmit={handleMeetingSubmit}
             setName={setName}
+            user={user}
             update
           />
         </Paper>

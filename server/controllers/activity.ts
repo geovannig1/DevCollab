@@ -4,16 +4,23 @@ import { userExist } from '../services/checkPermission';
 import Project from '../models/Project';
 import Activity from '../models/Activity';
 
-export const getActivities = async (req: Request, res: Response) => {
+export const getActivity = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
-    //Only user from the project can get activities
-    if (project) {
-      userExist(req, res, project);
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
     }
 
-    const activity = await Activity.findOne({ project: req.params.projectId });
+    //Only user from the project can get activities
+    const permission = userExist(project, req.user);
+    if (!permission) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    const activity = await Activity.findOne({
+      project: req.params.projectId,
+    }).populate('messages.user', ['firstName', 'lastName', 'avatar']);
 
     if (!activity) {
       return res.status(404).json({ msg: 'Activity not found' });
@@ -21,7 +28,7 @@ export const getActivities = async (req: Request, res: Response) => {
 
     res.status(200).json(activity);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send('Server error');
   }
 };

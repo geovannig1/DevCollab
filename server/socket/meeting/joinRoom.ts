@@ -34,7 +34,7 @@ export default (socket: Socket) => {
 
       socket.emit('all users', otherUserInThisRoom);
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 
@@ -56,7 +56,7 @@ export default (socket: Socket) => {
 
       socket.broadcast.emit('user left', foundSocket?.userId);
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 };

@@ -5,7 +5,7 @@ export default (socket: Socket) => {
     try {
       socket.broadcast.emit('user audio', data);
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 };

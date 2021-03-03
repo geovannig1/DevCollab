@@ -90,6 +90,7 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({
         projectId={projectId}
         handleDiscussionSubmit={handleDiscussionSubmit}
         setTitle={setTitle}
+        user={user}
       />
     </Paper>
   );

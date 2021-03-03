@@ -28,7 +28,7 @@ export default (io: Server, socket: Socket) => {
         io.in(data.projectId).emit('updated update list', updatedProjectTask);
       }
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
   });
 };

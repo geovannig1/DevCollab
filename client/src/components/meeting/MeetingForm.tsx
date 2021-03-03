@@ -8,12 +8,15 @@ import Alert from '../global/Alert';
 import { MeetingTypes } from '../../actions/meetingTypes';
 import SelectMembers from '../global/SelectMembers';
 import { ProjectType } from '../../actions/projectTypes';
+import socket from '../../utils/socketio';
+import { UserType } from '../../actions/authTypes';
 
 interface MeetingFormProps {
   projectId: string;
   selectedProject?: ProjectType;
   update?: boolean;
   selectedMeeting?: MeetingTypes;
+  user?: UserType;
   handleMeetingSubmit: (roomData: MeetingTypes) => void;
   setName: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -23,6 +26,7 @@ const MeetingForm: React.FC<MeetingFormProps> = ({
   selectedProject,
   update,
   selectedMeeting,
+  user,
   handleMeetingSubmit,
   setName,
 }) => {
@@ -50,6 +54,15 @@ const MeetingForm: React.FC<MeetingFormProps> = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleMeetingSubmit(roomData);
+
+    //Handle send activity
+    if (roomData.name && roomData.members) {
+      socket.emit(`${update ? 'update' : 'create'} activity meeting`, {
+        projectId,
+        userName: `${user?.firstName} ${user?.lastName}`,
+        roomName: roomData.name,
+      });
+    }
   };
 
   return (
@@ -94,6 +107,7 @@ const MeetingForm: React.FC<MeetingFormProps> = ({
           Cancel
         </StyledButton>
       </Form>
+
       <Alert />
     </Fragment>
   );

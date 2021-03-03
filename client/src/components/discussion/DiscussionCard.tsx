@@ -15,12 +15,14 @@ import CardMenu from '../global/CardMenu';
 import { deleteDiscussion } from '../../actions/discussionActions';
 import { AccessPermission, ProjectType } from '../../actions/projectTypes';
 import { UserType } from '../../actions/authTypes';
+import socket from '../../utils/socketio';
 
 interface DiscussionCardProps {
   discussion: DiscussionType;
   totalDiscussions: number;
   selectedProject?: ProjectType;
   deleteDiscussion: (projectId: string, discussionId: string) => Promise<void>;
+  projectId: string;
   user?: UserType;
 }
 
@@ -29,6 +31,7 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
   totalDiscussions,
   selectedProject,
   deleteDiscussion,
+  projectId,
   user,
 }) => {
   //Extend dayjs with relativeTime
@@ -36,6 +39,13 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
 
   const handleDelete = () => {
     deleteDiscussion(selectedProject?._id ?? '', discussion._id ?? '');
+
+    //Send discussion activity
+    socket.emit('delete activity discussion', {
+      projectId,
+      discussionName: discussion.title,
+      userName: `${user?.firstName} ${user?.lastName}`,
+    });
   };
 
   //Find user in the project
