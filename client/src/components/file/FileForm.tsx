@@ -6,11 +6,14 @@ import { Form, InputContainer, FileContainer } from '../global/FormContainer';
 import { Button } from '../global/Button';
 import Alert from '../global/Alert';
 import { FileTypes } from '../../actions/fileTypes';
+import socket from '../../utils/socketio';
+import { UserType } from '../../actions/authTypes';
 
 interface FileFormProps {
   projectId: string;
   update?: boolean;
   selectedFile?: FileTypes;
+  user?: UserType;
   setTitle: React.Dispatch<React.SetStateAction<string>>;
   handleFileSubmit: (name: string, file?: File) => void;
 }
@@ -19,6 +22,7 @@ const FileForm: React.FC<FileFormProps> = ({
   projectId,
   update,
   selectedFile,
+  user,
   setTitle,
   handleFileSubmit,
 }) => {
@@ -37,6 +41,15 @@ const FileForm: React.FC<FileFormProps> = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleFileSubmit(name, file);
+
+    //Handle send activity report
+    if (name && (update || file)) {
+      socket.emit(`${update ? 'update' : 'create'} activity file`, {
+        projectId,
+        fileName: name,
+        userName: `${user?.firstName} ${user?.lastName}`,
+      });
+    }
   };
 
   return (

@@ -21,12 +21,14 @@ import {
 import { Button } from '../components/global/Button';
 import { TaskData } from '../components/task/taskTypes';
 import SelectMembers from '../components/global/SelectMembers';
+import { AuthInitialState } from '../reducers/authReducer';
 
 interface CreateTaskProps {
   setNavbar: (selected: SelectedType) => void;
   loadProject: (projectId: string) => Promise<void>;
   clearNavbar: () => void;
   project: ProjectInitialState;
+  auth: AuthInitialState;
 }
 
 const CreateTask: React.FC<CreateTaskProps> = ({
@@ -34,6 +36,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({
   clearNavbar,
   loadProject,
   project: { selectedProject, projectError },
+  auth: { user },
 }) => {
   const { projectId, columnId } = useParams<{
     projectId: string;
@@ -86,6 +89,16 @@ const CreateTask: React.FC<CreateTaskProps> = ({
       pathname: `/projects/${selectedProject?._id}/tasks`,
       state: { fromCreateTask: true, createTaskProgress: true },
     });
+
+    //Handle activity report
+    if (taskData.title) {
+      socket.emit('create activity task', {
+        projectId,
+        columnId,
+        taskName: taskData.title,
+        userName: `${user?.firstName} ${user?.lastName}`,
+      });
+    }
   };
 
   return (
@@ -154,6 +167,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({
 
 const mapStateToProps = (state: Store) => ({
   project: state.project,
+  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({

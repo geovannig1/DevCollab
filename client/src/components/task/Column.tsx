@@ -14,6 +14,7 @@ import { Member } from './taskTypes';
 import CardMenu from '../../components/global/CardMenu';
 import socket from '../../utils/socketio';
 import { AccessPermission } from '../../actions/projectTypes';
+import { AuthInitialState } from '../../reducers/authReducer';
 
 interface ColumnProps {
   column: {
@@ -32,6 +33,7 @@ interface ColumnProps {
   index: number;
   project: ProjectInitialState;
   signedInMember?: Member;
+  auth: AuthInitialState;
 }
 
 const Column: React.FC<ColumnProps> = ({
@@ -40,12 +42,20 @@ const Column: React.FC<ColumnProps> = ({
   index,
   project: { selectedProject },
   signedInMember,
+  auth: { user },
 }) => {
   const handleDelete = () => {
     socket.emit('delete list', {
       columnId: column.id,
       projectId: selectedProject?._id,
       tasks: tasks,
+    });
+
+    //Handle activity report
+    socket.emit('delete activity list', {
+      projectId: selectedProject?._id,
+      userName: `${user?.firstName} ${user?.lastName}`,
+      listName: column.title,
     });
   };
 
@@ -65,6 +75,7 @@ const Column: React.FC<ColumnProps> = ({
                 deleteItem={handleDelete}
                 listTitle={column.title}
                 listId={column.id}
+                user={user}
               >
                 <HorizIcon fontSize='large' />
               </CardMenu>
@@ -103,6 +114,7 @@ const Column: React.FC<ColumnProps> = ({
 
 const mapStateToProps = (state: Store) => ({
   project: state.project,
+  auth: state.auth,
 });
 
 const Container = styled.div`

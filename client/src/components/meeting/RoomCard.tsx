@@ -14,6 +14,7 @@ import { ReactComponent as Meeting } from '../../assets/meeting2.svg';
 import { deleteMeeting } from '../../actions/meetingActions';
 import { UserType } from '../../actions/authTypes';
 import { AccessPermission, ProjectType } from '../../actions/projectTypes';
+import socket from '../../utils/socketio';
 
 interface RoomCardProps {
   meetingRoom: MeetingTypes;
@@ -32,6 +33,12 @@ const RoomCard: React.FC<RoomCardProps> = ({
 }) => {
   const handleDelete = () => {
     deleteMeeting(projectId, meetingRoom._id ?? '');
+
+    socket.emit('delete activity meeting', {
+      projectId,
+      userName: `${user?.firstName} ${user?.lastName}`,
+      roomName: meetingRoom.name,
+    });
   };
 
   //find user in the project

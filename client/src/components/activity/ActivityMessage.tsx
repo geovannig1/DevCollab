@@ -12,6 +12,9 @@ import { UserType } from '../../actions/authTypes';
 import socket from '../../utils/socketio';
 import discussionActivity from '../../assets/discussionActivity.png';
 import meetingActivity from '../../assets/meetingActivity.png';
+import noteActivity from '../../assets/noteActivity.png';
+import fileActivity from '../../assets/fileActivity.png';
+import taskActivity from '../../assets/taskActivity.png';
 
 interface ActivityMessageProps {
   projectId: string;
@@ -43,6 +46,15 @@ const ActivityMessage: React.FC<ActivityMessageProps> = ({
         break;
       case ActivityAvatar.meeting:
         setActivityAvatar(meetingActivity);
+        break;
+      case ActivityAvatar.note:
+        setActivityAvatar(noteActivity);
+        break;
+      case ActivityAvatar.file:
+        setActivityAvatar(fileActivity);
+        break;
+      case ActivityAvatar.task:
+        setActivityAvatar(taskActivity);
         break;
     }
   }, [message.avatar]);
@@ -112,6 +124,7 @@ const Text = styled.span`
   box-shadow: ${setShadow.light};
   align-self: flex-start;
   font-size: ${setRem(15)};
+  max-width: 900px;
 `;
 
 const DeleteButton = styled.span`

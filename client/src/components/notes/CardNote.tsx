@@ -16,6 +16,7 @@ import { Store } from '../../store';
 import { AuthInitialState } from '../../reducers/authReducer';
 import { ProjectInitialState } from '../../reducers/projectReducer';
 import { AccessPermission } from '../../actions/projectTypes';
+import socket from '../../utils/socketio';
 
 interface CardNoteProps {
   note: NoteTypes;
@@ -37,6 +38,13 @@ const CardNote: React.FC<CardNoteProps> = ({
 
   const handleDelete = () => {
     deleteNote(projectId, note?._id ?? '');
+
+    //Handle delete activity report
+    socket.emit('delete activity note', {
+      projectId,
+      userName: `${user?.firstName} ${user?.lastName}`,
+      noteName: note.title,
+    });
   };
 
   //find user in the project

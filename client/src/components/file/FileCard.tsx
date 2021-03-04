@@ -15,6 +15,7 @@ import { Store } from '../../store';
 import { AuthInitialState } from '../../reducers/authReducer';
 import { ProjectInitialState } from '../../reducers/projectReducer';
 import { AccessPermission } from '../../actions/projectTypes';
+import socket from '../../utils/socketio';
 
 interface FileCardProps {
   deleteFile: (projectId: string, fileId: string) => Promise<void>;
@@ -36,6 +37,11 @@ const FileCard: React.FC<FileCardProps> = ({
 
   const handleDelete = () => {
     deleteFile(projectId, file._id ?? '');
+    socket.emit('delete activity file', {
+      projectId,
+      userName: `${user?.firstName} ${user?.lastName}`,
+      fileName: file.name,
+    });
   };
 
   //find user in the project

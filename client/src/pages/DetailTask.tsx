@@ -154,6 +154,13 @@ const DetailTask: React.FC<DetailTaskProps> = ({
     socket.emit('update task', { projectId, taskId, taskData });
     setDefaultTaskData(taskData);
     setEditData(false);
+
+    //Handle activity report
+    socket.emit('update activity task', {
+      projectId,
+      taskName: taskData.title,
+      userName: `${user?.firstName} ${user?.lastName}`,
+    });
   };
 
   const handleDelete = () => {
@@ -164,6 +171,13 @@ const DetailTask: React.FC<DetailTaskProps> = ({
       taskTitle: defaultTaskData.title,
     });
     history.push(`/projects/${projectId}/tasks`);
+
+    //Handle activity report
+    socket.emit('delete activity task', {
+      projectId,
+      taskName: taskData.title,
+      userName: `${user?.firstName} ${user?.lastName}`,
+    });
   };
 
   //Get the signed in user data

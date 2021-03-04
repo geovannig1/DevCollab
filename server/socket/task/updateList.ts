@@ -17,7 +17,7 @@ export default (io: Server, socket: Socket) => {
         const updatedProjectTask = await (await projectTask.save())
           .populate({
             path: 'tasks.$*.comments.user',
-            select: ['email', 'avatar'],
+            select: ['firstName', 'lastName', 'avatar'],
           })
           .populate({
             path: 'tasks.$*.members.user',

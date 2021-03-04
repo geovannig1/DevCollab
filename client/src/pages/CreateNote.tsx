@@ -85,6 +85,7 @@ const CreateNote: React.FC<CreateNoteProps> = ({
         handleSubmitNote={handleSubmitNote}
         projectId={projectId}
         setTitle={setTitle}
+        user={user}
       />
     </Paper>
   );

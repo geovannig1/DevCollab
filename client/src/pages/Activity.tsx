@@ -5,7 +5,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { useParams, Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { setColor } from '../styles';
+import { setColor, setRem } from '../styles';
 import { Store } from '../store';
 import { loadProject } from '../actions/projectActions';
 import { ProjectInitialState } from '../reducers/projectReducer';
@@ -78,12 +78,22 @@ const Activity: React.FC<ActivityProps> = ({
   }, [selectedProject?._id, loadActivity, receiveActivity, projectId]);
 
   const [message, setMessage] = useState('');
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (message.trim().length > 0) {
       socket.emit('send activity message', { projectId, user, message });
       setMessage('');
+    }
+  };
+
+  //Handle the submit from the textarea
+  const handleUserKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (message.trim().length > 0) {
+        socket.emit('send activity message', { projectId, user, message });
+        setMessage('');
+      }
     }
   };
 
@@ -99,13 +109,13 @@ const Activity: React.FC<ActivityProps> = ({
             />
             <form onSubmit={handleSubmit}>
               <InputContainer>
-                <Input
+                <TextArea
                   placeholder='Write a message...'
                   name='message'
                   id='message'
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  autoComplete='off'
+                  onKeyPress={handleUserKeyPress}
                 />
                 <RoundedButton size='45'>
                   <SendIcon />
@@ -143,15 +153,19 @@ const Container = styled.div`
 
 const InputContainer = styled.div`
   display: flex;
+  align-items: center;
+  margin-top: 5px;
 `;
 
-const Input = styled.input`
+const TextArea = styled.textarea`
   width: 100%;
-  height: 15%;
   border: 1px solid ${setColor.lightBlack};
+  height: 55px;
   outline: none;
   padding: 15px;
   border-radius: 5px;
+  resize: none;
+  font-size: ${setRem(14)};
   &:focus {
     border-color: ${setColor.primary};
   }

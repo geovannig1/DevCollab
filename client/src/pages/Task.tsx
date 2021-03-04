@@ -132,14 +132,17 @@ const Task: React.FC<TaskProps> = ({
       setTaskState(data);
     });
 
+    //Listen to updated list
     socket.on('updated update list', (data: InitialTaskState) => {
       setTaskState(data);
     });
 
+    //Listen to updated task
     socket.on('updated update task', (data: InitialTaskState) => {
       setTaskState(data);
     });
 
+    //Listen to updated deleted task
     socket.on('updated delete task', (data: InitialTaskState) => {
       setTaskState(data);
     });
@@ -240,6 +243,15 @@ const Task: React.FC<TaskProps> = ({
       columnFinish: newFinish,
     });
     setTaskState(newState);
+
+    //Send activity report move task to another column
+    socket.emit('move activity task', {
+      projectId,
+      userName: `${user?.firstName} ${user?.lastName}`,
+      taskId: draggableId,
+      sourceListName: newStart.title,
+      destionationListName: newFinish.title,
+    });
   };
 
   //Get the signed in user data
@@ -270,7 +282,7 @@ const Task: React.FC<TaskProps> = ({
             })}
             {provided.placeholder}
             {signedInMember?.accessPermission !== AccessPermission.ReadOnly && (
-              <AddListMenu setProgress={setProgress}>
+              <AddListMenu setProgress={setProgress} user={user}>
                 <AddIcon />
                 New list
               </AddListMenu>

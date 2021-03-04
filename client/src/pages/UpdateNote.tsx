@@ -115,6 +115,7 @@ const UpdateNote: React.FC<UpdateNoteProps> = ({
             projectId={projectId}
             loadedNoteData={selectedNote}
             setTitle={setTitle}
+            user={user}
             update
           />
         </Paper>

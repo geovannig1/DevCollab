@@ -115,6 +115,7 @@ const UpdateFile: React.FC<UpdateFileProps> = ({
             selectedFile={selectedFile}
             handleFileSubmit={handleFileSubmit}
             setTitle={setTitle}
+            user={user}
             update
           />
         </Paper>

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 
 import AlertDialog from './AlertDialog';
 import EditListMenu from '../task/EditListMenu';
+import { UserType } from '../../actions/authTypes';
 
 interface CardMenuProps {
   deleteItem: (id?: string) => Promise<void> | void;
@@ -15,6 +16,7 @@ interface CardMenuProps {
   deleteText: string;
   listTitle?: string;
   listId?: string;
+  user?: UserType;
 }
 
 const CardMenu: React.FC<CardMenuProps> = ({
@@ -26,6 +28,7 @@ const CardMenu: React.FC<CardMenuProps> = ({
   editLink,
   listTitle,
   listId,
+  user,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -60,7 +63,11 @@ const CardMenu: React.FC<CardMenuProps> = ({
             <MenuItem onClick={handleClose}>Edit</MenuItem>
           </StyledLink>
         ) : (
-          <EditListMenu listTitle={listTitle ?? ''} listId={listId ?? ''}>
+          <EditListMenu
+            listTitle={listTitle ?? ''}
+            listId={listId ?? ''}
+            user={user}
+          >
             <MenuItem onClick={handleClose}>Edit</MenuItem>
           </EditListMenu>
         )}

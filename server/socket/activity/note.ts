@@ -1,26 +1,19 @@
 import { Server, Socket } from 'socket.io';
 
 import Activity, { Avatar } from '../../models/Activity';
-import User from '../../models/User';
 
 export default (io: Server, socket: Socket) => {
-  socket.on('create activity meeting', async (data) => {
+  socket.on('create activity note', async (data) => {
     try {
       const activity = await Activity.findOne({
         project: data.projectId,
       }).populate('messages.user', ['firstName', 'lastName', 'avatar']);
 
-      //Find users email
-      const users = await User.find({ _id: { $in: data.membersId } });
-      const usersEmail = users.map((user) => user.email);
-
       if (activity) {
         activity.messages.push({
-          avatar: Avatar.meeting,
-          name: 'Meeting Room',
-          message: `${data.userName} invited ${usersEmail.join(', ')} to ${
-            data.roomName
-          } meeting room`,
+          avatar: Avatar.note,
+          name: 'Note',
+          message: `${data.userName} created ${data.noteName} note`,
         });
 
         await activity.save();
@@ -31,7 +24,7 @@ export default (io: Server, socket: Socket) => {
     }
   });
 
-  socket.on('update activity meeting', async (data) => {
+  socket.on('update activity note', async (data) => {
     try {
       const activity = await Activity.findOne({
         project: data.projectId,
@@ -39,9 +32,9 @@ export default (io: Server, socket: Socket) => {
 
       if (activity) {
         activity.messages.push({
-          avatar: Avatar.meeting,
-          name: 'Meeting Room',
-          message: `${data.userName} updated ${data.roomName} meeting room`,
+          avatar: Avatar.note,
+          name: 'Note',
+          message: `${data.userName} updated ${data.noteName} note`,
         });
 
         await activity.save();
@@ -52,7 +45,7 @@ export default (io: Server, socket: Socket) => {
     }
   });
 
-  socket.on('delete activity meeting', async (data) => {
+  socket.on('delete activity note', async (data) => {
     try {
       const activity = await Activity.findOne({
         project: data.projectId,
@@ -60,9 +53,9 @@ export default (io: Server, socket: Socket) => {
 
       if (activity) {
         activity.messages.push({
-          avatar: Avatar.meeting,
-          name: 'Meeting Room',
-          message: `${data.userName} deleted ${data.roomName} meeting room`,
+          avatar: Avatar.note,
+          name: 'Note',
+          message: `${data.userName} deleted ${data.noteName} note`,
         });
 
         await activity.save();

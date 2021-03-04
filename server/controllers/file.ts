@@ -102,7 +102,12 @@ export const createFile = async (req: Request, res: Response) => {
 
       newFile.file!.url = result?.secure_url;
       newFile.file!.publicId = result?.public_id;
-      await newFile.save();
+      await (await newFile.save())
+        .populate({
+          path: 'user',
+          select: ['firstName', 'lastName'],
+        })
+        .execPopulate();
 
       //Delete file in the upload folder
       await fs.unlink(req.file.path);

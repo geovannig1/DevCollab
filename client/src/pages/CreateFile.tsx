@@ -85,6 +85,7 @@ const CreateFile: React.FC<CreateFileProps> = ({
         projectId={projectId}
         handleFileSubmit={handleFileSubmit}
         setTitle={setTitle}
+        user={user}
       />
     </Paper>
   );

@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 
@@ -11,11 +11,13 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import { setColor } from '../../styles';
 import socket from '../../utils/socketio';
+import { UserType } from '../../actions/authTypes';
 
 interface EditListMenuProps {
   setProgress?: React.Dispatch<React.SetStateAction<boolean>>;
   listTitle: string;
   listId: string;
+  user?: UserType;
 }
 
 const EditListMenu: React.FC<EditListMenuProps> = ({
@@ -23,6 +25,7 @@ const EditListMenu: React.FC<EditListMenuProps> = ({
   setProgress,
   listTitle,
   listId,
+  user,
 }) => {
   const [open, setOpen] = React.useState(false);
   const [listData, setListData] = useState(listTitle);
@@ -34,8 +37,13 @@ const EditListMenu: React.FC<EditListMenuProps> = ({
   };
 
   const handleClose = () => {
-    setOpen(false);
     setListData(listTitle);
+    setOpen(false);
+  };
+
+  //CLose updated data
+  const handleCloseUpdated = () => {
+    setOpen(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +53,15 @@ const EditListMenu: React.FC<EditListMenuProps> = ({
   const handleClick = () => {
     setProgress && setProgress(true);
     socket.emit('update list', { projectId, listData, listId });
-    handleClose();
+
+    //Handle activity report
+    socket.emit('update activity list', {
+      projectId,
+      userName: `${user?.firstName} ${user?.lastName}`,
+      listName: listData,
+      previousListName: listTitle,
+    });
+    handleCloseUpdated();
   };
 
   return (

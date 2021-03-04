@@ -13,7 +13,7 @@ export default (socket: Socket) => {
         const newColumnOrder = await (await task.save())
           .populate({
             path: 'tasks.$*.comments.user',
-            select: ['email', 'avatar'],
+            select: ['firstName', 'lastName', 'avatar'],
           })
           .populate({
             path: 'tasks.$*.members.user',

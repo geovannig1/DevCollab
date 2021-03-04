@@ -6,20 +6,24 @@ import { Form, InputContainer } from '../global/FormContainer';
 import { Button } from '../global/Button';
 import { NoteTypes } from '../../actions/noteTypes';
 import Alert from '../global/Alert';
+import socket from '../../utils/socketio';
+import { UserType } from '../../actions/authTypes';
 
 interface NoteFormProps {
-  handleSubmitNote: (noteData: NoteTypes) => void;
   loadedNoteData?: NoteTypes;
   projectId: string;
   update?: boolean;
+  user?: UserType;
+  handleSubmitNote: (noteData: NoteTypes) => void;
   setTitle: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const NoteForm: React.FC<NoteFormProps> = ({
-  handleSubmitNote,
   projectId,
   loadedNoteData,
   update,
+  user,
+  handleSubmitNote,
   setTitle,
 }) => {
   const [noteData, setNoteData] = useState<NoteTypes>({
@@ -40,6 +44,15 @@ const NoteForm: React.FC<NoteFormProps> = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleSubmitNote(noteData);
+
+    //Handle send activity report
+    if (noteData.title && noteData.contents) {
+      socket.emit(`${update ? 'update' : 'create'} activity note`, {
+        projectId,
+        noteName: noteData.title,
+        userName: `${user?.firstName} ${user?.lastName}`,
+      });
+    }
   };
 
   return (

@@ -11,12 +11,18 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import { setColor, setShadow } from '../../styles';
 import socket from '../../utils/socketio';
+import { UserType } from '../../actions/authTypes';
 
 interface AddListMenuProps {
   setProgress: React.Dispatch<React.SetStateAction<boolean>>;
+  user?: UserType;
 }
 
-const AddListMenu: React.FC<AddListMenuProps> = ({ children, setProgress }) => {
+const AddListMenu: React.FC<AddListMenuProps> = ({
+  children,
+  user,
+  setProgress,
+}) => {
   const [open, setOpen] = React.useState(false);
   const [listData, setListData] = useState('');
 
@@ -39,6 +45,14 @@ const AddListMenu: React.FC<AddListMenuProps> = ({ children, setProgress }) => {
     if (listData !== '') {
       setProgress(true);
       socket.emit('create list', { projectId, listData });
+
+      //Handle activity report
+      socket.emit('create activity list', {
+        projectId,
+        listName: listData,
+        userName: `${user?.firstName} ${user?.lastName}`,
+      });
+
       handleClose();
     }
   };

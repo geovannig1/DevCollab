@@ -199,7 +199,7 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
   //Send audio condition to other users (muted/not muted)
   useEffect(() => {
     socket.emit('send audio', { mute, userId: user?._id });
-  }, [videoPeers, mute]);
+  }, [videoPeers, mute, user?._id]);
 
   //Mute or unmute the audio
   const setAudio = () => {
