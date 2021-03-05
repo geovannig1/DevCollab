@@ -35,6 +35,7 @@ import { clearProject } from './projectActions';
 import { clearMeeting } from './meetingActions';
 import { clearNote } from './noteActions';
 import { clearFile } from './fileActions';
+import { clearTask } from './taskActions';
 
 //Load User
 export const loadUser = () => async (
@@ -122,6 +123,7 @@ export const signOut = () => async (
     dispatch(clearMeeting());
     dispatch(clearNote());
     dispatch(clearFile());
+    dispatch(clearTask());
 
     dispatch({ type: REMOVE_LOADING });
     dispatch({ type: LOGOUT_SUCCESS });

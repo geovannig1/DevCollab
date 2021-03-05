@@ -19,7 +19,7 @@ import {
   InputContainer,
 } from '../components/global/FormContainer';
 import { Button } from '../components/global/Button';
-import { TaskData } from '../components/task/taskTypes';
+import { TaskData } from '../actions/taskTypes';
 import SelectMembers from '../components/global/SelectMembers';
 import { AuthInitialState } from '../reducers/authReducer';
 

@@ -8,7 +8,7 @@ import Avatar from '../global/Avatar';
 import avatar from '../../assets/profile-picture.png';
 import socket from '../../utils/socketio';
 import { UserType } from '../../actions/authTypes';
-import { Comment as IComment, Member } from './taskTypes';
+import { Comment as IComment, Member } from '../../actions/taskTypes';
 import Comment from '../global/Comment';
 import { AccessPermission } from '../../actions/projectTypes';
 

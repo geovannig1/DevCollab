@@ -9,6 +9,7 @@ import displayReducer from './displayReducer';
 import noteReducer from './noteReducer';
 import fileReducer from './fileReducer';
 import activityReducer from './activityReducer';
+import taskReducer from './taskReducer';
 
 export default combineReducers({
   auth: authReducer,
@@ -21,4 +22,5 @@ export default combineReducers({
   note: noteReducer,
   file: fileReducer,
   activity: activityReducer,
+  task: taskReducer,
 });

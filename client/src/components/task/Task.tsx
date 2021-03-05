@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import { setColor, setRem, setShadow } from '../../styles';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import avatar from '../../assets/profile-picture.png';
-import { Member } from './taskTypes';
+import { Member } from '../../actions/taskTypes';
 import Avatar from '../global/Avatar';
 import AccessAlarmsIcon from '@material-ui/icons/AccessAlarms';
 import { AccessPermission } from '../../actions/projectTypes';

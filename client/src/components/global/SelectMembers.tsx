@@ -5,7 +5,7 @@ import { Member, ProjectType } from '../../actions/projectTypes';
 
 import { setColor, setRem } from '../../styles';
 import avatar from '../../assets/profile-picture.png';
-import { TaskData } from '../task/taskTypes';
+import { TaskData } from '../../actions/taskTypes';
 import Avatar from './Avatar';
 import { MeetingTypes } from '../../actions/meetingTypes';
 

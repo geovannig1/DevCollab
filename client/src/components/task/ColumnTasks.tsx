@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 
 import Column from './Column';
-import { Member } from '../../components/task/taskTypes';
+import { Member } from '../../actions/taskTypes';
 
 interface ColumnTasksProps {
   column: {

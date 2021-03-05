@@ -14,7 +14,7 @@ import { ProjectInitialState } from '../reducers/projectReducer';
 import Paper from '../components/global/Paper';
 import Previous from '../components/global/Previous';
 import api from '../api';
-import { TaskData } from '../components/task/taskTypes';
+import { TaskData } from '../actions/taskTypes';
 import Avatar from '../components/global/Avatar';
 import avatar from '../assets/profile-picture.png';
 import { setColor, setRem, setShadow } from '../styles';

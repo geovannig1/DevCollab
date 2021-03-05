@@ -10,7 +10,7 @@ import Tasks from './Tasks';
 import AddIcon from '@material-ui/icons/Add';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { ProjectInitialState } from '../../reducers/projectReducer';
-import { Member } from './taskTypes';
+import { Member } from '../../actions/taskTypes';
 import CardMenu from '../../components/global/CardMenu';
 import socket from '../../utils/socketio';
 import { AccessPermission } from '../../actions/projectTypes';

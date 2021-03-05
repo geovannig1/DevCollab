@@ -13,7 +13,8 @@ import { Store } from '../store';
 import { ProjectInitialState } from '../reducers/projectReducer';
 import ColumnTasks from '../components/task/ColumnTasks';
 import AddIcon from '@material-ui/icons/Add';
-import { InitialTaskState } from '../components/task/taskTypes';
+import { InitialTaskState } from '../actions/taskTypes';
+import { loadTaskState } from '../actions/taskActions';
 import { setColor } from '../styles';
 import AddListMenu from '../components/task/AddListMenu';
 import socket from '../utils/socketio';
@@ -24,6 +25,7 @@ import { AccessPermission } from '../actions/projectTypes';
 interface TaskProps {
   setNavbar: (selected: SelectedType) => void;
   loadProject: (projectId: string) => Promise<void>;
+  loadTaskState: (projectId: string) => Promise<void>;
   clearNavbar: () => void;
   project: ProjectInitialState;
   auth: AuthInitialState;
@@ -33,6 +35,7 @@ const Task: React.FC<TaskProps> = ({
   setNavbar,
   clearNavbar,
   loadProject,
+  loadTaskState,
   project: { selectedProject, projectError },
   auth: { user },
 }) => {
@@ -74,24 +77,23 @@ const Task: React.FC<TaskProps> = ({
       setProgress(location.state.createTaskProgress);
 
     (async () => {
-      try {
-        if (selectedProject && !location.state?.fromCreateTask) {
-          setProgress(true);
-          const res = await api.get(`/projects/${selectedProject._id}/tasks`);
-          setProgress(false);
-          if (res.data) {
-            setTaskState(res.data);
-          }
+      if (selectedProject && !location.state?.fromCreateTask) {
+        setProgress(true);
+
+        const res = await api.get(`/projects/${selectedProject._id}/tasks`);
+        loadTaskState(selectedProject._id);
+
+        setProgress(false);
+        if (res.data) {
+          setTaskState(res.data);
         }
-      } catch (err) {
-        console.error(err.message);
       }
     })();
 
     return () => {
       if (location.state?.fromCreateTask) location.state.fromCreateTask = false;
     };
-  }, [selectedProject, location]);
+  }, [selectedProject, location, loadTaskState]);
 
   //Socket connection
   useEffect(() => {
@@ -303,6 +305,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   clearNavbar: () => dispatch(clearNavbar()),
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
+  loadTaskState: (projectId: string) => dispatch(loadTaskState(projectId)),
 });
 
 const Container = styled.div<{ cursorProgress: boolean }>`

@@ -1,7 +1,7 @@
 import React, { Fragment, memo } from 'react';
 
 import Task from './Task';
-import { Member } from './taskTypes';
+import { Member } from '../../actions/taskTypes';
 
 interface TasksProps {
   tasks: {
