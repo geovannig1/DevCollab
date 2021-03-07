@@ -28,11 +28,13 @@ import SelectMembers from '../components/global/SelectMembers';
 import { Button } from '../components/global/Button';
 import socket from '../utils/socketio';
 import { AccessPermission } from '../actions/projectTypes';
+import { loadTaskState } from '../actions/taskActions';
 
 interface DetailTaskProps {
   setNavbar: (selected: SelectedType) => void;
   loadProject: (projectId: string) => Promise<void>;
   clearNavbar: () => void;
+  loadTaskState: (projectId: string) => Promise<void>;
   project: ProjectInitialState;
   auth: AuthInitialState;
 }
@@ -41,6 +43,7 @@ const DetailTask: React.FC<DetailTaskProps> = ({
   setNavbar,
   loadProject,
   clearNavbar,
+  loadTaskState,
   project: { selectedProject, projectError },
   auth: { user },
 }) => {
@@ -69,13 +72,9 @@ const DetailTask: React.FC<DetailTaskProps> = ({
 
   useEffect(() => {
     (async () => {
-      try {
-        const res = await api.get(`/projects/${projectId}/tasks/${taskId}`);
-        setTaskData(res.data);
-        setDefaultTaskData(res.data);
-      } catch (err) {
-        console.error(err.message);
-      }
+      const res = await api.get(`/projects/${projectId}/tasks/${taskId}`);
+      setTaskData(res.data);
+      setDefaultTaskData(res.data);
     })();
 
     return () => {
@@ -154,6 +153,7 @@ const DetailTask: React.FC<DetailTaskProps> = ({
     socket.emit('update task', { projectId, taskId, taskData });
     setDefaultTaskData(taskData);
     setEditData(false);
+    loadTaskState(projectId);
 
     //Handle activity report
     socket.emit('update activity task', {
@@ -327,6 +327,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   clearNavbar: () => dispatch(clearNavbar()),
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
+  loadTaskState: (projectId: string) => dispatch(loadTaskState(projectId)),
 });
 
 const Label = styled.label`

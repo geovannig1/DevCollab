@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Calendar from 'react-calendar';
+import Calendar, { CalendarTileProperties } from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import dayjs from 'dayjs';
 import { connect } from 'react-redux';
@@ -14,6 +14,9 @@ import { ProjectInitialState } from '../../reducers/projectReducer';
 import { loadTaskState } from '../../actions/taskActions';
 import { TaskInitialState } from '../../reducers/taskReducer';
 import { Member } from '../../actions/taskTypes';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import { AuthInitialState } from '../../reducers/authReducer';
+import socket from '../../utils/socketio';
 
 export interface TaskData {
   id: string;
@@ -24,12 +27,14 @@ export interface TaskData {
 }
 
 interface CalendarSidebarProps {
+  auth: AuthInitialState;
   project: ProjectInitialState;
   task: TaskInitialState;
   loadTaskState: (projectId: string) => Promise<void>;
 }
 
 const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
+  auth: { user },
   project: { selectedProject },
   task: { tasks },
   loadTaskState,
@@ -39,29 +44,56 @@ const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
   useEffect(() => {
     if (selectedProject) {
       loadTaskState(selectedProject._id);
+
+      socket.emit('join project', { projectId: selectedProject._id });
+      //Listen to project update and change the calendar data
+      socket.on('updated update task', () => {
+        loadTaskState(selectedProject?._id);
+      });
+    } else if (!selectedProject) {
+      setTaskData(undefined);
     }
+
+    return () => {
+      socket.emit('leave project', { projectId: selectedProject?._id });
+    };
   }, [selectedProject, loadTaskState]);
 
+  //Set the task lists
   useEffect(() => {
     if (tasks) {
-      !taskData &&
-        Object.keys(tasks.tasks).map((key) =>
-          setTaskData((prevData) => [...(prevData ?? []), tasks.tasks[key]])
-        );
+      setTaskData(undefined);
+      Object.keys(tasks.tasks).map((key) => {
+        if (
+          tasks.tasks[key].members.find(
+            (member) => member.user._id === user?._id
+          )
+        ) {
+          return setTaskData((prevData) => [
+            ...(prevData ?? []),
+            tasks.tasks[key],
+          ]);
+        }
+        return null;
+      });
     }
   }, [tasks]);
 
   //Date state
   const [value, onChange] = useState<Date | Date[]>(new Date());
 
-  const handleTile = () => {
-    const taskDate = taskData?.map(
-      (task) =>
-        dayjs(task?.dueDate).format('DD/MM/YYYY') ===
-        dayjs(value.toString()).format('DD/MM/YYYY')
+  //Handle the deadline tile
+  const handleTileContent = (props: CalendarTileProperties) => {
+    const taskDate = taskData?.map((task) =>
+      dayjs(task.dueDate).format('DD/MM/YYYY')
     );
+    const dates = taskDate?.filter((date) => date !== null);
 
-    return <div>wew</div>;
+    return dates?.includes(dayjs(props.date).format('DD/MM/YYYY')) ? (
+      <FiberManualRecordIcon
+        style={{ fontSize: setRem(9), color: setColor.mainRed }}
+      />
+    ) : null;
   };
 
   return (
@@ -71,17 +103,7 @@ const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
         value={value}
         calendarType='US'
         locale='en-US'
-        tileContent={({ activeStartDate, date }) => {
-          const test = taskData?.map((task) =>
-            dayjs(task?.dueDate).format('DD/MM/YYYY') ===
-            dayjs(date).format('DD/MM/YYYY') ? (
-              <div>wew</div>
-            ) : null
-          );
-          console.log(taskData);
-
-          return <div />;
-        }}
+        tileContent={handleTileContent}
       />
       <EventContainer>
         <span>Task Lists</span> {dayjs(value.toString()).format('D MMMM YYYY')}
@@ -97,6 +119,7 @@ const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
 const mapStateToProps = (state: Store) => ({
   project: state.project,
   task: state.task,
+  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
@@ -116,6 +139,12 @@ const StyledCalendar = styled(Calendar)`
   }
   span {
     color: ${setColor.primaryDark};
+  }
+  button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 `;
 

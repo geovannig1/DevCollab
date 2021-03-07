@@ -35,8 +35,9 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   box-shadow: ${setShadow.main};
+  transition: 0.2s ease-in-out;
   span {
-    font-weight: 500;
+    font-weight: 600;
   }
 `;
 

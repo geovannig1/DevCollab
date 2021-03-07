@@ -83,7 +83,10 @@ const Navbar: React.FC<NavbarProps> = ({
         </li>
 
         <li>
-          <StyledLink to='#' selected={navbar.selected === SelectedType.Github}>
+          <StyledLink
+            to={`/projects/${selectedProject?._id}/github-activity`}
+            selected={navbar.selected === SelectedType.Github}
+          >
             <GitHubIcon />
             <Text>GitHub Activity</Text>
             <div />
