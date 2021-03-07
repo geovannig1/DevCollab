@@ -29,6 +29,7 @@ export interface ProjectType {
   name: string;
   description: string;
   members: Member[];
+  githubAccessToken?: string;
 }
 
 export interface ProjectsLoaded {

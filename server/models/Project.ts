@@ -16,6 +16,7 @@ export interface IProject extends Document {
   name: string;
   description?: string;
   members: Member[];
+  githubAccessToken?: string;
 }
 
 const projectSchema = new Schema<IProject>({
@@ -41,6 +42,9 @@ const projectSchema = new Schema<IProject>({
       },
     },
   ],
+  githubAccessToken: {
+    type: String,
+  },
   date: {
     type: Date,
     default: Date.now,

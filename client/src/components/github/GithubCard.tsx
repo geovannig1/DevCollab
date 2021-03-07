@@ -37,6 +37,7 @@ const Container = styled.div`
   cursor: pointer;
   user-select: none;
   border-radius: 8px;
+  margin: 15px 0;
   &:hover {
     box-shadow: ${setShadow.hover};
   }

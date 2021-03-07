@@ -3,14 +3,16 @@ const router = express.Router();
 import { check } from 'express-validator';
 
 import passport from '../../services/passportGoogle';
+import auth from '../../middlewares/auth';
+import validateInput from '../../middlewares/validateInput';
 import {
   googleCallback,
   register,
   login,
   logout,
+  githubOauth,
+  githubCallback,
 } from '../../controllers/auth';
-import auth from '../../middlewares/auth';
-import validateInput from '../../middlewares/validateInput';
 
 /**
  *  @route GET api/auth/google
@@ -24,6 +26,20 @@ router.get(
     session: false,
   })
 );
+
+/**
+ *  @route GET api/auth/github/project/:projectId
+ *  @desc Github OAuth
+ *  @access Private
+ */
+router.get('/github/projects/:projectId', auth, githubOauth);
+
+/**
+ *  @route GET api/auth/github/callback
+ *  @desc Github OAuth callback
+ *  @access Public
+ */
+router.get('/github/callback', githubCallback);
 
 /**
  *  @route GET api/auth/google/callback

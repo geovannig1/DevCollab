@@ -37,6 +37,7 @@ import Files from './pages/Files';
 import CreateFile from './pages/CreateFile';
 import UpdateFile from './pages/UpdateFile';
 import GithubActivities from './pages/GithubActivities';
+import GithubConnection from './pages/GithubConnection';
 
 interface AppProps {
   loadUser: () => Promise<void>;
@@ -167,6 +168,11 @@ const App: React.FC<AppProps> = ({ loadUser }) => {
               exact
               path='/projects/:projectId/github-activity'
               component={GithubActivities}
+            />
+            <PrivateRoute
+              exact
+              path='/projects/:projectId/github-connection'
+              component={GithubConnection}
             />
             <Route exact path='*' component={NotFound} />
           </Switch>
