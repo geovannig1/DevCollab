@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, Redirect } from 'react-router-dom';
+import { useParams, Redirect, Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { History } from 'history';
 
 import { Store } from '../store';
 import { loadProject } from '../actions/projectActions';
@@ -11,25 +12,44 @@ import { ProjectInitialState } from '../reducers/projectReducer';
 import { setNavbar, clearNavbar } from '../actions/navbarAction';
 import { SelectedType } from '../actions/navbarTypes';
 import { Button } from '../components/global/Button';
-import GitHubIcon from '@material-ui/icons/GitHub';
 import Paper from '../components/global/Paper';
-import { Form } from '../components/global/FormContainer';
 import Previous from '../components/global/Previous';
+import SettingsApplicationsOutlinedIcon from '@material-ui/icons/SettingsApplicationsOutlined';
+import { setColor } from '../styles';
+import { loadRepos, storeRepo } from '../actions/githubActions';
+import { GithubInitialState } from '../reducers/githubReducer';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete, {
+  AutocompleteChangeDetails,
+  AutocompleteChangeReason,
+} from '@material-ui/lab/Autocomplete';
+import Alert from '../components/global/Alert';
 
 interface GithubConnectionProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
+  loadRepos: (projectId: string) => Promise<void>;
+  storeRepo: (
+    projectId: string,
+    repositoryName: string,
+    history: History
+  ) => Promise<void>;
   project: ProjectInitialState;
+  github: GithubInitialState;
 }
 
 const GithubConnection: React.FC<GithubConnectionProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
+  loadRepos,
+  storeRepo,
   project: { selectedProject, projectError },
+  github: { repos },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
+  const history = useHistory();
 
   useEffect(() => {
     document.title = 'GitHub Connection | DevCollab';
@@ -48,6 +68,26 @@ const GithubConnection: React.FC<GithubConnectionProps> = ({
     clearNavbar,
   ]);
 
+  useEffect(() => {
+    loadRepos(projectId);
+  }, [projectId, loadRepos]);
+
+  const [repositoryName, setRepositoryName] = useState('');
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    storeRepo(projectId, repositoryName, history);
+  };
+
+  const handleChange = (
+    event: React.ChangeEvent<{}>,
+    value: string | null,
+    reason: AutocompleteChangeReason,
+    details?: AutocompleteChangeDetails<string> | undefined
+  ) => {
+    setRepositoryName(value ?? '');
+  };
+
   return (
     <Paper>
       <Previous
@@ -55,15 +95,47 @@ const GithubConnection: React.FC<GithubConnectionProps> = ({
         link={`/projects/${projectId}/github-activity`}
         title='Github Connection'
       />
-      <Form>
+      <Container>
         <StyledButton
           extrasmall
+          outline
           as='a'
           href={`/api/auth/github/projects/${projectId}`}
         >
-          <StyledGitHubIcon /> Create Connection
+          <SettingsApplicationsOutlinedIcon /> Configure Connection
         </StyledButton>
-      </Form>
+
+        <Form onSubmit={handleSubmit}>
+          <Autocomplete
+            id='combo-box-demo'
+            options={repos?.map((repo) => repo.name) ?? []}
+            getOptionLabel={(option) => option}
+            style={{ width: 300 }}
+            size='small'
+            color={setColor.primary}
+            onChange={handleChange}
+            value={repositoryName}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label='Choose Repository'
+                variant='outlined'
+              />
+            )}
+          />
+
+          <StyledButton extrasmall>Save</StyledButton>
+          <StyledButton
+            as={Link}
+            to={`/projects/${projectId}/github-activity`}
+            extrasmall={'extrasmall' && 1}
+            outline={'outline' && 1}
+          >
+            Cancel
+          </StyledButton>
+        </Form>
+        <Alert />
+      </Container>
     </Paper>
   );
 };
@@ -71,18 +143,29 @@ const GithubConnection: React.FC<GithubConnectionProps> = ({
 const mapStateToProps = (state: Store) => ({
   project: state.project,
   auth: state.auth,
+  github: state.github,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   clearNavbar: () => dispatch(clearNavbar()),
+  loadRepos: (projectId: string) => dispatch(loadRepos(projectId)),
+  storeRepo: (projectId: string, repositoryName: string, history: History) =>
+    dispatch(storeRepo(projectId, repositoryName, history)),
 });
 
-const StyledGitHubIcon = styled(GitHubIcon)`
-  margin-right: 5px;
+const Container = styled.div`
+  margin: 10px 0;
 `;
 
-const StyledButton = styled(Button)``;
+const Form = styled.form`
+  margin: 15px 0;
+`;
+
+const StyledButton = styled(Button)`
+  margin-top: 20px;
+  margin-right: 10px;
+`;
 
 export default connect(mapStateToProps, mapDispatchToProps)(GithubConnection);

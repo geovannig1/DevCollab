@@ -10,6 +10,7 @@ import noteReducer from './noteReducer';
 import fileReducer from './fileReducer';
 import activityReducer from './activityReducer';
 import taskReducer from './taskReducer';
+import githubReducer from './githubReducer';
 
 export default combineReducers({
   auth: authReducer,
@@ -23,4 +24,5 @@ export default combineReducers({
   file: fileReducer,
   activity: activityReducer,
   task: taskReducer,
+  github: githubReducer,
 });

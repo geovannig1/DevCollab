@@ -11,6 +11,7 @@ import {
   login,
   logout,
   githubOauth,
+  githubRedirectCallback,
   githubCallback,
 } from '../../controllers/auth';
 
@@ -28,7 +29,7 @@ router.get(
 );
 
 /**
- *  @route GET api/auth/github/project/:projectId
+ *  @route GET api/auth/github/projects/:projectId
  *  @desc Github OAuth
  *  @access Private
  */
@@ -40,6 +41,13 @@ router.get('/github/projects/:projectId', auth, githubOauth);
  *  @access Public
  */
 router.get('/github/callback', githubCallback);
+
+/**
+ *  @route GET api/auth/github/projects
+ *  @desc Github app redirect to callback url
+ *  @access Public
+ */
+router.get('/github/projects', githubRedirectCallback);
 
 /**
  *  @route GET api/auth/google/callback

@@ -5,6 +5,7 @@ import axios from 'axios';
 import jwt from '../services/jwt';
 import User, { IUser } from '../models/User';
 import Project from '../models/Project';
+import { existAdmin } from '../services/checkPermission';
 
 //Google OAuth callback
 export const googleCallback = (req: Request, res: Response) => {
@@ -23,12 +24,35 @@ export const googleCallback = (req: Request, res: Response) => {
 //Github OAuth
 export const githubOauth = async (req: Request, res: Response) => {
   try {
+    const project = await Project.findById(req.params.projectId);
+
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
+    //Only user from the project and user with admin access permission can access the oauth
+    const permission = existAdmin(project, req.user);
+    if (!permission) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
     //Store the projectId as a cookie and redirect to the github login
     res
       .cookie('project_id', req.params.projectId)
       .redirect(
-        `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=http://localhost:3000/api/auth/github/callback`
+        `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=https://github.com/apps/devcollabapp`
       );
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+};
+
+//Execute callback when redirect from the github app
+export const githubRedirectCallback = async (req: Request, res: Response) => {
+  try {
+    res.redirect(
+      `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}`
+    );
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');
@@ -64,7 +88,7 @@ export const githubCallback = async (req: Request, res: Response) => {
       return res.status(404).json({ msg: 'Project not found' });
     }
 
-    project.githubAccessToken = access_token;
+    if (access_token) project.githubAccessToken = access_token;
     await project.save();
 
     res
