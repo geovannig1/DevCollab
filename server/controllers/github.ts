@@ -1,9 +1,20 @@
 import { Request, Response } from 'express';
 import { request } from '@octokit/request';
+import parse from 'parse-link-header';
 
-import { existAdmin } from '../services/checkPermission';
+import { existAdmin, userExist } from '../services/checkPermission';
 import Project from '../models/Project';
 import Github from '../models/Github';
+
+//github hooks
+export const githubHook = (req: Request, res: Response) => {
+  try {
+    console.log(req.body);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+};
 
 //To get all the repositories
 export const getRepositories = async (req: Request, res: Response) => {
@@ -53,18 +64,70 @@ export const storeRepository = async (req: Request, res: Response) => {
     const github = await Github.findOne({ project: req.params.projectId });
 
     if (!github) {
-      const newRepo = await Github.create({
+      await Github.create({
         project: req.params.projectId,
         repositoryName,
       });
 
-      return res.status(201).json(newRepo);
+      return res.status(200).json({ msg: 'Repository name stored' });
     }
 
     github.repositoryName = repositoryName;
     await github.save();
 
-    res.status(200).json(github);
+    res.status(200).json({ msg: 'Repository name stored' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+};
+
+//Get all the commits
+export const getCommits = async (req: Request, res: Response) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
+    //Only user from the project can access the commits
+    const permission = userExist(project, req.user);
+    if (!permission) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    const github = await Github.findOne({ project: req.params.projectId });
+
+    if (!github) {
+      return res.status(404).json({ msg: 'Github data not found' });
+    }
+
+    const user = await request('GET /user', {
+      headers: {
+        authorization: `token ${project.githubAccessToken}`,
+      },
+    });
+
+    const commits = await request('GET /repos/{owner}/{repo}/commits', {
+      owner: user.data.login,
+      repo: github.repositoryName,
+      per_page: 8,
+      page: parseInt(req.params.page),
+      headers: {
+        authorization: `token ${project.githubAccessToken}`,
+      },
+    });
+
+    if (!commits) {
+      return res.status(404).json({ msg: 'Commits not found' });
+    }
+
+    res
+      .status(200)
+      .json({
+        pageInfo: parse(commits.headers.link ?? ''),
+        commits: commits.data,
+      });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');

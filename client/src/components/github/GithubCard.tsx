@@ -1,34 +1,51 @@
 import React from 'react';
 import styled from 'styled-components';
+import dayjs from 'dayjs';
 
 import { setColor, setRem, setShadow } from '../../styles';
 import Avatar from '../global/Avatar';
 import avatar from '../../assets/profile-picture.png';
 import MessageOutlinedIcon from '@material-ui/icons/MessageOutlined';
+import { CommitTypes } from '../../actions/githubTypes';
 
-interface GithubCardProps {}
+interface GithubCardProps {
+  commit?: CommitTypes;
+}
 
-const GithubCard: React.FC<GithubCardProps> = ({}) => {
+const GithubCard: React.FC<GithubCardProps> = ({ commit }) => {
   return (
-    <Container>
-      <Avatar size='40' src={avatar} alt='avatar' />
+    <Container
+      href={commit?.html_url}
+      target='_blank'
+      rel='noopener noreferrer'
+    >
+      <Avatar
+        size='40'
+        src={commit?.committer.avatar_url ?? avatar}
+        alt='avatar'
+      />
       <ContentContainer>
-        <h4>Commit Name</h4>
+        <h4>{commit?.commit.message}</h4>
         <BottomContainer>
-          <span>John Doe</span>
-          <span>Commited on 13 Jan 2021</span>
+          <span>{commit?.commit.committer.name}</span>
+          <span>
+            Commited on{' '}
+            {dayjs(commit?.commit.committer.date).format('DD MMM YYYY')}
+          </span>
         </BottomContainer>
       </ContentContainer>
       <CommentContainer>
-        <span>5</span> <MessageOutlinedIcon />
+        <span>{commit?.commit.comment_count}</span> <MessageOutlinedIcon />
       </CommentContainer>
     </Container>
   );
 };
 
-const Container = styled.div`
+const Container = styled.a`
   display: flex;
   align-items: center;
+  text-decoration: none;
+  color: ${setColor.mainBlack};
   background-color: ${setColor.mainWhite};
   width: 100%;
   padding: 15px;

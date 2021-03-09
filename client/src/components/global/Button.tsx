@@ -26,6 +26,7 @@ export const Button = styled.button<ButtonProps>`
   align-items: center;
   text-align: center;
   justify-content: center;
+  user-select: none;
   font-size: ${({ small, extrasmall }) =>
     (extrasmall && setRem(13)) ?? (small ? setRem(14) : setRem(20))};
   &:hover {
@@ -59,6 +60,7 @@ export const RoundedButton = styled.button<ButtonProps>`
   outline: none;
   cursor: pointer;
   transition: 0.2s ease-in-out;
+  user-select: none;
   &:hover {
     background-color: ${({ danger }) =>
       danger ? setColor.transparentRed : setColor.primaryDark};

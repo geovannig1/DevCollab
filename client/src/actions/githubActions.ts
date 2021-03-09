@@ -4,6 +4,7 @@ import { History } from 'history';
 import {
   REPOSITORIES_LOADED,
   REPOSITORY_STORED,
+  COMMITS_LOADED,
   GITHUB_FAIL,
   GithubDispatchTypes,
 } from './githubTypes';
@@ -37,11 +38,11 @@ export const storeRepo = (
   try {
     dispatch(removeAlert());
 
-    const res = await api.put(`/projects/${projectId}/github/repos`, {
+    await api.put(`/projects/${projectId}/github/repos`, {
       repositoryName,
     });
 
-    dispatch({ type: REPOSITORY_STORED, payload: res.data });
+    dispatch({ type: REPOSITORY_STORED });
     history.push(`/projects/${projectId}/github-activity`);
   } catch (err) {
     const errors = err.response.data.errors;
@@ -55,5 +56,20 @@ export const storeRepo = (
         payload: { msg: err.response.statusText, status: err.response.status },
       });
     }
+  }
+};
+
+//Load all the commits
+export const loadCommits = (projectId: string, page: number) => async (
+  dispatch: Dispatch<GithubDispatchTypes>
+) => {
+  try {
+    const res = await api.get(`/projects/${projectId}/github/commits/${page}`);
+    dispatch({ type: COMMITS_LOADED, payload: res.data });
+  } catch (err) {
+    dispatch({
+      type: GITHUB_FAIL,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
   }
 };

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -98,34 +98,30 @@ const Activity: React.FC<ActivityProps> = ({
   };
 
   return (
-    <Fragment>
-      {activity && (
-        <Paper>
-          <Container>
-            <ActivityContent
-              activity={activity}
-              user={user}
-              projectId={projectId}
+    <Paper>
+      <Container>
+        <ActivityContent
+          activity={activity}
+          user={user}
+          projectId={projectId}
+        />
+        <form onSubmit={handleSubmit}>
+          <InputContainer>
+            <TextArea
+              placeholder='Write a message...'
+              name='message'
+              id='message'
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={handleUserKeyPress}
             />
-            <form onSubmit={handleSubmit}>
-              <InputContainer>
-                <TextArea
-                  placeholder='Write a message...'
-                  name='message'
-                  id='message'
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyPress={handleUserKeyPress}
-                />
-                <RoundedButton size='45'>
-                  <SendIcon />
-                </RoundedButton>
-              </InputContainer>
-            </form>
-          </Container>
-        </Paper>
-      )}
-    </Fragment>
+            <RoundedButton size='45'>
+              <SendIcon />
+            </RoundedButton>
+          </InputContainer>
+        </form>
+      </Container>
+    </Paper>
   );
 };
 
