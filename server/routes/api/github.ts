@@ -7,6 +7,7 @@ import {
   getRepositories,
   githubHook,
   getCommits,
+  getPulls,
 } from '../../controllers/github';
 import { check } from 'express-validator';
 import auth from '../../middlewares/auth';
@@ -46,7 +47,7 @@ router.put(
 );
 
 /**
- *  @route PUT api/projects/:projectId/github/commits/:page
+ *  @route GET api/projects/:projectId/github/commits/:page
  *  @desc Get commits per page from a repo
  *  @access Private
  */
@@ -55,6 +56,18 @@ router.get(
   auth,
   checkObjectId('projectId'),
   getCommits
+);
+
+/**
+ *  @route GET api/projects/:projectId/github/pulls/:page
+ *  @desc Get pull requests per page from a repo
+ *  @access Private
+ */
+router.get(
+  '/:projectId/github/pulls/:page',
+  auth,
+  checkObjectId('projectId'),
+  getPulls
 );
 
 export default router;

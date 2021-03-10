@@ -101,9 +101,9 @@ export const getProjects = async (req: Request, res: Response) => {
 //Load a project
 export const getProject = async (req: Request, res: Response) => {
   try {
-    const project = await Project.findById(
-      req.params.projectId
-    ).populate('members.user', ['firstName', 'lastName', 'email', 'avatar']);
+    const project = await Project.findById(req.params.projectId)
+      .populate('members.user', ['firstName', 'lastName', 'email', 'avatar'])
+      .select('-githubAccessToken');
 
     if (!project) {
       return res.status(404).json({ msg: 'project not exist' });
@@ -133,7 +133,9 @@ export const updateProject = async (req: Request, res: Response) => {
   try {
     const { name, description, members } = req.body;
 
-    const project = await Project.findById(req.params.projectId);
+    const project = await Project.findById(req.params.projectId).select(
+      '-githubAccessToken'
+    );
     const user = await User.findById(req.user);
 
     if (!project) {

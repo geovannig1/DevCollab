@@ -24,12 +24,12 @@ const BaseAuth: React.FC<BaseAuthProps> = ({
     <Fragment>
       <ScrollToTop />
       <Container>
-        <Aside>
+        <LeftContainer>
           <Link to='/'>
             <StyledLogo />
           </Link>
           <StyledVector />
-        </Aside>
+        </LeftContainer>
         <Content>
           <h1>{title}</h1>
           {children}
@@ -60,7 +60,7 @@ const Container = styled.div`
   position: relative;
 `;
 
-const Aside = styled.aside`
+const LeftContainer = styled.div`
   top: 0;
   min-width: 40vw;
   min-height: 100vh;

@@ -6,34 +6,31 @@ import { useParams, Redirect, Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Store } from '../store';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import MaterialButton from '@material-ui/core/Button';
 import { loadProject } from '../actions/projectActions';
 import { ProjectInitialState } from '../reducers/projectReducer';
 import { setNavbar, clearNavbar } from '../actions/navbarAction';
 import { SelectedType } from '../actions/navbarTypes';
-import GithubCard from '../components/github/GithubCard';
 import { Button } from '../components/global/Button';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import { loadCommits } from '../actions/githubActions';
-import { GithubInitialState } from '../reducers/githubReducer';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Paper from '@material-ui/core/Paper';
+import Commits from '../components/github/Commits';
+import Pulls from '../components/github/Pulls';
 
 interface GithubActivitiesProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
-  loadCommits: (projectId: string, page: number) => Promise<void>;
   project: ProjectInitialState;
-  github: GithubInitialState;
 }
 
 const GithubActivities: React.FC<GithubActivitiesProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
-  loadCommits,
   project: { selectedProject, projectError },
-  github: { commit },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
 
@@ -54,49 +51,43 @@ const GithubActivities: React.FC<GithubActivitiesProps> = ({
     clearNavbar,
   ]);
 
-  const [page, setPage] = useState(1);
-  const lastPage = commit?.pageInfo.last?.page;
+  const [value, setValue] = React.useState(0);
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue);
+  };
 
-  useEffect(() => {
-    loadCommits(projectId, page);
-  }, [loadCommits, projectId, page]);
+  const handlePageChange = () => {
+    switch (value) {
+      case 0:
+        return <Commits projectId={projectId} />;
+      case 1:
+        return <Pulls projectId={projectId} />;
+    }
+  };
 
   return (
     <Fragment>
-      {commit && (
-        <Fragment>
-          <Button
-            extrasmall={'extrasmall' && 1}
-            as={Link}
-            to={`/projects/${projectId}/github-connection`}
-          >
-            <StyledGitHubIcon /> GitHub Connection
-          </Button>
+      <Button
+        extrasmall={'extrasmall' && 1}
+        as={Link}
+        to={`/projects/${projectId}/github-connection`}
+      >
+        <StyledGitHubIcon /> GitHub Connection
+      </Button>
 
-          {commit?.commits.map((commit) => (
-            <GithubCard key={commit.node_id} commit={commit} />
-          ))}
+      <StyledPaper>
+        <Tabs
+          indicatorColor='primary'
+          textColor='primary'
+          value={value}
+          onChange={handleChange}
+        >
+          <Tab label='Commits' />
+          <Tab label='Pull Requests' />
+        </Tabs>
+      </StyledPaper>
 
-          <ButtonGroup
-            color='primary'
-            aria-label='outlined primary button group'
-            size='large'
-          >
-            <MaterialButton
-              disabled={page === 1}
-              onClick={() => page > 1 && setPage(page - 1)}
-            >
-              Newer
-            </MaterialButton>
-            <MaterialButton
-              disabled={!lastPage}
-              onClick={() => page < (lastPage ?? 1) && setPage(page + 1)}
-            >
-              Older
-            </MaterialButton>
-          </ButtonGroup>
-        </Fragment>
-      )}
+      {handlePageChange()}
     </Fragment>
   );
 };
@@ -104,19 +95,20 @@ const GithubActivities: React.FC<GithubActivitiesProps> = ({
 const mapStateToProps = (state: Store) => ({
   project: state.project,
   auth: state.auth,
-  github: state.github,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   clearNavbar: () => dispatch(clearNavbar()),
-  loadCommits: (projectId: string, page: number) =>
-    dispatch(loadCommits(projectId, page)),
 });
 
 const StyledGitHubIcon = styled(GitHubIcon)`
   margin-right: 5px;
+`;
+
+const StyledPaper = styled(Paper)`
+  margin-top: 15px;
 `;
 
 export default connect(mapStateToProps, mapDispatchToProps)(GithubActivities);

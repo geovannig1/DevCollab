@@ -5,7 +5,9 @@ import {
   REPOSITORIES_LOADED,
   REPOSITORY_STORED,
   COMMITS_LOADED,
+  PULLS_LOADED,
   GITHUB_FAIL,
+  CLEAR_GITHUB,
   GithubDispatchTypes,
 } from './githubTypes';
 import api from '../api';
@@ -72,4 +74,24 @@ export const loadCommits = (projectId: string, page: number) => async (
       payload: { msg: err.response.statusText, status: err.response.status },
     });
   }
+};
+
+//Load all the pulls
+export const loadPulls = (projectId: string, page: number) => async (
+  dispatch: Dispatch<GithubDispatchTypes>
+) => {
+  try {
+    const res = await api.get(`/projects/${projectId}/github/pulls/${page}`);
+    dispatch({ type: PULLS_LOADED, payload: res.data });
+  } catch (err) {
+    dispatch({
+      type: GITHUB_FAIL,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
+//Clear all github state
+export const clearGithub = () => (dispatch: Dispatch<GithubDispatchTypes>) => {
+  dispatch({ type: CLEAR_GITHUB });
 };

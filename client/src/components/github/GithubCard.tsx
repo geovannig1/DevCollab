@@ -1,42 +1,65 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 import { setColor, setRem, setShadow } from '../../styles';
 import Avatar from '../global/Avatar';
 import avatar from '../../assets/profile-picture.png';
 import MessageOutlinedIcon from '@material-ui/icons/MessageOutlined';
-import { CommitTypes } from '../../actions/githubTypes';
+import { CommitTypes, PullTypes } from '../../actions/githubTypes';
 
 interface GithubCardProps {
   commit?: CommitTypes;
+  pull?: PullTypes;
 }
 
-const GithubCard: React.FC<GithubCardProps> = ({ commit }) => {
+const GithubCard: React.FC<GithubCardProps> = ({ commit, pull }) => {
+  //Extends dayjs with relativeTime
+  dayjs.extend(relativeTime);
+
   return (
     <Container
-      href={commit?.html_url}
+      href={commit?.html_url ?? pull?.html_url}
       target='_blank'
       rel='noopener noreferrer'
     >
       <Avatar
         size='40'
-        src={commit?.committer.avatar_url ?? avatar}
+        src={commit?.author.avatar_url ?? pull?.user.avatar_url ?? avatar}
         alt='avatar'
       />
       <ContentContainer>
-        <h4>{commit?.commit.message}</h4>
+        <Title>
+          <h4>{commit?.commit.message ?? pull?.title}</h4>
+          {pull && <span>{dayjs(pull?.updated_at).fromNow()}</span>}
+        </Title>
+
+        {pull && (
+          <Info>
+            <b>{pull.user.login}</b> wants to merge commits into{' '}
+            <strong>{pull?.base.label}</strong> from{' '}
+            <strong>{pull?.head.label}</strong>
+          </Info>
+        )}
         <BottomContainer>
-          <span>{commit?.commit.committer.name}</span>
-          <span>
-            Commited on{' '}
-            {dayjs(commit?.commit.committer.date).format('DD MMM YYYY')}
-          </span>
+          {commit && (
+            <Fragment>
+              <span>{commit?.commit.author.name ?? pull?.user.login}</span>
+
+              <span>
+                Commited {dayjs(commit?.commit.author.date).fromNow()}
+              </span>
+            </Fragment>
+          )}
         </BottomContainer>
       </ContentContainer>
-      <CommentContainer>
-        <span>{commit?.commit.comment_count}</span> <MessageOutlinedIcon />
-      </CommentContainer>
+
+      {commit && (
+        <CommentContainer>
+          <span>{commit?.commit.comment_count}</span> <MessageOutlinedIcon />
+        </CommentContainer>
+      )}
     </Container>
   );
 };
@@ -63,6 +86,16 @@ const Container = styled.a`
   }
 `;
 
+const Title = styled.div`
+  display: flex;
+  span {
+    color: ${setColor.mediumBlack};
+    margin-left: 10px;
+    font-weight: 400;
+    font-size: ${setRem(13)};
+  }
+`;
+
 const ContentContainer = styled.div`
   margin-left: 5px;
   h4 {
@@ -79,9 +112,19 @@ const BottomContainer = styled.div`
   }
   span:last-child {
     color: ${setColor.mediumBlack};
-    margin-left: 10px;
+    margin-left: 5px;
     font-weight: 400;
     font-size: ${setRem(13)};
+  }
+`;
+
+const Info = styled.span`
+  font-size: ${setRem(14)};
+  b {
+    font-weight: 500;
+  }
+  strong {
+    font-weight: 500;
   }
 `;
 

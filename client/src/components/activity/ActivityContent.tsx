@@ -44,7 +44,7 @@ const ActivityContent: React.FC<ActivityContentProps> = ({
 
 const Container = styled.div`
   overflow-y: auto;
-  height: 60vh;
+  height: 58vh;
   padding: 10px 0;
 `;
 

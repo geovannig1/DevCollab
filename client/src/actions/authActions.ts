@@ -1,6 +1,5 @@
 import { Dispatch } from 'react';
 import { ThunkDispatch } from 'redux-thunk';
-import axios from 'axios';
 
 import api from '../api';
 import { removeAlert, setAlert } from './alertActions';
@@ -36,6 +35,7 @@ import { clearMeeting } from './meetingActions';
 import { clearNote } from './noteActions';
 import { clearFile } from './fileActions';
 import { clearTask } from './taskActions';
+import { clearGithub } from './githubActions';
 
 //Load User
 export const loadUser = () => async (
@@ -124,6 +124,7 @@ export const signOut = () => async (
     dispatch(clearNote());
     dispatch(clearFile());
     dispatch(clearTask());
+    dispatch(clearGithub());
 
     dispatch({ type: REMOVE_LOADING });
     dispatch({ type: LOGOUT_SUCCESS });
@@ -160,7 +161,7 @@ export const updateUser = (userData: UserData, image?: File) => async (
     fd.append('newPassword', newPassword);
     if (image) fd.append('avatar', image);
 
-    const res = await axios.patch('/api/user', fd);
+    const res = await api.patch('/user', fd);
 
     dispatch({ type: USER_UPDATED, payload: res.data });
     dispatch(setAlert('User updated', MessageType.Success, 'input'));

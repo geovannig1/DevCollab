@@ -2,16 +2,20 @@ import {
   REPOSITORIES_LOADED,
   COMMITS_LOADED,
   REPOSITORY_STORED,
+  PULLS_LOADED,
   GITHUB_FAIL,
   GithubDispatchTypes,
   RepoTypes,
   CommitTypes,
   PageInfo,
+  CLEAR_GITHUB,
+  PullTypes,
 } from '../actions/githubTypes';
 
 export interface GithubInitialState {
   repos?: RepoTypes[];
-  commit?: { pageInfo: PageInfo; commits: CommitTypes[] };
+  commit?: { pageInfo?: PageInfo; commits: CommitTypes[] };
+  pull?: { pageInfo?: PageInfo; pulls: PullTypes[] };
   githubError?: { msg: string; status: number };
 }
 
@@ -24,12 +28,21 @@ const githubReducer = (
   switch (action.type) {
     case REPOSITORIES_LOADED:
       return { ...state, repos: action.payload };
-    case COMMITS_LOADED:
-      return { ...state, commit: action.payload };
     case REPOSITORY_STORED:
       return { ...state };
+    case COMMITS_LOADED:
+      return { ...state, commit: action.payload, pull: undefined };
+    case PULLS_LOADED:
+      return { ...state, pull: action.payload, commit: undefined };
     case GITHUB_FAIL:
       return { ...state, githubError: action.payload };
+    case CLEAR_GITHUB:
+      return {
+        githubError: undefined,
+        repos: undefined,
+        commit: undefined,
+        pull: undefined,
+      };
     default:
       return state;
   }
