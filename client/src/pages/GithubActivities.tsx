@@ -18,6 +18,7 @@ import Tab from '@material-ui/core/Tab';
 import Paper from '@material-ui/core/Paper';
 import Commits from '../components/github/Commits';
 import Pulls from '../components/github/Pulls';
+import socket from '../utils/socketio';
 
 interface GithubActivitiesProps {
   loadProject: (projectId: string) => Promise<void>;

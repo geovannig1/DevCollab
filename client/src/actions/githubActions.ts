@@ -2,6 +2,7 @@ import { Dispatch } from 'redux';
 import { History } from 'history';
 
 import {
+  REPOSITORY_LOADED,
   REPOSITORIES_LOADED,
   REPOSITORY_STORED,
   COMMITS_LOADED,
@@ -23,6 +24,22 @@ export const loadRepos = (projectId: string) => async (
     const res = await api.get(`/projects/${projectId}/github/repos`);
 
     dispatch({ type: REPOSITORIES_LOADED, payload: res.data });
+  } catch (err) {
+    dispatch({
+      type: GITHUB_FAIL,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
+//Load a repository
+export const loadRepo = (projectId: string) => async (
+  dispatch: Dispatch<GithubDispatchTypes>
+) => {
+  try {
+    const res = await api.get(`/projects/${projectId}/github/repo`);
+
+    dispatch({ type: REPOSITORY_LOADED, payload: res.data });
   } catch (err) {
     dispatch({
       type: GITHUB_FAIL,

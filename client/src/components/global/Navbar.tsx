@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
 
 import { setColor, setShadow } from '../../styles';
 import ImportExportIcon from '@material-ui/icons/ImportExport';
@@ -18,22 +20,52 @@ import { SelectedType } from '../../actions/navbarTypes';
 import { ProjectInitialState } from '../../reducers/projectReducer';
 import { AuthInitialState } from '../../reducers/authReducer';
 import { AccessPermission } from '../../actions/projectTypes';
+import { loadRepo } from '../../actions/githubActions';
+import { GithubInitialState } from '../../reducers/githubReducer';
+import socket from '../../utils/socketio';
 
 interface NavbarProps {
+  loadRepo: (projectId: string) => Promise<void>;
   navbar: NavbarInitialState;
   project: ProjectInitialState;
   auth: AuthInitialState;
+  github: GithubInitialState;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
+  loadRepo,
   navbar,
   project: { selectedProject },
   auth: { user },
+  github: { repo },
 }) => {
+  useEffect(() => {
+    loadRepo(selectedProject?._id ?? '');
+  }, [selectedProject, loadRepo]);
+
   //find user in the project
   const userProject = selectedProject?.members.find(
     (member) => member.user._id === user?._id
   );
+
+  useEffect(() => {
+    //Join to repository room
+    socket.emit('join repo', { repoId: repo?.node_id });
+
+    //Emit commit listener
+    socket.emit('listen commit', { repoId: repo?.node_id });
+
+    return () => {
+      socket.emit('leave repo', { repoId: repo?.node_id });
+    };
+  }, [repo?.node_id]);
+
+  useEffect(() => {
+    //Listen every github commit
+    socket.on('receive commit', (data: string) => {
+      console.log(data);
+    });
+  }, []);
 
   return (
     <Container>
@@ -132,6 +164,11 @@ const mapStateToProps = (state: Store) => ({
   navbar: state.navbar,
   project: state.project,
   auth: state.auth,
+  github: state.github,
+});
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
+  loadRepo: (projectId: string) => dispatch(loadRepo(projectId)),
 });
 
 const Container = styled.nav`
@@ -184,4 +221,4 @@ const Text = styled.span`
   font-weight: 600;
 `;
 
-export default connect(mapStateToProps)(Navbar);
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar);

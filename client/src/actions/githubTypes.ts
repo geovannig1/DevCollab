@@ -1,4 +1,5 @@
 export const REPOSITORIES_LOADED = 'REPOSITORIES_LOADED';
+export const REPOSITORY_LOADED = 'REPOSITORY_LOADED';
 export const REPOSITORY_STORED = 'REPOSITORY_STORED';
 export const COMMITS_LOADED = 'COMMITS_LOADED';
 export const PULLS_LOADED = 'PULLS_LOADED';
@@ -6,6 +7,7 @@ export const GITHUB_FAIL = 'GITHUB_FAIl';
 export const CLEAR_GITHUB = 'CLEAR_GITHUB';
 
 export type RepoTypes = {
+  node_id: string;
   id: number;
   name: string;
 };
@@ -58,6 +60,11 @@ export interface RepositoriesLoaded {
   payload: RepoTypes[];
 }
 
+export interface RepositoryLoaded {
+  type: typeof REPOSITORY_LOADED;
+  payload: RepoTypes;
+}
+
 export interface RepositoryStored {
   type: typeof REPOSITORY_STORED;
 }
@@ -86,6 +93,7 @@ export interface ClearGithub {
 
 export type GithubDispatchTypes =
   | RepositoriesLoaded
+  | RepositoryLoaded
   | RepositoryStored
   | CommitsLoaded
   | PullsLoaded

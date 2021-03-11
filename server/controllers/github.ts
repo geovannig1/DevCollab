@@ -1,15 +1,37 @@
 import { Request, Response } from 'express';
 import { request } from '@octokit/request';
 import parse from 'parse-link-header';
+import crypto from 'crypto';
 
 import { existAdmin, userExist } from '../services/checkPermission';
 import Project from '../models/Project';
 import Github from '../models/Github';
+import { emitter } from '../services/eventEmitter';
 
-//github webhook
+//Github webhook controller
 export const githubHook = (req: Request, res: Response) => {
   try {
-    console.log(req.body);
+    //Create a signature
+    const expectedSignature =
+      'sha256=' +
+      crypto
+        .createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET!)
+        .update(JSON.stringify(req.body))
+        .digest('hex');
+
+    // compare the signature against the one in the request
+    const signature = req.headers['x-hub-signature-256'];
+    if (signature !== expectedSignature) {
+      return res.status(401).json({ msg: 'Unauthorized request' });
+    }
+
+    const { repository, ref, pull_request } = req.body;
+
+    if (ref === `refs/heads/${repository.master_branch}` && !pull_request) {
+      emitter.commit({ nodeId: repository.node_id });
+    }
+
+    res.status(200);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');
@@ -39,6 +61,51 @@ export const getRepositories = async (req: Request, res: Response) => {
     const repositories = response.data;
 
     res.status(200).json(repositories);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+};
+
+//Get a repo
+export const getRepository = async (req: Request, res: Response) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
+    //Only user from the project can access the a repository
+    const permission = userExist(project, req.user);
+    if (!permission) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    //Get the user account
+    const user = await request('GET /user', {
+      headers: {
+        authorization: `token ${project.githubAccessToken}`,
+      },
+    });
+
+    const github = await Github.findOne({ project: req.params.projectId });
+    if (!github) {
+      return res.status(404).json({ msg: 'Github data not found' });
+    }
+
+    const repository = await request('GET /repos/{owner}/{repo}', {
+      owner: user.data.login,
+      repo: github.repositoryName,
+      headers: {
+        authorization: `token ${project.githubAccessToken}`,
+      },
+    });
+
+    if (!repository) {
+      return res.status(404).json({ msg: 'Repository not found' });
+    }
+
+    res.status(200).json(repository.data);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');

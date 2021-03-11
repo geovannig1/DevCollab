@@ -1,5 +1,6 @@
 import {
   REPOSITORIES_LOADED,
+  REPOSITORY_LOADED,
   COMMITS_LOADED,
   REPOSITORY_STORED,
   PULLS_LOADED,
@@ -14,6 +15,7 @@ import {
 
 export interface GithubInitialState {
   repos?: RepoTypes[];
+  repo?: RepoTypes;
   commit?: { pageInfo?: PageInfo; commits: CommitTypes[] };
   pull?: { pageInfo?: PageInfo; pulls: PullTypes[] };
   githubError?: { msg: string; status: number };
@@ -28,6 +30,8 @@ const githubReducer = (
   switch (action.type) {
     case REPOSITORIES_LOADED:
       return { ...state, repos: action.payload };
+    case REPOSITORY_LOADED:
+      return { ...state, repo: action.payload };
     case REPOSITORY_STORED:
       return { ...state };
     case COMMITS_LOADED:
@@ -40,6 +44,7 @@ const githubReducer = (
       return {
         githubError: undefined,
         repos: undefined,
+        repo: undefined,
         commit: undefined,
         pull: undefined,
       };

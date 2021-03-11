@@ -26,6 +26,7 @@ import taskSocket from './socket/task';
 import discussionSocket from './socket/discussion';
 import meetingSocket from './socket/meeting';
 import activitySocket from './socket/activity';
+import githubSocket from './socket/github';
 
 const app = express();
 
@@ -54,6 +55,7 @@ io.on('connection', (socket: Socket) => {
   discussionSocket(io, socket);
   meetingSocket(socket);
   activitySocket(io, socket);
+  githubSocket(io, socket);
 });
 
 //Heroku Middleware SSL Redirect
