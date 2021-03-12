@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -12,19 +12,20 @@ import { setNavbar, clearNavbar } from '../actions/navbarAction';
 import { SelectedType } from '../actions/navbarTypes';
 import { Button } from '../components/global/Button';
 import GitHubIcon from '@material-ui/icons/GitHub';
-import { loadCommits } from '../actions/githubActions';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Paper from '@material-ui/core/Paper';
 import Commits from '../components/github/Commits';
 import Pulls from '../components/github/Pulls';
-import socket from '../utils/socketio';
+import Badge from '@material-ui/core/Badge';
+import { GithubInitialState } from '../reducers/githubReducer';
 
 interface GithubActivitiesProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
   project: ProjectInitialState;
+  github: GithubInitialState;
 }
 
 const GithubActivities: React.FC<GithubActivitiesProps> = ({
@@ -32,6 +33,7 @@ const GithubActivities: React.FC<GithubActivitiesProps> = ({
   setNavbar,
   clearNavbar,
   project: { selectedProject, projectError },
+  github: { commitEvent },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
 
@@ -86,6 +88,25 @@ const GithubActivities: React.FC<GithubActivitiesProps> = ({
           <Tab label='Commits' />
           <Tab label='Pull Requests' />
         </Tabs>
+
+        <Badge
+          color='secondary'
+          badgeContent={commitEvent}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          style={{ position: 'absolute', left: '120px', top: '14px' }}
+        />
+        <Badge
+          color='secondary'
+          badgeContent={0}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          style={{ position: 'absolute', left: '300px', top: '14px' }}
+        />
       </StyledPaper>
 
       {handlePageChange()}
@@ -96,6 +117,7 @@ const GithubActivities: React.FC<GithubActivitiesProps> = ({
 const mapStateToProps = (state: Store) => ({
   project: state.project,
   auth: state.auth,
+  github: state.github,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
@@ -110,6 +132,7 @@ const StyledGitHubIcon = styled(GitHubIcon)`
 
 const StyledPaper = styled(Paper)`
   margin-top: 15px;
+  position: relative;
 `;
 
 export default connect(mapStateToProps, mapDispatchToProps)(GithubActivities);

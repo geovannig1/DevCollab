@@ -9,7 +9,7 @@ import Github from '../models/Github';
 import { emitter } from '../services/eventEmitter';
 
 //Github webhook controller
-export const githubHook = (req: Request, res: Response) => {
+export const githubHook = async (req: Request, res: Response) => {
   try {
     //Create a signature
     const expectedSignature =
@@ -27,11 +27,50 @@ export const githubHook = (req: Request, res: Response) => {
 
     const { repository, ref, pull_request } = req.body;
 
+    const github = await Github.findOne({ nodeId: repository.node_id });
+
+    if (!github) {
+      return res.status(404).json({ msg: 'Github data not found' });
+    }
+
+    //Only emit master/main branch and commit event
     if (ref === `refs/heads/${repository.master_branch}` && !pull_request) {
       emitter.commit({ nodeId: repository.node_id });
+      //Store the total commit event to database
+      github.totalNewCommit = (github.totalNewCommit ?? 0) + 1;
+      await github.save();
     }
 
     res.status(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+};
+
+//Get commit and pull total event notification
+export const getEvents = async (req: Request, res: Response) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
+    //Only user from the project can access the a repository
+    const permission = userExist(project, req.user);
+    if (!permission) {
+      return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    const github = await Github.findOne({ project: req.params.projectId });
+
+    if (!github) {
+      return res.status(404).json('Github data not found');
+    }
+
+    const event = { totalCommit: github.totalNewCommit };
+
+    res.status(200).json(event);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');
@@ -128,18 +167,36 @@ export const storeRepository = async (req: Request, res: Response) => {
 
     const { repositoryName } = req.body;
 
+    //Get user github
+    const user = await request('GET /user', {
+      headers: {
+        authorization: `token ${project.githubAccessToken}`,
+      },
+    });
+
+    //Get repository
+    const repo = await request('GET /repos/{owner}/{repo}', {
+      owner: user.data.login,
+      repo: repositoryName,
+      headers: {
+        authorization: `token ${project.githubAccessToken}`,
+      },
+    });
+
     const github = await Github.findOne({ project: req.params.projectId });
 
     if (!github) {
       await Github.create({
         project: req.params.projectId,
         repositoryName,
+        nodeId: repo.data.node_id,
       });
 
       return res.status(200).json({ msg: 'Repository name stored' });
     }
 
     github.repositoryName = repositoryName;
+    github.nodeId = repo.data.node_id;
     await github.save();
 
     res.status(200).json({ msg: 'Repository name stored' });

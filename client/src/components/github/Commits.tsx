@@ -17,7 +17,7 @@ interface CommitsProps {
 
 const Commits: React.FC<CommitsProps> = ({
   loadCommits,
-  github: { commit },
+  github: { commit, commitEvent },
   projectId,
 }) => {
   const [page, setPage] = useState(1);
@@ -25,7 +25,7 @@ const Commits: React.FC<CommitsProps> = ({
 
   useEffect(() => {
     loadCommits(projectId, page);
-  }, [loadCommits, projectId, page]);
+  }, [loadCommits, projectId, page, commitEvent]);
 
   useEffect(() => {
     setLastPage(

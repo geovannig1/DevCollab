@@ -3,6 +3,8 @@ import { Schema, model, Document } from 'mongoose';
 export interface IGithub extends Document {
   project: string;
   repositoryName: string;
+  nodeId: string;
+  totalNewCommit?: number;
 }
 
 const githubSchema = new Schema<IGithub>({
@@ -13,6 +15,14 @@ const githubSchema = new Schema<IGithub>({
   repositoryName: {
     type: String,
     required: true,
+  },
+  nodeId: {
+    type: String,
+    required: true,
+  },
+  totalNewCommit: {
+    type: Number,
+    default: 0,
   },
 });
 

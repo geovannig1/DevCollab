@@ -9,6 +9,8 @@ import {
   PULLS_LOADED,
   GITHUB_FAIL,
   CLEAR_GITHUB,
+  COMMIT_NOTIFIED,
+  EVENT_LOADED,
   GithubDispatchTypes,
 } from './githubTypes';
 import api from '../api';
@@ -111,4 +113,26 @@ export const loadPulls = (projectId: string, page: number) => async (
 //Clear all github state
 export const clearGithub = () => (dispatch: Dispatch<GithubDispatchTypes>) => {
   dispatch({ type: CLEAR_GITHUB });
+};
+
+//Add a commit notification
+export const setCommitNotification = (totalNotification: number) => (
+  dispatch: Dispatch<GithubDispatchTypes>
+) => {
+  dispatch({ type: COMMIT_NOTIFIED, payload: totalNotification });
+};
+
+//Load all events
+export const loadEvents = (projectId: string) => async (
+  dispatch: Dispatch<GithubDispatchTypes>
+) => {
+  try {
+    const res = await api.get(`/projects/${projectId}/github/events`);
+    dispatch({ type: EVENT_LOADED, payload: res.data });
+  } catch (err) {
+    dispatch({
+      type: GITHUB_FAIL,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
 };

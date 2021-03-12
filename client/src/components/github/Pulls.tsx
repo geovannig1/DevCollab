@@ -33,8 +33,6 @@ const Pulls: React.FC<PullsProps> = ({
     );
   }, [pull]);
 
-  console.log(lastPage);
-
   return (
     <Fragment>
       {pull && (

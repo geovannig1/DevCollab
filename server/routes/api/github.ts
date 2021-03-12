@@ -9,6 +9,7 @@ import {
   getCommits,
   getPulls,
   getRepository,
+  getEvents,
 } from '../../controllers/github';
 import { check } from 'express-validator';
 import auth from '../../middlewares/auth';
@@ -20,6 +21,13 @@ import validateInput from '../../middlewares/validateInput';
  *  @access Public
  */
 router.post('/github/hook', githubHook);
+
+/**
+ *  @route GET api/projects/:projectId/github/events
+ *  @desc Get all events
+ *  @access Private
+ */
+router.get('/:projectId/github/events', auth, getEvents);
 
 /**
  *  @route GET api/projects/:projectId/github/repos

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -20,12 +20,19 @@ import { SelectedType } from '../../actions/navbarTypes';
 import { ProjectInitialState } from '../../reducers/projectReducer';
 import { AuthInitialState } from '../../reducers/authReducer';
 import { AccessPermission } from '../../actions/projectTypes';
-import { loadRepo } from '../../actions/githubActions';
+import {
+  loadRepo,
+  setCommitNotification,
+  loadEvents,
+} from '../../actions/githubActions';
 import { GithubInitialState } from '../../reducers/githubReducer';
 import socket from '../../utils/socketio';
+import Badge from '@material-ui/core/Badge';
 
 interface NavbarProps {
   loadRepo: (projectId: string) => Promise<void>;
+  loadEvents: (projectId: string) => Promise<void>;
+  setCommitNotification: (totalNotification: number) => void;
   navbar: NavbarInitialState;
   project: ProjectInitialState;
   auth: AuthInitialState;
@@ -34,14 +41,19 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({
   loadRepo,
+  loadEvents,
+  setCommitNotification,
   navbar,
   project: { selectedProject },
   auth: { user },
-  github: { repo },
+  github: { repo, events },
 }) => {
   useEffect(() => {
-    loadRepo(selectedProject?._id ?? '');
-  }, [selectedProject, loadRepo]);
+    if (selectedProject) {
+      loadRepo(selectedProject._id);
+      loadEvents(selectedProject._id);
+    }
+  }, [selectedProject, loadRepo, loadEvents]);
 
   //find user in the project
   const userProject = selectedProject?.members.find(
@@ -49,23 +61,41 @@ const Navbar: React.FC<NavbarProps> = ({
   );
 
   useEffect(() => {
-    //Join to repository room
-    socket.emit('join repo', { repoId: repo?.node_id });
+    if (repo && selectedProject) {
+      //Join to repository room
+      socket.emit('join repo', { repoId: repo.node_id });
 
-    //Emit commit listener
-    socket.emit('listen commit', { repoId: repo?.node_id });
+      //Emit commit listener
+      socket.emit('listen commit', {
+        repoId: repo.node_id,
+        projectId: selectedProject._id,
+      });
+    }
 
     return () => {
       socket.emit('leave repo', { repoId: repo?.node_id });
+      socket.emit('unregister event');
     };
-  }, [repo?.node_id]);
+  }, [repo, selectedProject]);
+
+  //Store all event notification
+  const [githubNotification, setGithubNotification] = useState(0);
+  //Store every github commits
+  const [commitReceiver, setCommitReceiver] = useState<string[]>([]);
 
   useEffect(() => {
     //Listen every github commit
-    socket.on('receive commit', (data: string) => {
-      console.log(data);
+    socket.on('receive commit', (data: { nodeId: string }) => {
+      setCommitReceiver((prevData) => [...prevData, data.nodeId]);
     });
   }, []);
+
+  useEffect(() => {
+    if (events) {
+      setGithubNotification(events.totalCommit + commitReceiver.length);
+      setCommitNotification(events.totalCommit + commitReceiver.length);
+    }
+  }, [commitReceiver, events, setCommitNotification]);
 
   return (
     <Container>
@@ -119,7 +149,9 @@ const Navbar: React.FC<NavbarProps> = ({
             to={`/projects/${selectedProject?._id}/github-activity`}
             selected={navbar.selected === SelectedType.Github}
           >
-            <GitHubIcon />
+            <Badge color='secondary' badgeContent={githubNotification}>
+              <GitHubIcon />
+            </Badge>
             <Text>GitHub Activity</Text>
             <div />
           </StyledLink>
@@ -169,6 +201,9 @@ const mapStateToProps = (state: Store) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadRepo: (projectId: string) => dispatch(loadRepo(projectId)),
+  loadEvents: (projectId: string) => dispatch(loadEvents(projectId)),
+  setCommitNotification: (totalNotification: number) =>
+    dispatch(setCommitNotification(totalNotification)),
 });
 
 const Container = styled.nav`
