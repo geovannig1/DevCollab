@@ -10,6 +10,7 @@ import {
   getPulls,
   getRepository,
   getEvents,
+  removeEvent,
 } from '../../controllers/github';
 import { check } from 'express-validator';
 import auth from '../../middlewares/auth';
@@ -27,7 +28,26 @@ router.post('/github/hook', githubHook);
  *  @desc Get all events
  *  @access Private
  */
-router.get('/:projectId/github/events', auth, getEvents);
+router.get(
+  '/:projectId/github/events',
+  auth,
+  checkObjectId('projectId'),
+  getEvents
+);
+
+/**
+ *  @route PUT api/projects/:projectId/github/events
+ *  @desc Reset event
+ *  @access Private
+ */
+router.patch(
+  '/:projectId/github/events',
+  auth,
+  checkObjectId('projectId'),
+  check('event', "Event can't be empty").notEmpty(),
+  validateInput,
+  removeEvent
+);
 
 /**
  *  @route GET api/projects/:projectId/github/repos

@@ -7,16 +7,18 @@ import { Store } from '../../store';
 import { GithubInitialState } from '../../reducers/githubReducer';
 import Pagination from '@material-ui/lab/Pagination';
 import GithubCard from '../../components/github/GithubCard';
-import { loadCommits } from '../../actions/githubActions';
+import { loadCommits, removeEvent } from '../../actions/githubActions';
 
 interface CommitsProps {
   loadCommits: (projectId: string, page: number) => Promise<void>;
+  removeEvent: (projectId: string, event: string) => Promise<void>;
   github: GithubInitialState;
   projectId: string;
 }
 
 const Commits: React.FC<CommitsProps> = ({
   loadCommits,
+  removeEvent,
   github: { commit, commitEvent },
   projectId,
 }) => {
@@ -25,7 +27,8 @@ const Commits: React.FC<CommitsProps> = ({
 
   useEffect(() => {
     loadCommits(projectId, page);
-  }, [loadCommits, projectId, page, commitEvent]);
+    removeEvent(projectId, 'commit');
+  }, [loadCommits, projectId, page, commitEvent, removeEvent]);
 
   useEffect(() => {
     setLastPage(
@@ -60,6 +63,8 @@ const mapStateToProps = (state: Store) => ({
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadCommits: (projectId: string, page: number) =>
     dispatch(loadCommits(projectId, page)),
+  removeEvent: (projectId: string, event: string) =>
+    dispatch(removeEvent(projectId, event)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Commits);

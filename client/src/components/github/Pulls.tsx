@@ -7,25 +7,28 @@ import { Store } from '../../store';
 import { GithubInitialState } from '../../reducers/githubReducer';
 import Pagination from '@material-ui/lab/Pagination';
 import GithubCard from '../../components/github/GithubCard';
-import { loadPulls } from '../../actions/githubActions';
+import { loadPulls, removeEvent } from '../../actions/githubActions';
 
 interface PullsProps {
-  loadCommits: (projectId: string, page: number) => Promise<void>;
+  loadPulls: (projectId: string, page: number) => Promise<void>;
+  removeEvent: (projectId: string, event: string) => Promise<void>;
   github: GithubInitialState;
   projectId: string;
 }
 
 const Pulls: React.FC<PullsProps> = ({
-  loadCommits,
-  github: { pull },
+  loadPulls,
+  removeEvent,
+  github: { pull, pullEvent },
   projectId,
 }) => {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState('');
 
   useEffect(() => {
-    loadCommits(projectId, page);
-  }, [loadCommits, projectId, page]);
+    loadPulls(projectId, page);
+    removeEvent(projectId, 'pull');
+  }, [loadPulls, removeEvent, projectId, page, pullEvent]);
 
   useEffect(() => {
     setLastPage(
@@ -58,8 +61,10 @@ const mapStateToProps = (state: Store) => ({
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
-  loadCommits: (projectId: string, page: number) =>
+  loadPulls: (projectId: string, page: number) =>
     dispatch(loadPulls(projectId, page)),
+  removeEvent: (projectId: string, event: string) =>
+    dispatch(removeEvent(projectId, event)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Pulls);

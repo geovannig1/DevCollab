@@ -6,7 +6,9 @@ export const PULLS_LOADED = 'PULLS_LOADED';
 export const GITHUB_FAIL = 'GITHUB_FAIl';
 export const CLEAR_GITHUB = 'CLEAR_GITHUB';
 export const COMMIT_NOTIFIED = 'COMMIT_NOTIFIED';
+export const PULL_NOTIFIED = 'PULL_NOTIFIED';
 export const EVENT_LOADED = 'EVENT_LOADED';
+export const EVENT_REMOVED = 'EVENT_REMOVED';
 
 export type RepoTypes = {
   node_id: string;
@@ -98,9 +100,19 @@ export interface CommitNotified {
   payload: number;
 }
 
+export interface PullNotified {
+  type: typeof PULL_NOTIFIED;
+  payload: number;
+}
+
 export interface EventLoaded {
   type: typeof EVENT_LOADED;
-  payload: { totalCommit: number };
+  payload: { totalCommit: number; totalPull: number };
+}
+
+export interface EventRemoved {
+  type: typeof EVENT_REMOVED;
+  payload: string;
 }
 
 export type GithubDispatchTypes =
@@ -112,4 +124,6 @@ export type GithubDispatchTypes =
   | GithubFail
   | ClearGithub
   | CommitNotified
-  | EventLoaded;
+  | PullNotified
+  | EventLoaded
+  | EventRemoved;

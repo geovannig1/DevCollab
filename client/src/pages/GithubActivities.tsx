@@ -33,7 +33,7 @@ const GithubActivities: React.FC<GithubActivitiesProps> = ({
   setNavbar,
   clearNavbar,
   project: { selectedProject, projectError },
-  github: { commitEvent },
+  github: { commitEvent, pullEvent },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
 
@@ -100,7 +100,7 @@ const GithubActivities: React.FC<GithubActivitiesProps> = ({
         />
         <Badge
           color='secondary'
-          badgeContent={0}
+          badgeContent={pullEvent}
           anchorOrigin={{
             vertical: 'top',
             horizontal: 'right',
