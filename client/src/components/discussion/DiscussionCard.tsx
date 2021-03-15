@@ -45,6 +45,7 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
       projectId,
       discussionName: discussion.title,
       userName: `${user?.firstName} ${user?.lastName}`,
+      userId: user?._id,
     });
   };
 

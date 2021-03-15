@@ -128,6 +128,9 @@ const Text = styled.div`
   align-self: flex-start;
   font-size: ${setRem(15)};
   max-width: 900px;
+  strong {
+    font-weight: 600;
+  }
 `;
 
 const DeleteButton = styled.span`

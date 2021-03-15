@@ -97,9 +97,6 @@ const Task: React.FC<TaskProps> = ({
 
   //Socket connection
   useEffect(() => {
-    //Join the project room
-    socket.emit('join project', { projectId: selectedProject?._id });
-
     //Listen to updated new list
     socket.on('new list update', (data: InitialTaskState) => {
       setTaskState(data);
@@ -150,7 +147,6 @@ const Task: React.FC<TaskProps> = ({
     });
 
     return () => {
-      socket.emit('leave project', { projectId: selectedProject?._id });
       setTaskState({ tasks: {}, columns: {}, columnOrder: [] });
     };
   }, [selectedProject, location.state]);
@@ -253,6 +249,7 @@ const Task: React.FC<TaskProps> = ({
       taskId: draggableId,
       sourceListName: newStart.title,
       destionationListName: newFinish.title,
+      userId: user?._id,
     });
   };
 

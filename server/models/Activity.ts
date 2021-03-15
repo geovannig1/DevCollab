@@ -18,6 +18,10 @@ interface IActivity extends Document {
     name?: string;
     message: string;
   }[];
+  notifications?: {
+    user: string;
+    totalNotifications: number;
+  }[];
 }
 
 const activitySchema = new Schema<IActivity>({
@@ -44,6 +48,18 @@ const activitySchema = new Schema<IActivity>({
       date: {
         type: Date,
         default: Date.now,
+      },
+    },
+  ],
+  notifications: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      totalNotifications: {
+        type: Number,
+        default: 0,
       },
     },
   ],

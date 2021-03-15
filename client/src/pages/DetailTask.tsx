@@ -89,8 +89,6 @@ const DetailTask: React.FC<DetailTaskProps> = ({
   }, [projectId, taskId]);
 
   useEffect(() => {
-    socket.emit('join project', { projectId });
-
     //Listen to new comment
     socket.on('receive task comment', (data: TaskData) => {
       setTaskData(data);
@@ -108,10 +106,6 @@ const DetailTask: React.FC<DetailTaskProps> = ({
       setTaskData(data);
       setDefaultTaskData(data);
     });
-
-    return () => {
-      socket.emit('leave project', { projectId });
-    };
   }, [projectId]);
 
   useEffect(() => {
@@ -160,6 +154,7 @@ const DetailTask: React.FC<DetailTaskProps> = ({
       projectId,
       taskName: taskData.title,
       userName: `${user?.firstName} ${user?.lastName}`,
+      userId: user?._id,
     });
   };
 
@@ -169,6 +164,7 @@ const DetailTask: React.FC<DetailTaskProps> = ({
       columnId,
       taskId,
       taskTitle: defaultTaskData.title,
+      userId: user?._id,
     });
     history.push(`/projects/${projectId}/tasks`);
 
@@ -177,6 +173,7 @@ const DetailTask: React.FC<DetailTaskProps> = ({
       projectId,
       taskName: taskData.title,
       userName: `${user?.firstName} ${user?.lastName}`,
+      userId: user?._id,
     });
   };
 

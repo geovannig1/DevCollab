@@ -41,6 +41,7 @@ const FileCard: React.FC<FileCardProps> = ({
       projectId,
       userName: `${user?.firstName} ${user?.lastName}`,
       fileName: file.name,
+      userId: user?._id,
     });
   };
 

@@ -16,17 +16,15 @@ import { RoundedButton } from '../components/global/Button';
 import SendIcon from '@material-ui/icons/Send';
 import socket from '../utils/socketio';
 import { AuthInitialState } from '../reducers/authReducer';
-import { loadActivity, receiveActivity } from '../actions/activityActions';
+import { removeNotification } from '../actions/activityActions';
 import { ActivityInitialState } from '../reducers/activityReducer';
 import ActivityContent from '../components/activity/ActivityContent';
-import { ActivityTypes } from '../actions/activityTypes';
 
 interface ActivityProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
-  loadActivity: (projectId: string) => Promise<void>;
-  receiveActivity: (activityData: ActivityTypes) => void;
+  removeNotification: (projectId: string) => Promise<void>;
   project: ProjectInitialState;
   auth: AuthInitialState;
   activity: ActivityInitialState;
@@ -36,8 +34,7 @@ const Activity: React.FC<ActivityProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
-  loadActivity,
-  receiveActivity,
+  removeNotification,
   project: { selectedProject, projectError },
   auth: { user },
   activity: { activity },
@@ -61,21 +58,15 @@ const Activity: React.FC<ActivityProps> = ({
     clearNavbar,
   ]);
 
+  const userNotif = activity?.notifications?.find(
+    (notification) => notification.user === user?._id
+  );
+
   useEffect(() => {
-    //Load the activity
-    loadActivity(projectId);
-
-    socket.emit('join project', { projectId: selectedProject?._id });
-
-    //Listen to new messages
-    socket.on('receive activity message', (data: ActivityTypes) => {
-      receiveActivity(data);
-    });
-
-    return () => {
-      socket.emit('leave project', { projectId: selectedProject?._id });
-    };
-  }, [selectedProject?._id, loadActivity, receiveActivity, projectId]);
+    if (userNotif) {
+      removeNotification(projectId);
+    }
+  }, [projectId, removeNotification, activity, userNotif]);
 
   const [message, setMessage] = useState('');
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -135,9 +126,8 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   clearNavbar: () => dispatch(clearNavbar()),
-  loadActivity: (projectId: string) => dispatch(loadActivity(projectId)),
-  receiveActivity: (activityData: ActivityTypes) =>
-    dispatch(receiveActivity(activityData)),
+  removeNotification: (projectId: string) =>
+    dispatch(removeNotification(projectId)),
 });
 
 const Container = styled.div`

@@ -48,6 +48,7 @@ const FileForm: React.FC<FileFormProps> = ({
         projectId,
         fileName: name,
         userName: `${user?.firstName} ${user?.lastName}`,
+        userId: user?._id,
       });
     }
   };

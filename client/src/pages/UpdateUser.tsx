@@ -20,17 +20,15 @@ import { UserData } from '../actions/authTypes';
 import avatar from '../assets/profile-picture.png';
 import Alert from '../components/global/Alert';
 import AlertSnackbar from '../components/global/AlertSnackbar';
-import { updateUser, deleteUser } from '../actions/authActions';
+import { updateUser } from '../actions/authActions';
 import { AlertInitialState } from '../reducers/alertReducer';
 import { MessageType } from '../actions/alertTypes';
-import AlertDialog from '../components/global/AlertDialog';
 import { clearProject } from '../actions/projectActions';
 
 interface UpdateUserProps {
   auth: AuthInitialState;
   alert: AlertInitialState;
   updateUser: (userData: UserData, image?: File) => Promise<void>;
-  deleteUser: () => Promise<void>;
   clearProject: () => void;
 }
 
@@ -38,7 +36,6 @@ const UpdateUser: React.FC<UpdateUserProps> = ({
   auth: { user },
   alert,
   updateUser,
-  deleteUser,
   clearProject,
 }) => {
   useEffect(() => {
@@ -245,16 +242,6 @@ const UpdateUser: React.FC<UpdateUserProps> = ({
             Cancel
           </StyledButton>
         </Form>
-        <AlertDialog
-          deleteButton
-          title='Delete Account'
-          deleteItem={deleteUser}
-          text="Are you sure want to delete this account? this process can't be undone."
-          firstButton='Delete Account'
-          secondButton='Cancel'
-        >
-          <DeleteButton>Delete Account?</DeleteButton>
-        </AlertDialog>
       </Paper>
     </Fragment>
   );
@@ -268,7 +255,6 @@ const mapStateToProps = (state: Store) => ({
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   updateUser: (userData: UserData, image?: File) =>
     dispatch(updateUser(userData, image)),
-  deleteUser: () => dispatch(deleteUser()),
   clearProject: () => dispatch(clearProject()),
 });
 
@@ -332,21 +318,6 @@ const CheckboxContainer = styled.div`
     margin: 0 5px;
     font-weight: 500;
     font-size: ${setRem(14)};
-  }
-`;
-
-const DeleteButton = styled.span`
-  background-color: ${setColor.mainWhite};
-  outline: none;
-  border: none;
-  cursor: pointer;
-  color: ${setColor.mainRed};
-  transition: 0.3s ease-in-out;
-  &:hover {
-    color: ${setColor.lightRed};
-  }
-  &:active {
-    color: ${setColor.mainRed};
   }
 `;
 

@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 
 import Activity, { Avatar } from '../../models/Activity';
+import Project from '../../models/Project';
 import Task from '../../models/Task';
 
 export default (io: Server, socket: Socket) => {
@@ -16,11 +17,35 @@ export default (io: Server, socket: Socket) => {
       const taskProject = await Task.findOne({ project: data.projectId });
       const column = taskProject?.get(`columns.${data.columnId}`);
 
+      //Find project members except logged in user
+      const project = await Project.findById(data.projectId);
+      const userProject = project?.members
+        .map((member) => member.user)
+        .filter((member) => member?.toString() !== data.userId);
+
       if (activity) {
+        //Push new message
         activity.messages.push({
           avatar: Avatar.task,
           name: 'Task',
-          message: `**${data.userName}** added **${data.taskName}** task to **${column.title}** list`,
+          message: `**${data.userName.trim()}** added **${data.taskName.trim()}** task to **${column.title.trim()}** list`,
+        });
+
+        //Add notification
+        userProject?.map((user, index) => {
+          if (
+            user &&
+            (!activity.notifications || !activity.notifications[index]?.user)
+          ) {
+            activity.notifications?.push({ user: user, totalNotifications: 1 });
+          } else if (
+            activity.notifications &&
+            activity.notifications[index]?.user
+          ) {
+            activity.notifications[index].totalNotifications =
+              activity.notifications[index].totalNotifications + 1;
+          }
+          return activity.notifications;
         });
 
         await activity.save();
@@ -37,11 +62,34 @@ export default (io: Server, socket: Socket) => {
         project: data.projectId,
       }).populate('messages.user', ['firstName', 'lastName', 'avatar']);
 
+      //Find project members except logged in user
+      const project = await Project.findById(data.projectId);
+      const userProject = project?.members
+        .map((member) => member.user)
+        .filter((member) => member?.toString() !== data.userId);
+
       if (activity) {
         activity.messages.push({
           avatar: Avatar.task,
           name: 'Task',
-          message: `**${data.userName}** updated **${data.taskName}** task`,
+          message: `**${data.userName.trim()}** updated **${data.taskName.trim()}** task`,
+        });
+
+        //Add notification
+        userProject?.map((user, index) => {
+          if (
+            user &&
+            (!activity.notifications || !activity.notifications[index]?.user)
+          ) {
+            activity.notifications?.push({ user: user, totalNotifications: 1 });
+          } else if (
+            activity.notifications &&
+            activity.notifications[index]?.user
+          ) {
+            activity.notifications[index].totalNotifications =
+              activity.notifications[index].totalNotifications + 1;
+          }
+          return activity.notifications;
         });
 
         await activity.save();
@@ -58,11 +106,34 @@ export default (io: Server, socket: Socket) => {
         project: data.projectId,
       }).populate('messages.user', ['firstName', 'lastName', 'avatar']);
 
+      //Find project members except logged in user
+      const project = await Project.findById(data.projectId);
+      const userProject = project?.members
+        .map((member) => member.user)
+        .filter((member) => member?.toString() !== data.userId);
+
       if (activity) {
         activity.messages.push({
           avatar: Avatar.task,
           name: 'Task',
-          message: `**${data.userName}** deleted **${data.taskName}** task`,
+          message: `**${data.userName.trim()}** deleted **${data.taskName.trim()}** task`,
+        });
+
+        //Add notification
+        userProject?.map((user, index) => {
+          if (
+            user &&
+            (!activity.notifications || !activity.notifications[index]?.user)
+          ) {
+            activity.notifications?.push({ user: user, totalNotifications: 1 });
+          } else if (
+            activity.notifications &&
+            activity.notifications[index]?.user
+          ) {
+            activity.notifications[index].totalNotifications =
+              activity.notifications[index].totalNotifications + 1;
+          }
+          return activity.notifications;
         });
 
         await activity.save();
@@ -83,12 +154,35 @@ export default (io: Server, socket: Socket) => {
       const taskProject = await Task.findOne({ project: data.projectId });
       const task = taskProject?.get(`tasks.${data.taskId}`);
 
+      //Find project members except logged in user
+      const project = await Project.findById(data.projectId);
+      const userProject = project?.members
+        .map((member) => member.user)
+        .filter((member) => member?.toString() !== data.userId);
+
       if (activity) {
         activity.messages.push({
           avatar: Avatar.task,
           name: 'Task',
-          message: `**${data.userName}** moved **${task.title}** task from **${data.sourceListName}** list
-           to **${data.destionationListName}** list`,
+          message: `**${data.userName.trim()}** moved **${task.title.trim()}** task from **${data.sourceListName.trim()}** list
+           to **${data.destionationListName.trim()}** list`,
+        });
+
+        //Add notification
+        userProject?.map((user, index) => {
+          if (
+            user &&
+            (!activity.notifications || !activity.notifications[index]?.user)
+          ) {
+            activity.notifications?.push({ user: user, totalNotifications: 1 });
+          } else if (
+            activity.notifications &&
+            activity.notifications[index]?.user
+          ) {
+            activity.notifications[index].totalNotifications =
+              activity.notifications[index].totalNotifications + 1;
+          }
+          return activity.notifications;
         });
 
         await activity.save();
@@ -107,11 +201,34 @@ export default (io: Server, socket: Socket) => {
         project: data.projectId,
       }).populate('messages.user', ['firstName', 'lastName', 'avatar']);
 
+      //Find project members except logged in user
+      const project = await Project.findById(data.projectId);
+      const userProject = project?.members
+        .map((member) => member.user)
+        .filter((member) => member?.toString() !== data.userId);
+
       if (activity) {
         activity.messages.push({
           avatar: Avatar.task,
           name: 'Task',
-          message: `**${data.userName}** added **${data.listName}** list`,
+          message: `**${data.userName.trim()}** added **${data.listName.trim()}** list`,
+        });
+
+        //Add notification
+        userProject?.map((user, index) => {
+          if (
+            user &&
+            (!activity.notifications || !activity.notifications[index]?.user)
+          ) {
+            activity.notifications?.push({ user: user, totalNotifications: 1 });
+          } else if (
+            activity.notifications &&
+            activity.notifications[index]?.user
+          ) {
+            activity.notifications[index].totalNotifications =
+              activity.notifications[index].totalNotifications + 1;
+          }
+          return activity.notifications;
         });
 
         await activity.save();
@@ -128,11 +245,34 @@ export default (io: Server, socket: Socket) => {
         project: data.projectId,
       }).populate('messages.user', ['firstName', 'lastName', 'avatar']);
 
+      //Find project members except logged in user
+      const project = await Project.findById(data.projectId);
+      const userProject = project?.members
+        .map((member) => member.user)
+        .filter((member) => member?.toString() !== data.userId);
+
       if (activity) {
         activity.messages.push({
           avatar: Avatar.task,
           name: 'Task',
-          message: `**${data.userName}** renamed **${data.previousListName}** list to **${data.listName}**`,
+          message: `**${data.userName.trim()}** renamed **${data.previousListName.trim()}** list to **${data.listName.trim()}**`,
+        });
+
+        //Add notification
+        userProject?.map((user, index) => {
+          if (
+            user &&
+            (!activity.notifications || !activity.notifications[index]?.user)
+          ) {
+            activity.notifications?.push({ user: user, totalNotifications: 1 });
+          } else if (
+            activity.notifications &&
+            activity.notifications[index]?.user
+          ) {
+            activity.notifications[index].totalNotifications =
+              activity.notifications[index].totalNotifications + 1;
+          }
+          return activity.notifications;
         });
 
         await activity.save();
@@ -149,11 +289,34 @@ export default (io: Server, socket: Socket) => {
         project: data.projectId,
       }).populate('messages.user', ['firstName', 'lastName', 'avatar']);
 
+      //Find project members except logged in user
+      const project = await Project.findById(data.projectId);
+      const userProject = project?.members
+        .map((member) => member.user)
+        .filter((member) => member?.toString() !== data.userId);
+
       if (activity) {
         activity.messages.push({
           avatar: Avatar.task,
           name: 'Task',
-          message: `**${data.userName}** deleted **${data.listName}** list`,
+          message: `**${data.userName.trim()}** deleted **${data.listName.trim()}** list`,
+        });
+
+        //Add notification
+        userProject?.map((user, index) => {
+          if (
+            user &&
+            (!activity.notifications || !activity.notifications[index]?.user)
+          ) {
+            activity.notifications?.push({ user: user, totalNotifications: 1 });
+          } else if (
+            activity.notifications &&
+            activity.notifications[index]?.user
+          ) {
+            activity.notifications[index].totalNotifications =
+              activity.notifications[index].totalNotifications + 1;
+          }
+          return activity.notifications;
         });
 
         await activity.save();

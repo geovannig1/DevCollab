@@ -38,6 +38,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
       projectId,
       userName: `${user?.firstName} ${user?.lastName}`,
       roomName: meetingRoom.name,
+      userId: user?._id,
     });
   };
 

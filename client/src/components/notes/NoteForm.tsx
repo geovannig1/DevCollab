@@ -51,6 +51,7 @@ const NoteForm: React.FC<NoteFormProps> = ({
         projectId,
         noteName: noteData.title,
         userName: `${user?.firstName} ${user?.lastName}`,
+        userId: user?._id,
       });
     }
   };

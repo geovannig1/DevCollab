@@ -51,6 +51,7 @@ const AddListMenu: React.FC<AddListMenuProps> = ({
         projectId,
         listName: listData,
         userName: `${user?.firstName} ${user?.lastName}`,
+        userId: user?._id,
       });
 
       handleClose();

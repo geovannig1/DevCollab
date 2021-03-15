@@ -97,6 +97,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({
         columnId,
         taskName: taskData.title,
         userName: `${user?.firstName} ${user?.lastName}`,
+        userId: user?._id,
       });
     }
   };

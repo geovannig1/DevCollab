@@ -29,16 +29,22 @@ import {
 import { GithubInitialState } from '../../reducers/githubReducer';
 import socket from '../../utils/socketio';
 import Badge from '@material-ui/core/Badge';
+import { ActivityInitialState } from '../../reducers/activityReducer';
+import { loadActivity, receiveActivity } from '../../actions/activityActions';
+import { ActivityTypes } from '../../actions/activityTypes';
 
 interface NavbarProps {
   loadRepo: (projectId: string) => Promise<void>;
   loadEvents: (projectId: string) => Promise<void>;
   setCommitNotification: (totalNotification: number) => void;
   setPullNotification: (totalNotification: number) => void;
+  loadActivity: (projectId: string) => Promise<void>;
+  receiveActivity: (activityData: ActivityTypes) => void;
   navbar: NavbarInitialState;
   project: ProjectInitialState;
   auth: AuthInitialState;
   github: GithubInitialState;
+  activity: ActivityInitialState;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
@@ -46,10 +52,13 @@ const Navbar: React.FC<NavbarProps> = ({
   loadEvents,
   setCommitNotification,
   setPullNotification,
+  loadActivity,
+  receiveActivity,
   navbar,
   project: { selectedProject },
   auth: { user },
   github: { repo, events, commitEvent, pullEvent },
+  activity: { activity },
 }) => {
   useEffect(() => {
     if (selectedProject) {
@@ -133,6 +142,29 @@ const Navbar: React.FC<NavbarProps> = ({
     }
   }, [commitEvent, pullEvent]);
 
+  //Handle activity notification
+  useEffect(() => {
+    //Load the activity
+    if (selectedProject) {
+      loadActivity(selectedProject?._id);
+
+      socket.emit('join project', { projectId: selectedProject?._id });
+
+      //Listen to new messages
+      socket.on('receive activity message', (data: ActivityTypes) => {
+        receiveActivity(data);
+      });
+    }
+
+    return () => {
+      socket.emit('leave project', { projectId: selectedProject?._id });
+    };
+  }, [loadActivity, receiveActivity, selectedProject]);
+
+  const userNotif = activity?.notifications?.find(
+    (notification) => notification.user === user?._id
+  );
+
   return (
     <Container>
       <ul>
@@ -141,7 +173,12 @@ const Navbar: React.FC<NavbarProps> = ({
             to={`/projects/${selectedProject?._id}/activity`}
             selected={navbar.selected === SelectedType.Activity}
           >
-            <ImportExportIcon />
+            <Badge
+              color='secondary'
+              badgeContent={userNotif?.totalNotifications}
+            >
+              <ImportExportIcon />
+            </Badge>
             <Text>Activity</Text>
             <div />
           </StyledLink>
@@ -233,6 +270,7 @@ const mapStateToProps = (state: Store) => ({
   project: state.project,
   auth: state.auth,
   github: state.github,
+  activity: state.activity,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
@@ -242,6 +280,9 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
     dispatch(setCommitNotification(totalNotification)),
   setPullNotification: (totalNotification: number) =>
     dispatch(setPullNotification(totalNotification)),
+  loadActivity: (projectId: string) => dispatch(loadActivity(projectId)),
+  receiveActivity: (activityData: ActivityTypes) =>
+    dispatch(receiveActivity(activityData)),
 });
 
 const Container = styled.nav`

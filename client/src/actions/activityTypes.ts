@@ -1,6 +1,7 @@
 export const ACTIVITY_LOADED = 'ACTIVITY_LOADED';
 export const ACTIVITY_RECEIVED = 'ACTIVITY_RECEIVED';
 export const ACTIVITY_FAIL = 'ACTIVITY_FAIL';
+export const NOTIFICATION_REMOVED = 'NOTIFICATION_REMOVED';
 
 export enum ActivityAvatar {
   task,
@@ -30,6 +31,10 @@ export interface Message {
 export interface ActivityTypes {
   _id: string;
   messages: Message[];
+  notifications?: {
+    totalNotifications: number;
+    user: string;
+  }[];
 }
 
 export interface ActivityLoaded {
@@ -50,7 +55,13 @@ export interface ActivityFail {
   };
 }
 
+export interface NotificationRemoved {
+  type: typeof NOTIFICATION_REMOVED;
+  payload: ActivityTypes;
+}
+
 export type ActivityDispatchTypes =
   | ActivityLoaded
   | ActivityReceived
-  | ActivityFail;
+  | ActivityFail
+  | NotificationRemoved;

@@ -1,11 +1,18 @@
 import { Server, Socket } from 'socket.io';
 
 import Activity from '../../models/Activity';
+import Project from '../../models/Project';
 
 export default (io: Server, socket: Socket) => {
   socket.on('send activity message', async (data) => {
     try {
       let activity = await Activity.findOne({ project: data.projectId });
+
+      //Find project members except logged in user
+      const project = await Project.findById(data.projectId);
+      const userProject = project?.members
+        .map((member) => member.user)
+        .filter((member) => member?.toString() !== data.user._id);
 
       if (activity) {
         activity.messages.push({ user: data.user, message: data.message });
@@ -22,6 +29,35 @@ export default (io: Server, socket: Socket) => {
           messages: [{ user: data.user, message: data.message }],
         });
         await activity
+          .populate({
+            path: 'messages.user',
+            select: ['firstName', 'lastName', 'avatar'],
+          })
+          .execPopulate();
+      }
+
+      if (activity) {
+        //Add notification
+        userProject?.map((user, index) => {
+          if (
+            user &&
+            (!activity?.notifications || !activity?.notifications[index]?.user)
+          ) {
+            activity?.notifications?.push({
+              user: user,
+              totalNotifications: 1,
+            });
+          } else if (
+            activity?.notifications &&
+            activity.notifications[index]?.user
+          ) {
+            activity.notifications[index].totalNotifications =
+              activity.notifications[index].totalNotifications + 1;
+          }
+          return activity?.notifications;
+        });
+
+        await (await activity.save())
           .populate({
             path: 'messages.user',
             select: ['firstName', 'lastName', 'avatar'],

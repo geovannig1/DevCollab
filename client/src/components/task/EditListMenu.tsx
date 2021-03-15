@@ -60,6 +60,7 @@ const EditListMenu: React.FC<EditListMenuProps> = ({
       userName: `${user?.firstName} ${user?.lastName}`,
       listName: listData,
       previousListName: listTitle,
+      user: user?._id,
     });
     handleCloseUpdated();
   };

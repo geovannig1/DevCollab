@@ -59,6 +59,7 @@ const DiscussionForm: React.FC<DiscussionFormProps> = ({
         projectId,
         discussionName: discussionData.title,
         userName: `${user?.firstName} ${user?.lastName}`,
+        userId: user?._id,
       });
     }
   };

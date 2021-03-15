@@ -73,12 +73,7 @@ const Discussion: React.FC<DiscussionProps> = ({
 
   useEffect(() => {
     loadDiscussion(projectId, discussionId);
-
-    socket.emit('join project', { projectId: selectedProject?._id });
-    return () => {
-      socket.emit('leave project', { projectId: selectedProject?._id });
-    };
-  }, [loadDiscussion, projectId, discussionId, selectedProject?._id]);
+  }, [loadDiscussion, projectId, discussionId]);
 
   return (
     <Fragment>

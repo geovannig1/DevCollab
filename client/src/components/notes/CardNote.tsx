@@ -44,6 +44,7 @@ const CardNote: React.FC<CardNoteProps> = ({
       projectId,
       userName: `${user?.firstName} ${user?.lastName}`,
       noteName: note.title,
+      userId: user?._id,
     });
   };
 

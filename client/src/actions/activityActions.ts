@@ -4,6 +4,7 @@ import {
   ACTIVITY_LOADED,
   ACTIVITY_RECEIVED,
   ACTIVITY_FAIL,
+  NOTIFICATION_REMOVED,
   ActivityDispatchTypes,
   ActivityTypes,
 } from './activityTypes';
@@ -29,4 +30,21 @@ export const receiveActivity = (activityData: ActivityTypes) => (
   dispatch: Dispatch<ActivityDispatchTypes>
 ) => {
   dispatch({ type: ACTIVITY_RECEIVED, payload: activityData });
+};
+
+//Remove notification
+export const removeNotification = (projectId: string) => async (
+  dispatch: Dispatch<ActivityDispatchTypes>
+) => {
+  try {
+    const res = await api.patch(
+      `/projects/${projectId}/activities/notification`
+    );
+    dispatch({ type: NOTIFICATION_REMOVED, payload: res.data });
+  } catch (err) {
+    dispatch({
+      type: ACTIVITY_FAIL,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
 };

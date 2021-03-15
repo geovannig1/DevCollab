@@ -62,6 +62,7 @@ const MeetingForm: React.FC<MeetingFormProps> = ({
         userName: `${user?.firstName} ${user?.lastName}`,
         roomName: roomData.name,
         membersId: roomData.members.map((member) => member.user._id),
+        userId: user?._id,
       });
     }
   };

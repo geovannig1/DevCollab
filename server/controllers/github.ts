@@ -42,7 +42,7 @@ export const githubHook = async (req: Request, res: Response) => {
     //Only emit master/main branch and commit event
     if (ref === `refs/heads/${repository.master_branch}` && !pull_request) {
       emitter.commit({ nodeId: repository.node_id });
-      //Store the total commit event to each user to database
+      //Store the total commit event to each user
       const totalNewCommit = userProject.map((user, index) => {
         if (
           user &&
