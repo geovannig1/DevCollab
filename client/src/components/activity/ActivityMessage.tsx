@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import avatar from '../../assets/profile-picture.png';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import ReactMarkdown from 'react-markdown';
 
 import { setColor, setRem, setShadow } from '../../styles';
 import Avatar from '../global/Avatar';
@@ -75,7 +76,9 @@ const ActivityMessage: React.FC<ActivityMessageProps> = ({
           </h5>
           <span>{dayjs(message.date).fromNow()}</span>
         </Header>
-        <Text>{message.message}</Text>
+        <Text>
+          <ReactMarkdown>{message.message}</ReactMarkdown>
+        </Text>
         {message.user?._id === user?._id && (
           <AlertDialog
             title='Delete Message'
@@ -117,7 +120,7 @@ const Header = styled.div`
   }
 `;
 
-const Text = styled.span`
+const Text = styled.div`
   padding: 10px;
   margin: 3px 0;
   background-color: ${setColor.lightGrey};

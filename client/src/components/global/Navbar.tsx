@@ -23,6 +23,7 @@ import { AccessPermission } from '../../actions/projectTypes';
 import {
   loadRepo,
   setCommitNotification,
+  setPullNotification,
   loadEvents,
 } from '../../actions/githubActions';
 import { GithubInitialState } from '../../reducers/githubReducer';
@@ -33,6 +34,7 @@ interface NavbarProps {
   loadRepo: (projectId: string) => Promise<void>;
   loadEvents: (projectId: string) => Promise<void>;
   setCommitNotification: (totalNotification: number) => void;
+  setPullNotification: (totalNotification: number) => void;
   navbar: NavbarInitialState;
   project: ProjectInitialState;
   auth: AuthInitialState;
@@ -43,10 +45,11 @@ const Navbar: React.FC<NavbarProps> = ({
   loadRepo,
   loadEvents,
   setCommitNotification,
+  setPullNotification,
   navbar,
   project: { selectedProject },
   auth: { user },
-  github: { repo, events },
+  github: { repo, events, commitEvent, pullEvent },
 }) => {
   useEffect(() => {
     if (selectedProject) {
@@ -61,14 +64,18 @@ const Navbar: React.FC<NavbarProps> = ({
   );
 
   useEffect(() => {
-    if (repo && selectedProject) {
+    if (repo) {
       //Join to repository room
       socket.emit('join repo', { repoId: repo.node_id });
 
       //Emit commit listener
       socket.emit('listen commit', {
         repoId: repo.node_id,
-        projectId: selectedProject._id,
+      });
+
+      //Emit pull request listener
+      socket.emit('listen pull', {
+        repoId: repo.node_id,
       });
     }
 
@@ -76,26 +83,55 @@ const Navbar: React.FC<NavbarProps> = ({
       socket.emit('leave repo', { repoId: repo?.node_id });
       socket.emit('unregister event');
     };
-  }, [repo, selectedProject]);
+  }, [repo]);
 
   //Store all event notification
   const [githubNotification, setGithubNotification] = useState(0);
   //Store every github commits
   const [commitReceiver, setCommitReceiver] = useState<string[]>([]);
+  //Store every "opened" github pull request
+  const [pullReceiver, setPullReceiver] = useState<string[]>([]);
 
   useEffect(() => {
     //Listen every github commit
     socket.on('receive commit', (data: { nodeId: string }) => {
       setCommitReceiver((prevData) => [...prevData, data.nodeId]);
     });
+    //Listen every github pull request
+    socket.on('receive pull', (data: { nodeId: string }) => {
+      setPullReceiver((prevData) => [...prevData, data.nodeId]);
+    });
   }, []);
 
   useEffect(() => {
     if (events) {
-      setGithubNotification(events.totalCommit + commitReceiver.length);
-      setCommitNotification(events.totalCommit + commitReceiver.length);
+      setGithubNotification(
+        (events.totalCommit ?? 0) +
+          (events.totalPull ?? 0) +
+          (commitReceiver.length + pullReceiver.length)
+      );
+
+      setCommitNotification((events.totalCommit ?? 0) + commitReceiver.length);
+      setPullNotification((events.totalPull ?? 0) + pullReceiver.length);
     }
-  }, [commitReceiver, events, setCommitNotification]);
+  }, [
+    commitReceiver,
+    pullReceiver,
+    events,
+    setCommitNotification,
+    setPullNotification,
+  ]);
+
+  useEffect(() => {
+    //Reset commitReceiver
+    if (!commitEvent && commitReceiver.length !== 0) {
+      setCommitReceiver([]);
+    }
+    //Reset pullReceiver
+    if (!pullEvent && pullReceiver.length !== 0) {
+      setPullReceiver([]);
+    }
+  }, [commitEvent, pullEvent]);
 
   return (
     <Container>
@@ -204,6 +240,8 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadEvents: (projectId: string) => dispatch(loadEvents(projectId)),
   setCommitNotification: (totalNotification: number) =>
     dispatch(setCommitNotification(totalNotification)),
+  setPullNotification: (totalNotification: number) =>
+    dispatch(setPullNotification(totalNotification)),
 });
 
 const Container = styled.nav`

@@ -5,8 +5,8 @@ class GithubEmitter extends EventEmitter {
     this.emit('commitEvent', data);
   }
 
-  pull() {
-    this.emit('pullEvent', 'test pull');
+  pull(data: { nodeId: string }) {
+    this.emit('pullEvent', data);
   }
 }
 

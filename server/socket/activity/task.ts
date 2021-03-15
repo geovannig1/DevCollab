@@ -20,7 +20,7 @@ export default (io: Server, socket: Socket) => {
         activity.messages.push({
           avatar: Avatar.task,
           name: 'Task',
-          message: `${data.userName} added ${data.taskName} task to ${column.title} list`,
+          message: `**${data.userName}** added **${data.taskName}** task to **${column.title}** list`,
         });
 
         await activity.save();
@@ -41,7 +41,7 @@ export default (io: Server, socket: Socket) => {
         activity.messages.push({
           avatar: Avatar.task,
           name: 'Task',
-          message: `${data.userName} updated ${data.taskName} task`,
+          message: `**${data.userName}** updated **${data.taskName}** task`,
         });
 
         await activity.save();
@@ -62,7 +62,7 @@ export default (io: Server, socket: Socket) => {
         activity.messages.push({
           avatar: Avatar.task,
           name: 'Task',
-          message: `${data.userName} deleted ${data.taskName} task`,
+          message: `**${data.userName}** deleted **${data.taskName}** task`,
         });
 
         await activity.save();
@@ -87,8 +87,8 @@ export default (io: Server, socket: Socket) => {
         activity.messages.push({
           avatar: Avatar.task,
           name: 'Task',
-          message: `${data.userName} moved ${task.title} task from ${data.sourceListName} list
-           to ${data.destionationListName} list`,
+          message: `**${data.userName}** moved **${task.title}** task from **${data.sourceListName}** list
+           to **${data.destionationListName}** list`,
         });
 
         await activity.save();
@@ -111,7 +111,7 @@ export default (io: Server, socket: Socket) => {
         activity.messages.push({
           avatar: Avatar.task,
           name: 'Task',
-          message: `${data.userName} added ${data.listName} list`,
+          message: `**${data.userName}** added **${data.listName}** list`,
         });
 
         await activity.save();
@@ -132,7 +132,7 @@ export default (io: Server, socket: Socket) => {
         activity.messages.push({
           avatar: Avatar.task,
           name: 'Task',
-          message: `${data.userName} renamed ${data.previousListName} list to ${data.listName}`,
+          message: `**${data.userName}** renamed **${data.previousListName}** list to **${data.listName}**`,
         });
 
         await activity.save();
@@ -153,7 +153,7 @@ export default (io: Server, socket: Socket) => {
         activity.messages.push({
           avatar: Avatar.task,
           name: 'Task',
-          message: `${data.userName} deleted ${data.listName} list`,
+          message: `**${data.userName}** deleted **${data.listName}** list`,
         });
 
         await activity.save();

@@ -11,6 +11,8 @@ import {
   CLEAR_GITHUB,
   COMMIT_NOTIFIED,
   EVENT_LOADED,
+  PULL_NOTIFIED,
+  EVENT_REMOVED,
   GithubDispatchTypes,
 } from './githubTypes';
 import api from '../api';
@@ -122,6 +124,13 @@ export const setCommitNotification = (totalNotification: number) => (
   dispatch({ type: COMMIT_NOTIFIED, payload: totalNotification });
 };
 
+//Add a pull notification
+export const setPullNotification = (totalNotification: number) => (
+  dispatch: Dispatch<GithubDispatchTypes>
+) => {
+  dispatch({ type: PULL_NOTIFIED, payload: totalNotification });
+};
+
 //Load all events
 export const loadEvents = (projectId: string) => async (
   dispatch: Dispatch<GithubDispatchTypes>
@@ -129,6 +138,21 @@ export const loadEvents = (projectId: string) => async (
   try {
     const res = await api.get(`/projects/${projectId}/github/events`);
     dispatch({ type: EVENT_LOADED, payload: res.data });
+  } catch (err) {
+    dispatch({
+      type: GITHUB_FAIL,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
+//Remove an event
+export const removeEvent = (projectId: string, event: string) => async (
+  dispatch: Dispatch<GithubDispatchTypes>
+) => {
+  try {
+    await api.patch(`/projects/${projectId}/github/events`, { event });
+    dispatch({ type: EVENT_REMOVED, payload: event });
   } catch (err) {
     dispatch({
       type: GITHUB_FAIL,

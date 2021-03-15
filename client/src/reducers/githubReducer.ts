@@ -5,13 +5,15 @@ import {
   REPOSITORY_STORED,
   PULLS_LOADED,
   GITHUB_FAIL,
+  COMMIT_NOTIFIED,
+  PULL_NOTIFIED,
+  EVENT_LOADED,
+  CLEAR_GITHUB,
+  EVENT_REMOVED,
   GithubDispatchTypes,
   RepoTypes,
   CommitTypes,
   PageInfo,
-  CLEAR_GITHUB,
-  COMMIT_NOTIFIED,
-  EVENT_LOADED,
   PullTypes,
 } from '../actions/githubTypes';
 
@@ -20,8 +22,9 @@ export interface GithubInitialState {
   repo?: RepoTypes;
   commit?: { pageInfo?: PageInfo; commits: CommitTypes[] };
   pull?: { pageInfo?: PageInfo; pulls: PullTypes[] };
-  events?: { totalCommit: number };
+  events?: { totalCommit: number; totalPull: number };
   commitEvent?: number;
+  pullEvent?: number;
   githubError?: { msg: string; status: number };
 }
 
@@ -39,15 +42,32 @@ const githubReducer = (
     case REPOSITORY_STORED:
       return { ...state };
     case COMMITS_LOADED:
-      return { ...state, commit: action.payload, pull: undefined };
+      return { ...state, commit: action.payload };
     case PULLS_LOADED:
-      return { ...state, pull: action.payload, commit: undefined };
+      return { ...state, pull: action.payload };
     case GITHUB_FAIL:
       return { ...state, githubError: action.payload };
     case COMMIT_NOTIFIED:
       return { ...state, commitEvent: action.payload };
+    case PULL_NOTIFIED:
+      return { ...state, pullEvent: action.payload };
     case EVENT_LOADED:
       return { ...state, events: action.payload };
+    case EVENT_REMOVED:
+      return action.payload === 'commit'
+        ? {
+            ...state,
+            commitEvent: undefined,
+            events: { totalCommit: 0, totalPull: state.events?.totalPull ?? 0 },
+          }
+        : {
+            ...state,
+            pullEvent: undefined,
+            events: {
+              totalPull: 0,
+              totalCommit: state.events?.totalCommit ?? 0,
+            },
+          };
     case CLEAR_GITHUB:
       return {
         githubError: undefined,
@@ -57,6 +77,7 @@ const githubReducer = (
         pull: undefined,
         events: undefined,
         commitEvent: undefined,
+        pullEvent: undefined,
       };
     default:
       return state;
