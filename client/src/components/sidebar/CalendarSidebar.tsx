@@ -45,7 +45,6 @@ const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
     if (selectedProject) {
       loadTaskState(selectedProject._id);
 
-      socket.emit('join project', { projectId: selectedProject._id });
       //Listen to project update and change the calendar data
       socket.on('updated update task', () => {
         loadTaskState(selectedProject?._id);
@@ -53,15 +52,11 @@ const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
     } else if (!selectedProject) {
       setTaskData(undefined);
     }
-
-    return () => {
-      socket.emit('leave project', { projectId: selectedProject?._id });
-    };
   }, [selectedProject, loadTaskState]);
 
   //Set the task lists
   useEffect(() => {
-    if (tasks) {
+    if (tasks && tasks.tasks) {
       setTaskData(undefined);
       Object.keys(tasks.tasks).map((key) => {
         if (
@@ -77,7 +72,7 @@ const CalendarSidebar: React.FC<CalendarSidebarProps> = ({
         return null;
       });
     }
-  }, [tasks]);
+  }, [tasks, user?._id]);
 
   //Date state
   const [value, onChange] = useState<Date | Date[]>(new Date());

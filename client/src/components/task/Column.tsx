@@ -56,7 +56,7 @@ const Column: React.FC<ColumnProps> = ({
       projectId: selectedProject?._id,
       userName: `${user?.firstName} ${user?.lastName}`,
       listName: column.title,
-      user: user?._id,
+      userId: user?._id,
     });
   };
 
