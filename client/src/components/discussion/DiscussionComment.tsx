@@ -9,7 +9,7 @@ import Avatar from '../global/Avatar';
 import { RoundedButton } from '../global/Button';
 import avatar from '../../assets/profile-picture.png';
 import { UserType } from '../../actions/authTypes';
-import { setColor } from '../../styles';
+import { setColor, setRem } from '../../styles';
 import socket from '../../utils/socketio';
 import { receiveComment } from '../../actions/discussionActions';
 import { DiscussionType } from '../../actions/discussionTypes';
@@ -37,7 +37,7 @@ const DiscussionComment: React.FC<DiscussionCommentProps> = ({
     });
   }, [receiveComment]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCommentData(e.target.value);
   };
 
@@ -54,6 +54,22 @@ const DiscussionComment: React.FC<DiscussionCommentProps> = ({
     }
   };
 
+  //Handle the submit from the textarea
+  const handleUserKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (commentData.trim() !== '') {
+        socket.emit('send discussion comment', {
+          projectId: selectedProject?._id,
+          discussionId: selectedDiscussion._id,
+          userId: user?._id,
+          commentData,
+        });
+        setCommentData('');
+      }
+    }
+  };
+
   //Find user in the project
   const findUser = selectedProject?.members?.find(
     (member) => member.user._id === user?._id
@@ -65,15 +81,15 @@ const DiscussionComment: React.FC<DiscussionCommentProps> = ({
         <form onSubmit={handleSubmit}>
           <InputComment>
             <Avatar size='40' src={user?.avatar?.url ?? avatar} alt='profile' />
-            <input
-              type='text'
+            <textarea
               name='comment'
               placeholder='Write a comment...'
               autoComplete='off'
               onChange={handleChange}
               value={commentData}
+              onKeyPress={handleUserKeyPress}
             />
-            <RoundedButton size='40'>
+            <RoundedButton size='45'>
               <SendIcon fontSize='small' />
             </RoundedButton>
           </InputComment>
@@ -104,15 +120,15 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
 const InputComment = styled.div`
   display: flex;
   align-items: center;
-  input {
-    display: block;
-    border-radius: 5px;
-    width: 350px;
-    height: 40px;
-    padding: 15px;
-    border: solid ${setColor.lightBlack} 1px;
+  textarea {
+    width: 400px;
+    border: 1px solid ${setColor.lightBlack};
+    height: 50px;
     outline: none;
-    margin-left: 5px;
+    padding: 15px;
+    border-radius: 5px;
+    resize: none;
+    font-size: ${setRem(14)};
     &:focus {
       border-color: ${setColor.primary};
     }

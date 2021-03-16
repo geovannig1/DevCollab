@@ -4,6 +4,11 @@ import jwt from 'jsonwebtoken';
 import Project, { Member, AccessPermission } from '../models/Project';
 import sendEmail from '../services/sendEmail';
 import User from '../models/User';
+import Discussion from '../models/Discussion';
+import Note from '../models/Note';
+import File from '../models/File';
+import Github from '../models/Github';
+import Meeting from '../models/Meeting';
 
 //Create a new project
 export const createProject = async (req: Request, res: Response) => {
@@ -245,6 +250,19 @@ export const deleteProject = async (req: Request, res: Response) => {
       return res.status(401).json({ errors: { msg: 'Unauthorized user' } });
     }
 
+    //Delete discussions
+    await Discussion.deleteMany({
+      project: req.params.projectId,
+    });
+    //Delete files
+    await File.deleteMany({ project: req.params.projectId });
+    //Delete github
+    await Github.deleteOne({ project: req.params.projectId });
+    //Delete Meetings
+    await Meeting.deleteMany({ project: req.params.projectId });
+    //Remove Notes
+    await Note.deleteMany({ project: req.params.projectId });
+    //Delete the project
     await project?.delete();
 
     res.status(200).json({ msg: 'Project deleted' });

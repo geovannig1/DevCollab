@@ -19,11 +19,14 @@ import Commits from '../components/github/Commits';
 import Pulls from '../components/github/Pulls';
 import Badge from '@material-ui/core/Badge';
 import { GithubInitialState } from '../reducers/githubReducer';
+import { AuthInitialState } from '../reducers/authReducer';
+import { AccessPermission } from '../actions/projectTypes';
 
 interface GithubActivitiesProps {
   loadProject: (projectId: string) => Promise<void>;
   setNavbar: (selected: SelectedType) => void;
   clearNavbar: () => void;
+  auth: AuthInitialState;
   project: ProjectInitialState;
   github: GithubInitialState;
 }
@@ -32,6 +35,7 @@ const GithubActivities: React.FC<GithubActivitiesProps> = ({
   loadProject,
   setNavbar,
   clearNavbar,
+  auth: { user },
   project: { selectedProject, projectError },
   github: { commitEvent, pullEvent },
 }) => {
@@ -68,15 +72,22 @@ const GithubActivities: React.FC<GithubActivitiesProps> = ({
     }
   };
 
+  //find user in the project
+  const userProject = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
+
   return (
     <Fragment>
-      <Button
-        extrasmall={'extrasmall' && 1}
-        as={Link}
-        to={`/projects/${projectId}/github-connection`}
-      >
-        <StyledGitHubIcon /> GitHub Connection
-      </Button>
+      {userProject?.accessPermission === AccessPermission.Admin && (
+        <Button
+          extrasmall={'extrasmall' && 1}
+          as={Link}
+          to={`/projects/${projectId}/github-connection`}
+        >
+          <StyledGitHubIcon /> GitHub Connection
+        </Button>
+      )}
 
       <StyledPaper>
         <Tabs

@@ -1,4 +1,4 @@
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 
 export default (socket: Socket) => {
   socket.on('returning signal', (data) => {

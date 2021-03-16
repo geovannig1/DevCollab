@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import SendIcon from '@material-ui/icons/Send';
 import { RoundedButton } from '../global/Button';
-import { setColor } from '../../styles';
+import { setColor, setRem } from '../../styles';
 import Avatar from '../global/Avatar';
 import avatar from '../../assets/profile-picture.png';
 import socket from '../../utils/socketio';
@@ -29,7 +29,7 @@ const CommentTask: React.FC<CommentTaskProps> = ({
 }) => {
   const [commentData, setCommentData] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCommentData(e.target.value);
   };
 
@@ -47,21 +47,37 @@ const CommentTask: React.FC<CommentTaskProps> = ({
     }
   };
 
+  //Handle the submit from the textarea
+  const handleUserKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (commentData.trim() !== '') {
+        socket.emit('send task comment', {
+          projectId,
+          taskId,
+          userId: user?._id,
+          commentData,
+        });
+        setCommentData('');
+      }
+    }
+  };
+
   return (
     <Fragment>
       {signedInMember?.accessPermission !== AccessPermission.ReadOnly && (
         <form onSubmit={handleSubmit}>
           <InputComment>
             <Avatar size='40' src={user?.avatar?.url ?? avatar} alt='profile' />
-            <input
-              type='text'
+            <textarea
               name='comment'
               placeholder='Write a comment...'
               autoComplete='off'
               onChange={handleChange}
               value={commentData}
+              onKeyPress={handleUserKeyPress}
             />
-            <RoundedButton size='40'>
+            <RoundedButton size='45'>
               <SendIcon fontSize='small' />
             </RoundedButton>
           </InputComment>
@@ -87,15 +103,15 @@ const CommentTask: React.FC<CommentTaskProps> = ({
 const InputComment = styled.div`
   display: flex;
   align-items: center;
-  input {
-    display: block;
-    border-radius: 5px;
-    width: 350px;
-    height: 40px;
-    padding: 15px;
-    border: solid ${setColor.lightBlack} 1px;
+  textarea {
+    width: 400px;
+    border: 1px solid ${setColor.lightBlack};
+    height: 50px;
     outline: none;
-    margin-left: 5px;
+    padding: 15px;
+    border-radius: 5px;
+    resize: none;
+    font-size: ${setRem(14)};
     &:focus {
       border-color: ${setColor.primary};
     }

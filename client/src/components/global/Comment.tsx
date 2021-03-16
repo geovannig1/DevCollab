@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import ReactMarkdown from 'react-markdown';
 
 import { setColor, setRem, setShadow } from '../../styles';
 import avatar from '../../assets/profile-picture.png';
@@ -59,7 +60,9 @@ const Comment: React.FC<CommentProps> = ({
           <span>{dayjs(comment.date).fromNow()}</span>
         </Header>
 
-        <Text>{comment.comment}</Text>
+        <Text>
+          <ReactMarkdown>{comment.comment}</ReactMarkdown>
+        </Text>
 
         {comment.user._id === user?._id && (
           <AlertDialog
@@ -102,7 +105,7 @@ const Header = styled.div`
   }
 `;
 
-const Text = styled.span`
+const Text = styled.div`
   padding: 10px;
   margin: 3px 0;
   background-color: ${setColor.lightGrey};

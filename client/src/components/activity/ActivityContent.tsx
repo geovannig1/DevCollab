@@ -9,12 +9,14 @@ interface ActivityContentProps {
   projectId: string;
   activity?: ActivityTypes;
   user?: UserType;
+  size?: string;
 }
 
 const ActivityContent: React.FC<ActivityContentProps> = ({
   projectId,
   activity,
   user,
+  size,
 }) => {
   const messagesEndRef = useRef<HTMLInputElement>(null);
 
@@ -28,7 +30,7 @@ const ActivityContent: React.FC<ActivityContentProps> = ({
   }, [activity?.messages]);
 
   return (
-    <Container>
+    <Container size={size}>
       {activity?.messages.map((message) => (
         <ActivityMessage
           key={message._id}
@@ -42,9 +44,9 @@ const ActivityContent: React.FC<ActivityContentProps> = ({
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ size?: string }>`
   overflow-y: auto;
-  height: 58vh;
+  height: ${({ size }) => size ?? '58'}vh;
   padding: 10px 0;
 `;
 

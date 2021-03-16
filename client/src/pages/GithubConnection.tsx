@@ -24,6 +24,8 @@ import Autocomplete, {
   AutocompleteChangeReason,
 } from '@material-ui/lab/Autocomplete';
 import Alert from '../components/global/Alert';
+import { AccessPermission } from '../actions/projectTypes';
+import { AuthInitialState } from '../reducers/authReducer';
 
 interface GithubConnectionProps {
   loadProject: (projectId: string) => Promise<void>;
@@ -37,6 +39,7 @@ interface GithubConnectionProps {
   ) => Promise<void>;
   project: ProjectInitialState;
   github: GithubInitialState;
+  auth: AuthInitialState;
 }
 
 const GithubConnection: React.FC<GithubConnectionProps> = ({
@@ -47,6 +50,7 @@ const GithubConnection: React.FC<GithubConnectionProps> = ({
   storeRepo,
   project: { selectedProject, projectError },
   github: { repos },
+  auth: { user },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
   const history = useHistory();
@@ -87,6 +91,15 @@ const GithubConnection: React.FC<GithubConnectionProps> = ({
   ) => {
     setRepositoryName(value ?? '');
   };
+
+  //find user in the project
+  const userProject = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
+  //User with read only permission can't access
+  if (userProject?.accessPermission !== AccessPermission.Admin) {
+    history.push(`/projects/${projectId}/github-activity`);
+  }
 
   return (
     <Paper>

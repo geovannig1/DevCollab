@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 import Note from '../models/Note';
 import { existNotReadOnly, userExist } from '../services/checkPermission';
-import Project, { AccessPermission } from '../models/Project';
+import Project from '../models/Project';
 
 //Get all notes
 export const getNotes = async (req: Request, res: Response) => {

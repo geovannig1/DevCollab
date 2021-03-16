@@ -19,6 +19,7 @@ import { AuthInitialState } from '../reducers/authReducer';
 import { removeNotification } from '../actions/activityActions';
 import { ActivityInitialState } from '../reducers/activityReducer';
 import ActivityContent from '../components/activity/ActivityContent';
+import { AccessPermission } from '../actions/projectTypes';
 
 interface ActivityProps {
   loadProject: (projectId: string) => Promise<void>;
@@ -88,6 +89,11 @@ const Activity: React.FC<ActivityProps> = ({
     }
   };
 
+  //Get the signed in user data
+  const signedInMember = selectedProject?.members.find(
+    (member) => member.user._id === user?._id
+  );
+
   return (
     <Paper>
       <Container>
@@ -95,22 +101,29 @@ const Activity: React.FC<ActivityProps> = ({
           activity={activity}
           user={user}
           projectId={projectId}
+          size={
+            signedInMember?.accessPermission === AccessPermission.ReadOnly
+              ? '68'
+              : undefined
+          }
         />
-        <form onSubmit={handleSubmit}>
-          <InputContainer>
-            <TextArea
-              placeholder='Write a message...'
-              name='message'
-              id='message'
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyPress={handleUserKeyPress}
-            />
-            <RoundedButton size='45'>
-              <SendIcon />
-            </RoundedButton>
-          </InputContainer>
-        </form>
+        {signedInMember?.accessPermission !== AccessPermission.ReadOnly && (
+          <form onSubmit={handleSubmit}>
+            <InputContainer>
+              <TextArea
+                placeholder='Write a message...'
+                name='message'
+                id='message'
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyPress={handleUserKeyPress}
+              />
+              <RoundedButton size='45'>
+                <SendIcon />
+              </RoundedButton>
+            </InputContainer>
+          </form>
+        )}
       </Container>
     </Paper>
   );

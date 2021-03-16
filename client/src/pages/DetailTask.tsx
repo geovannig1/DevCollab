@@ -178,9 +178,9 @@ const DetailTask: React.FC<DetailTaskProps> = ({
   };
 
   //Get the signed in user data
-  const signedInMember = selectedProject?.members.filter(
+  const signedInMember = selectedProject?.members.find(
     (member) => member.user._id === user?._id
-  )[0];
+  );
 
   return (
     <Fragment>
