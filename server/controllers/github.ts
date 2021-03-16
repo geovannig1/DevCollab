@@ -209,6 +209,10 @@ export const getRepositories = async (req: Request, res: Response) => {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
+    if (!project.githubAccessToken) {
+      return res.status(404).json({ msg: 'Access token not found' });
+    }
+
     //Request github api repos using octokit
     const response = await request('GET /user/repos', {
       headers: {
@@ -236,6 +240,10 @@ export const getRepository = async (req: Request, res: Response) => {
     const permission = userExist(project, req.user);
     if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    if (!project.githubAccessToken) {
+      return res.status(404).json({ msg: 'Access token not found' });
     }
 
     //Get the user account
@@ -281,6 +289,10 @@ export const storeRepository = async (req: Request, res: Response) => {
     const permission = existAdmin(project, req.user);
     if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    if (!project.githubAccessToken) {
+      return res.status(404).json({ msg: 'Access token not found' });
     }
 
     const { repositoryName } = req.body;
@@ -338,6 +350,10 @@ export const getCommits = async (req: Request, res: Response) => {
       return res.status(401).json({ msg: 'Unauthorized user' });
     }
 
+    if (!project.githubAccessToken) {
+      return res.status(404).json({ msg: 'Access token not found' });
+    }
+
     const github = await Github.findOne({ project: req.params.projectId });
 
     if (!github) {
@@ -386,6 +402,10 @@ export const getPulls = async (req: Request, res: Response) => {
     const permission = userExist(project, req.user);
     if (!permission) {
       return res.status(401).json({ msg: 'Unauthorized user' });
+    }
+
+    if (!project.githubAccessToken) {
+      return res.status(404).json({ msg: 'Access token not found' });
     }
 
     const github = await Github.findOne({ project: req.params.projectId });
