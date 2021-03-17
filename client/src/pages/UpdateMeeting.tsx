@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, Redirect, useHistory } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { History } from 'history';
 
 import { Store } from '../store';
@@ -70,7 +70,7 @@ const UpdateMeeting: React.FC<UpdateMeetingProps> = ({
     loadMeeting(projectId, meetingId);
     setFullscreen(false);
 
-    projectError && <Redirect to='/projects' />;
+    projectError && history.push('/projects');
 
     return () => {
       clearNavbar();
@@ -80,6 +80,7 @@ const UpdateMeeting: React.FC<UpdateMeetingProps> = ({
   }, [
     loadProject,
     projectId,
+    history,
     selectedProject,
     projectError,
     setNavbar,

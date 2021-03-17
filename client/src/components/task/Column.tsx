@@ -93,6 +93,7 @@ const Column: React.FC<ColumnProps> = ({
                   tasks={tasks}
                   columnId={column.id}
                   signedInMember={signedInMember}
+                  selectedProject={selectedProject}
                 />
                 {provided.placeholder}
                 {signedInMember?.accessPermission !==

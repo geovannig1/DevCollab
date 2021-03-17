@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, Redirect } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { setColor, setRem } from '../styles';
@@ -41,13 +41,14 @@ const Activity: React.FC<ActivityProps> = ({
   activity: { activity },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
+  const history = useHistory();
 
   useEffect(() => {
     document.title = 'Activity | DevCollab';
     setNavbar(SelectedType.Activity);
 
     !selectedProject && loadProject(projectId);
-    projectError && <Redirect to='/projects' />;
+    projectError && history.push('/projects');
 
     return () => clearNavbar();
   }, [
@@ -57,6 +58,7 @@ const Activity: React.FC<ActivityProps> = ({
     projectError,
     setNavbar,
     clearNavbar,
+    history,
   ]);
 
   const userNotif = activity?.notifications?.find(
@@ -64,7 +66,7 @@ const Activity: React.FC<ActivityProps> = ({
   );
 
   useEffect(() => {
-    if (userNotif) {
+    if ((userNotif?.totalNotifications ?? 0) > 0) {
       removeNotification(projectId);
     }
   }, [projectId, removeNotification, activity, userNotif]);

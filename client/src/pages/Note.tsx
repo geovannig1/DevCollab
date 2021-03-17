@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, Redirect } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Store } from '../store';
@@ -38,13 +38,14 @@ const Note: React.FC<NoteProps> = ({
     projectId: string;
     noteId: string;
   }>();
+  const history = useHistory();
 
   useEffect(() => {
     document.title = 'Note | DevCollab';
     setNavbar(SelectedType.Notes);
 
     !selectedProject && loadProject(projectId);
-    projectError && <Redirect to='/projects' />;
+    projectError && history.push('/projects');
 
     return () => {
       clearNavbar();
@@ -53,6 +54,7 @@ const Note: React.FC<NoteProps> = ({
   }, [
     loadProject,
     projectId,
+    history,
     selectedProject,
     projectError,
     setNavbar,

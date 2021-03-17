@@ -10,7 +10,7 @@ import avatar from '../../assets/profile-picture.png';
 import { Member } from '../../actions/taskTypes';
 import Avatar from '../global/Avatar';
 import AccessAlarmsIcon from '@material-ui/icons/AccessAlarms';
-import { AccessPermission } from '../../actions/projectTypes';
+import { AccessPermission, ProjectType } from '../../actions/projectTypes';
 import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
 
 interface TaskProps {
@@ -25,6 +25,7 @@ interface TaskProps {
   index: number;
   columnId: string;
   signedInMember?: Member;
+  selectedProject?: ProjectType;
 }
 
 const Task: React.FC<TaskProps> = ({
@@ -32,8 +33,17 @@ const Task: React.FC<TaskProps> = ({
   index,
   columnId,
   signedInMember,
+  selectedProject,
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
+
+  //Find members that exist in the project
+  const projectMembersId = selectedProject?.members.map(
+    (member) => member.user._id
+  );
+  const members = task.members.filter((member) =>
+    projectMembersId?.includes(member.user._id)
+  );
 
   return (
     <Draggable draggableId={task.id} index={index}>
@@ -66,7 +76,7 @@ const Task: React.FC<TaskProps> = ({
               </DateCommentContainer>
 
               <AvatarContainer>
-                {task.members.map((member) => (
+                {members.map((member) => (
                   <Avatar
                     key={member.user._id}
                     src={member.user.avatar?.url ?? avatar}

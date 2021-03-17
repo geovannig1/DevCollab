@@ -5,6 +5,7 @@ import {
   ACTIVITY_RECEIVED,
   ACTIVITY_FAIL,
   NOTIFICATION_REMOVED,
+  CLEAR_ACTIVITY,
   ActivityDispatchTypes,
   ActivityTypes,
 } from './activityTypes';
@@ -47,4 +48,11 @@ export const removeNotification = (projectId: string) => async (
       payload: { msg: err.response.statusText, status: err.response.status },
     });
   }
+};
+
+//Clear all activities
+export const clearActivity = () => (
+  dispatch: Dispatch<ActivityDispatchTypes>
+) => {
+  dispatch({ type: CLEAR_ACTIVITY });
 };

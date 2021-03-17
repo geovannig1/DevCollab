@@ -45,7 +45,12 @@ const projectReducer = (
           }),
       };
     case PROJECT_CLEAR:
-      return {};
+      return {
+        ...state,
+        projects: undefined,
+        selectedProject: undefined,
+        projectError: undefined,
+      };
     case PROJECT_DELETED:
       return {
         ...state,

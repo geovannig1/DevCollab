@@ -3,7 +3,7 @@ const router = express.Router();
 
 import auth from '../../middlewares/auth';
 import checkObjectId from '../../middlewares/checkObjectId';
-import { getActivity, removeNotification } from '../../controllers/activity';
+import { getActivity, resetNotification } from '../../controllers/activity';
 
 /**
  *  @route GET api/projects/:projectId/activities
@@ -26,7 +26,7 @@ router.patch(
   '/:projectId/activities/notification',
   auth,
   checkObjectId('projectId'),
-  removeNotification
+  resetNotification
 );
 
 export default router;

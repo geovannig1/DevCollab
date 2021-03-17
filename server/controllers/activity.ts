@@ -33,8 +33,8 @@ export const getActivity = async (req: Request, res: Response) => {
   }
 };
 
-//Remove user activity notification
-export const removeNotification = async (req: Request, res: Response) => {
+//Reset user activity notification
+export const resetNotification = async (req: Request, res: Response) => {
   try {
     const project = await Project.findById(req.params.projectId);
 
@@ -56,8 +56,14 @@ export const removeNotification = async (req: Request, res: Response) => {
       return res.status(404).json({ msg: 'Activity not found' });
     }
 
-    const userNotification = activity.notifications?.filter(
-      (notification) => notification.user.toString() !== req.user
+    const userNotification = activity.notifications?.map((notification) =>
+      notification.user.toString() === req.user
+        ? {
+            _id: notification._id,
+            user: notification.user,
+            totalNotifications: (notification.totalNotifications = 0),
+          }
+        : notification
     );
 
     activity.notifications = userNotification;

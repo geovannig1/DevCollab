@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, Redirect, Link, useHistory } from 'react-router-dom';
+import { useParams, Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { History } from 'history';
 
@@ -60,12 +60,13 @@ const GithubConnection: React.FC<GithubConnectionProps> = ({
     setNavbar(SelectedType.Github);
 
     !selectedProject && loadProject(projectId);
-    projectError && <Redirect to='/projects' />;
+    projectError && history.push('/projects');
 
     return () => clearNavbar();
   }, [
     loadProject,
     projectId,
+    history,
     selectedProject,
     projectError,
     setNavbar,

@@ -9,7 +9,7 @@ export enum Avatar {
   file,
 }
 
-interface IActivity extends Document {
+export interface IActivity extends Document {
   project: string;
   messages: {
     _id?: number;
@@ -19,6 +19,7 @@ interface IActivity extends Document {
     message: string;
   }[];
   notifications?: {
+    _id?: string;
     user: string;
     totalNotifications: number;
   }[];

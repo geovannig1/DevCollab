@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, Redirect, useHistory } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import dayjs from 'dayjs';
 
 import { Store } from '../store';
@@ -111,12 +111,13 @@ const DetailTask: React.FC<DetailTaskProps> = ({
   useEffect(() => {
     document.title = 'Detail Task | DevCollab';
     !selectedProject && loadProject(projectId);
-    projectError && <Redirect to='/projects' />;
+    projectError && history.push('/projects');
 
     setNavbar(SelectedType.Task);
     return () => clearNavbar();
   }, [
     setNavbar,
+    history,
     clearNavbar,
     loadProject,
     projectError,

@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
-import { useParams, Redirect, Link } from 'react-router-dom';
+import { useParams, useHistory, Link } from 'react-router-dom';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { Store } from '../store';
@@ -37,18 +37,20 @@ const Discussions: React.FC<DiscussionsProps> = ({
   loadDiscussions,
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
+  const history = useHistory();
 
   useEffect(() => {
     document.title = 'Discussions | DevCollab';
     setNavbar(SelectedType.Discussions);
 
     !selectedProject && loadProject(projectId);
-    projectError && <Redirect to='/projects' />;
+    projectError && history.push('/projects');
 
     return () => clearNavbar();
   }, [
     loadProject,
     projectId,
+    history,
     selectedProject,
     projectError,
     setNavbar,

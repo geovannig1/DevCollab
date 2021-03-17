@@ -36,6 +36,7 @@ import { clearNote } from './noteActions';
 import { clearFile } from './fileActions';
 import { clearTask } from './taskActions';
 import { clearGithub } from './githubActions';
+import { clearActivity } from './activityActions';
 
 //Load User
 export const loadUser = () => async (
@@ -125,6 +126,7 @@ export const signOut = () => async (
     dispatch(clearFile());
     dispatch(clearTask());
     dispatch(clearGithub());
+    dispatch(clearActivity());
 
     dispatch({ type: REMOVE_LOADING });
     dispatch({ type: LOGOUT_SUCCESS });

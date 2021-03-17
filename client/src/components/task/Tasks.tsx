@@ -2,6 +2,7 @@ import React, { Fragment, memo } from 'react';
 
 import Task from './Task';
 import { Member } from '../../actions/taskTypes';
+import { ProjectType } from '../../actions/projectTypes';
 
 interface TasksProps {
   tasks: {
@@ -14,9 +15,15 @@ interface TasksProps {
   }[];
   columnId: string;
   signedInMember?: Member;
+  selectedProject?: ProjectType;
 }
 
-const Tasks: React.FC<TasksProps> = ({ tasks, columnId, signedInMember }) => {
+const Tasks: React.FC<TasksProps> = ({
+  tasks,
+  columnId,
+  signedInMember,
+  selectedProject,
+}) => {
   return (
     <Fragment>
       {tasks.map((task, index) => (
@@ -26,6 +33,7 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, signedInMember }) => {
           index={index}
           columnId={columnId}
           signedInMember={signedInMember}
+          selectedProject={selectedProject}
         />
       ))}
     </Fragment>

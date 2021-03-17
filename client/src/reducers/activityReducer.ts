@@ -3,6 +3,7 @@ import {
   ACTIVITY_FAIL,
   ACTIVITY_RECEIVED,
   NOTIFICATION_REMOVED,
+  CLEAR_ACTIVITY,
   ActivityDispatchTypes,
   ActivityTypes,
 } from '../actions/activityTypes';
@@ -27,6 +28,8 @@ const activityReducer = (
       return { ...state, activity: action.payload };
     case ACTIVITY_FAIL:
       return { ...state, activityError: action.payload };
+    case CLEAR_ACTIVITY:
+      return { ...state, activity: undefined, activityError: undefined };
     default:
       return state;
   }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AnyAction } from 'redux';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, Link, Redirect, useHistory } from 'react-router-dom';
+import { useParams, Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
 import socket from '../utils/socketio';
@@ -22,11 +22,13 @@ import { Button } from '../components/global/Button';
 import { TaskData } from '../actions/taskTypes';
 import SelectMembers from '../components/global/SelectMembers';
 import { AuthInitialState } from '../reducers/authReducer';
+import { loadTaskState } from '../actions/taskActions';
 
 interface CreateTaskProps {
   setNavbar: (selected: SelectedType) => void;
   loadProject: (projectId: string) => Promise<void>;
   clearNavbar: () => void;
+  loadTaskState: (projectId: string) => Promise<void>;
   project: ProjectInitialState;
   auth: AuthInitialState;
 }
@@ -35,6 +37,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({
   setNavbar,
   clearNavbar,
   loadProject,
+  loadTaskState,
   project: { selectedProject, projectError },
   auth: { user },
 }) => {
@@ -47,12 +50,13 @@ const CreateTask: React.FC<CreateTaskProps> = ({
   useEffect(() => {
     document.title = 'Create Task | DevCollab';
     !selectedProject && loadProject(projectId);
-    projectError && <Redirect to='/projects' />;
+    projectError && history.push('/projects');
 
     setNavbar(SelectedType.Task);
     return () => clearNavbar();
   }, [
     setNavbar,
+    history,
     clearNavbar,
     loadProject,
     projectError,
@@ -79,6 +83,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     socket.emit('create task', {
       projectId: selectedProject?._id,
       columnId,
@@ -100,6 +105,9 @@ const CreateTask: React.FC<CreateTaskProps> = ({
         userId: user?._id,
       });
     }
+
+    //Load calendar task state
+    loadTaskState(projectId);
   };
 
   return (
@@ -175,6 +183,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   clearNavbar: () => dispatch(clearNavbar()),
   setNavbar: (selected: SelectedType) => dispatch(setNavbar(selected)),
   loadProject: (projectId: string) => dispatch(loadProject(projectId)),
+  loadTaskState: (projectId: string) => dispatch(loadTaskState(projectId)),
 });
 
 const StyledButton = styled(Button)`

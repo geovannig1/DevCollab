@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Redirect, useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { History } from 'history';
@@ -63,7 +63,7 @@ const UpdateDiscussion: React.FC<UpdateDiscussionProps> = ({
     setNavbar(SelectedType.Discussions);
 
     !selectedProject && loadProject(projectId);
-    projectError && <Redirect to='/projects' />;
+    projectError && history.push('/projects');
 
     return () => {
       clearNavbar();
@@ -72,6 +72,7 @@ const UpdateDiscussion: React.FC<UpdateDiscussionProps> = ({
   }, [
     loadProject,
     projectId,
+    history,
     selectedProject,
     projectError,
     setNavbar,

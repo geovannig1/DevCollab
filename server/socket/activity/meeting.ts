@@ -3,6 +3,7 @@ import { Server, Socket } from 'socket.io';
 import Activity, { Avatar } from '../../models/Activity';
 import Project from '../../models/Project';
 import User from '../../models/User';
+import addNotification from '../../services/addNotification';
 
 export default (io: Server, socket: Socket) => {
   socket.on('create activity meeting', async (data) => {
@@ -17,9 +18,7 @@ export default (io: Server, socket: Socket) => {
 
       //Find project members except logged in user
       const project = await Project.findById(data.projectId);
-      const userProject = project?.members
-        .map((member) => member.user)
-        .filter((member) => member?.toString() !== data.userId);
+      const userProject = project?.members.map((member) => member.user);
 
       if (activity) {
         activity.messages.push({
@@ -31,21 +30,7 @@ export default (io: Server, socket: Socket) => {
         });
 
         //Add notification
-        userProject?.map((user, index) => {
-          if (
-            user &&
-            (!activity.notifications || !activity.notifications[index]?.user)
-          ) {
-            activity.notifications?.push({ user: user, totalNotifications: 1 });
-          } else if (
-            activity.notifications &&
-            activity.notifications[index]?.user
-          ) {
-            activity.notifications[index].totalNotifications =
-              activity.notifications[index].totalNotifications + 1;
-          }
-          return activity.notifications;
-        });
+        addNotification(activity, data, userProject);
 
         await activity.save();
         io.in(data.projectId).emit('receive activity message', activity);
@@ -63,9 +48,7 @@ export default (io: Server, socket: Socket) => {
 
       //Find project members except logged in user
       const project = await Project.findById(data.projectId);
-      const userProject = project?.members
-        .map((member) => member.user)
-        .filter((member) => member?.toString() !== data.userId);
+      const userProject = project?.members.map((member) => member.user);
 
       if (activity) {
         activity.messages.push({
@@ -75,21 +58,7 @@ export default (io: Server, socket: Socket) => {
         });
 
         //Add notification
-        userProject?.map((user, index) => {
-          if (
-            user &&
-            (!activity.notifications || !activity.notifications[index]?.user)
-          ) {
-            activity.notifications?.push({ user: user, totalNotifications: 1 });
-          } else if (
-            activity.notifications &&
-            activity.notifications[index]?.user
-          ) {
-            activity.notifications[index].totalNotifications =
-              activity.notifications[index].totalNotifications + 1;
-          }
-          return activity.notifications;
-        });
+        addNotification(activity, data, userProject);
 
         await activity.save();
         io.in(data.projectId).emit('receive activity message', activity);
@@ -107,9 +76,7 @@ export default (io: Server, socket: Socket) => {
 
       //Find project members except logged in user
       const project = await Project.findById(data.projectId);
-      const userProject = project?.members
-        .map((member) => member.user)
-        .filter((member) => member?.toString() !== data.userId);
+      const userProject = project?.members.map((member) => member.user);
 
       if (activity) {
         activity.messages.push({
@@ -119,21 +86,7 @@ export default (io: Server, socket: Socket) => {
         });
 
         //Add notification
-        userProject?.map((user, index) => {
-          if (
-            user &&
-            (!activity.notifications || !activity.notifications[index]?.user)
-          ) {
-            activity.notifications?.push({ user: user, totalNotifications: 1 });
-          } else if (
-            activity.notifications &&
-            activity.notifications[index]?.user
-          ) {
-            activity.notifications[index].totalNotifications =
-              activity.notifications[index].totalNotifications + 1;
-          }
-          return activity.notifications;
-        });
+        addNotification(activity, data, userProject);
 
         await activity.save();
         io.in(data.projectId).emit('receive activity message', activity);

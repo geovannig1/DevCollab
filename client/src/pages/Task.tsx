@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import styled from 'styled-components';
-import { useParams, Redirect, useLocation } from 'react-router-dom';
+import { useParams, useHistory, useLocation } from 'react-router-dom';
 import { DragDropContext, DropResult, Droppable } from 'react-beautiful-dnd';
 
 import { loadProject } from '../actions/projectActions';
@@ -44,17 +44,19 @@ const Task: React.FC<TaskProps> = ({
     fromCreateTask?: boolean;
     createTaskProgress?: boolean;
   }>();
+  const history = useHistory();
 
   useEffect(() => {
     document.title = 'Tasks | DevCollab';
     !selectedProject && loadProject(projectId);
-    projectError && <Redirect to='/projects' />;
+    projectError && history.push('/projects');
 
     setNavbar(SelectedType.Task);
     return () => clearNavbar();
   }, [
     setNavbar,
     clearNavbar,
+    history,
     loadProject,
     projectError,
     projectId,
@@ -107,8 +109,12 @@ const Task: React.FC<TaskProps> = ({
     socket.on('new task update', (data: InitialTaskState) => {
       setTaskState(data);
       setProgress(false);
+
       if (location.state?.createTaskProgress)
         location.state.createTaskProgress = false;
+
+      //Load calendar task state
+      loadTaskState(projectId);
     });
 
     //Listen to updated column move

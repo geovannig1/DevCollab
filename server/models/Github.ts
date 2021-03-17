@@ -41,7 +41,10 @@ const githubSchema = new Schema<IGithub>({
   ],
   totalNewPull: [
     {
-      user: { type: Schema.Types.ObjectId, ref: 'User' },
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
       pull: {
         type: Number,
         default: 0,

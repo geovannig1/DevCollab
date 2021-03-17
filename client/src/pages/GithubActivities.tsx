@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useParams, Redirect, Link } from 'react-router-dom';
+import { useParams, useHistory, Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Store } from '../store';
@@ -40,18 +40,20 @@ const GithubActivities: React.FC<GithubActivitiesProps> = ({
   github: { commitEvent, pullEvent },
 }) => {
   const { projectId } = useParams<{ projectId: string }>();
+  const history = useHistory();
 
   useEffect(() => {
     document.title = 'GitHub Activity | DevCollab';
     setNavbar(SelectedType.Github);
 
     !selectedProject && loadProject(projectId);
-    projectError && <Redirect to='/projects' />;
+    projectError && history.push('/projects');
 
     return () => clearNavbar();
   }, [
     loadProject,
     projectId,
+    history,
     selectedProject,
     projectError,
     setNavbar,

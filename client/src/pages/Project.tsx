@@ -6,17 +6,36 @@ import { AnyAction } from 'redux';
 import { Link } from 'react-router-dom';
 
 import { Store } from '../store';
-import { loadProjects, deleteProject } from '../actions/projectActions';
+import {
+  loadProjects,
+  deleteProject,
+  clearProject,
+} from '../actions/projectActions';
 import { ProjectInitialState } from '../reducers/projectReducer';
 import AddIcon from '@material-ui/icons/Add';
 import { Button } from '../components/global/Button';
 import Card from '../components/global/Card';
 import { setColor } from '../styles';
 import { AuthInitialState } from '../reducers/authReducer';
+import { clearActivity } from '../actions/activityActions';
+import { clearGithub } from '../actions/githubActions';
+import { clearNote } from '../actions/noteActions';
+import { clearFile } from '../actions/fileActions';
+import { clearDiscussion } from '../actions/discussionActions';
+import { clearMeeting } from '../actions/meetingActions';
+import { clearTask } from '../actions/taskActions';
 
 interface ProjectProps {
   loadProjects: () => Promise<void>;
   deleteProject: (projectId: string) => Promise<void>;
+  clearProject: () => void;
+  clearGithub: () => void;
+  clearActivity: () => void;
+  clearMeeting: () => void;
+  clearNote: () => void;
+  clearFile: () => void;
+  clearDiscussion: () => void;
+  clearTask: () => void;
   project: ProjectInitialState;
   auth: AuthInitialState;
 }
@@ -24,6 +43,14 @@ interface ProjectProps {
 const Project: React.FC<ProjectProps> = ({
   loadProjects,
   deleteProject,
+  clearProject,
+  clearActivity,
+  clearGithub,
+  clearMeeting,
+  clearNote,
+  clearFile,
+  clearDiscussion,
+  clearTask,
   project: { projects },
   auth: { user },
 }) => {
@@ -31,8 +58,30 @@ const Project: React.FC<ProjectProps> = ({
     document.title = 'Projects | DevCollab';
 
     //Only load if project undefined
-    !projects && loadProjects();
-  }, [projects, loadProjects]);
+    if (!projects) {
+      clearProject();
+      clearActivity();
+      clearGithub();
+      clearMeeting();
+      clearNote();
+      clearFile();
+      clearDiscussion();
+      clearTask();
+
+      loadProjects();
+    }
+  }, [
+    projects,
+    loadProjects,
+    clearProject,
+    clearActivity,
+    clearGithub,
+    clearMeeting,
+    clearNote,
+    clearFile,
+    clearDiscussion,
+    clearTask,
+  ]);
 
   return (
     <Fragment>
@@ -70,6 +119,14 @@ const mapStateToProps = (state: Store) => ({
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   loadProjects: () => dispatch(loadProjects()),
   deleteProject: (projectId: string) => dispatch(deleteProject(projectId)),
+  clearProject: () => dispatch(clearProject()),
+  clearActivity: () => dispatch(clearActivity()),
+  clearGithub: () => dispatch(clearGithub()),
+  clearMeeting: () => dispatch(clearMeeting()),
+  clearNote: () => dispatch(clearNote()),
+  clearFile: () => dispatch(clearFile()),
+  clearDiscussion: () => dispatch(clearDiscussion()),
+  clearTask: () => dispatch(clearTask()),
 });
 
 const H1 = styled.h1`
