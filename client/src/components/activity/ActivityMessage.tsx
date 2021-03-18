@@ -11,11 +11,11 @@ import AlertDialog from '../global/AlertDialog';
 import { ActivityAvatar, Message } from '../../actions/activityTypes';
 import { UserType } from '../../actions/authTypes';
 import socket from '../../utils/socketio';
-import discussionActivity from '../../assets/discussionActivity.png';
-import meetingActivity from '../../assets/meetingActivity.png';
-import noteActivity from '../../assets/noteActivity.png';
-import fileActivity from '../../assets/fileActivity.png';
-import taskActivity from '../../assets/taskActivity.png';
+import discussionActivity from '../../assets/discussionActivity.svg';
+import meetingActivity from '../../assets/meetingActivity.svg';
+import noteActivity from '../../assets/noteActivity.svg';
+import fileActivity from '../../assets/fileActivity.svg';
+import taskActivity from '../../assets/taskActivity.svg';
 
 interface ActivityMessageProps {
   projectId: string;
