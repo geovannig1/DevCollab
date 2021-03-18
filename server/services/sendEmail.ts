@@ -19,7 +19,9 @@ export default (
       },
     };
 
-    const token = jwt.sign(payload, process.env.JWT_NODEMAILER_SECRET!);
+    const token = jwt.sign(payload, process.env.JWT_NODEMAILER_SECRET!, {
+      expiresIn: '1d',
+    });
 
     let url: string;
     if (process.env.NODE_ENV === 'production') {

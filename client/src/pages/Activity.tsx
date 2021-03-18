@@ -75,7 +75,12 @@ const Activity: React.FC<ActivityProps> = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (message.trim().length > 0) {
-      socket.emit('send activity message', { projectId, user, message });
+      socket.emit('send activity message', {
+        projectId,
+        user,
+        message,
+        userId: user?._id,
+      });
       setMessage('');
     }
   };
@@ -85,7 +90,12 @@ const Activity: React.FC<ActivityProps> = ({
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       if (message.trim().length > 0) {
-        socket.emit('send activity message', { projectId, user, message });
+        socket.emit('send activity message', {
+          projectId,
+          user,
+          message,
+          userId: user?._id,
+        });
         setMessage('');
       }
     }

@@ -9,7 +9,7 @@ export default (io: Server, socket: Socket) => {
     try {
       let activity = await Activity.findOne({ project: data.projectId });
 
-      //Find project members except logged in user
+      //Find project members
       const project = await Project.findById(data.projectId);
       const userProject = project?.members.map((member) => member.user);
 

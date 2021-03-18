@@ -7,27 +7,32 @@ import addNotification from '../../services/addNotification';
 export default (io: Server, socket: Socket) => {
   socket.on('create activity file', async (data) => {
     try {
-      const activity = await Activity.findOne({
+      let activity = await Activity.findOne({
         project: data.projectId,
       }).populate('messages.user', ['firstName', 'lastName', 'avatar']);
 
-      //Find project members except logged in user
+      //Find project members
       const project = await Project.findById(data.projectId);
       const userProject = project?.members.map((member) => member.user);
 
-      if (activity) {
-        activity.messages.push({
-          avatar: Avatar.file,
-          name: 'File',
-          message: `**${data.userName.trim()}** created **${data.fileName.trim()}** file`,
+      if (!activity) {
+        activity = await Activity.create({
+          project: data.projectId,
+          messages: [],
         });
-
-        //Add notification
-        addNotification(activity, data, userProject);
-
-        await activity.save();
-        io.in(data.projectId).emit('receive activity message', activity);
       }
+
+      activity.messages.push({
+        avatar: Avatar.file,
+        name: 'File',
+        message: `**${data.userName.trim()}** created **${data.fileName.trim()}** file`,
+      });
+
+      //Add notification
+      addNotification(activity, data, userProject);
+
+      await activity.save();
+      io.in(data.projectId).emit('receive activity message', activity);
     } catch (err) {
       console.error(err);
     }
@@ -35,27 +40,32 @@ export default (io: Server, socket: Socket) => {
 
   socket.on('update activity file', async (data) => {
     try {
-      const activity = await Activity.findOne({
+      let activity = await Activity.findOne({
         project: data.projectId,
       }).populate('messages.user', ['firstName', 'lastName', 'avatar']);
 
-      //Find project members except logged in user
+      //Find project members
       const project = await Project.findById(data.projectId);
       const userProject = project?.members.map((member) => member.user);
 
-      if (activity) {
-        activity.messages.push({
-          avatar: Avatar.file,
-          name: 'File',
-          message: `**${data.userName.trim()}** updated **${data.fileName.trim()}** file`,
+      if (!activity) {
+        activity = await Activity.create({
+          project: data.projectId,
+          messages: [],
         });
-
-        //Add notification
-        addNotification(activity, data, userProject);
-
-        await activity.save();
-        io.in(data.projectId).emit('receive activity message', activity);
       }
+
+      activity.messages.push({
+        avatar: Avatar.file,
+        name: 'File',
+        message: `**${data.userName.trim()}** updated **${data.fileName.trim()}** file`,
+      });
+
+      //Add notification
+      addNotification(activity, data, userProject);
+
+      await activity.save();
+      io.in(data.projectId).emit('receive activity message', activity);
     } catch (err) {
       console.error(err);
     }
@@ -63,27 +73,32 @@ export default (io: Server, socket: Socket) => {
 
   socket.on('delete activity file', async (data) => {
     try {
-      const activity = await Activity.findOne({
+      let activity = await Activity.findOne({
         project: data.projectId,
       }).populate('messages.user', ['firstName', 'lastName', 'avatar']);
 
-      //Find project members except logged in user
+      //Find project members
       const project = await Project.findById(data.projectId);
       const userProject = project?.members.map((member) => member.user);
 
-      if (activity) {
-        activity.messages.push({
-          avatar: Avatar.file,
-          name: 'File',
-          message: `**${data.userName.trim()}** deleted **${data.fileName.trim()}** file`,
+      if (!activity) {
+        activity = await Activity.create({
+          project: data.projectId,
+          messages: [],
         });
-
-        //Add notification
-        addNotification(activity, data, userProject);
-
-        await activity.save();
-        io.in(data.projectId).emit('receive activity message', activity);
       }
+
+      activity.messages.push({
+        avatar: Avatar.file,
+        name: 'File',
+        message: `**${data.userName.trim()}** deleted **${data.fileName.trim()}** file`,
+      });
+
+      //Add notification
+      addNotification(activity, data, userProject);
+
+      await activity.save();
+      io.in(data.projectId).emit('receive activity message', activity);
     } catch (err) {
       console.error(err);
     }

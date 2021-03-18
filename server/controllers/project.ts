@@ -287,11 +287,10 @@ export const confirmInvitation = async (req: Request, res: Response) => {
     if (user?.id) {
       //Check if invited member already in the project
       const userExist = project?.members.filter(
-        (member) => member.user === user.id
+        (member) => member.user?.toString() === user._id.toString()
       );
-
       if (userExist && userExist.length > 0) {
-        return res.status(400).json({ msg: 'User already in the project' });
+        return res.status(400).redirect('/');
       }
 
       project?.members.push({
@@ -313,6 +312,6 @@ export const confirmInvitation = async (req: Request, res: Response) => {
     res.status(200).redirect(`/projects/${member.projectId}/activity`);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server error');
+    res.status(400).redirect('/');
   }
 };
