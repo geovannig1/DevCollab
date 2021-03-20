@@ -37,3 +37,17 @@ export const setShadow = {
   hover: '3px 6px 3px 0px rgba(126, 126, 126, 0.25)',
   light: '2px 4px 8px 0px rgba(126, 126, 126, 0.25)',
 };
+
+const sizes = {
+  lg: '1436px',
+  md: '1250px',
+  sm: '800px',
+  xs: '566px',
+};
+
+export const media = {
+  lg: `(max-width: ${sizes.lg})`,
+  md: `(max-width: ${sizes.md})`,
+  sm: `(max-width: ${sizes.sm})`,
+  xs: `(max-width: ${sizes.xs})`,
+};

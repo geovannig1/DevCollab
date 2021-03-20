@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { Redirect } from 'react-router-dom';
 
-import { setColor } from '../styles';
+import { media, setColor } from '../styles';
 import { Button } from '../components/global/Button';
 import BaseAuth from '../components/auth/BaseAuth';
 import { Store } from '../store';
@@ -106,6 +106,10 @@ const Container = styled.div`
     outline: none;
     &:focus {
       border-color: ${setColor.primary};
+    }
+
+    @media ${media.sm} {
+      width: 80vw;
     }
   }
   label {

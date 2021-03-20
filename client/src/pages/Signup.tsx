@@ -7,7 +7,7 @@ import { Redirect } from 'react-router-dom';
 
 import BaseAuth from '../components/auth/BaseAuth';
 import { Button } from '../components/global/Button';
-import { setColor } from '../styles';
+import { media, setColor } from '../styles';
 import { signUp } from '../actions/authActions';
 import { SignUpData } from '../actions/authTypes';
 import { Store } from '../store';
@@ -153,7 +153,12 @@ const Container = styled.div`
     &:focus {
       border-color: ${setColor.primary};
     }
+
+    @media ${media.sm} {
+      width: 80vw;
+    }
   }
+
   label {
     font-weight: 500;
     margin-bottom: 5px;
@@ -162,6 +167,10 @@ const Container = styled.div`
 
 const InputContainer = styled.div`
   display: flex;
+
+  @media ${media.sm} {
+    flex-direction: column;
+  }
 `;
 
 const Item = styled.div`

@@ -15,7 +15,7 @@ import { ProjectInitialState } from '../reducers/projectReducer';
 import AddIcon from '@material-ui/icons/Add';
 import { Button } from '../components/global/Button';
 import Card from '../components/global/Card';
-import { setColor } from '../styles';
+import { setColor, media } from '../styles';
 import { AuthInitialState } from '../reducers/authReducer';
 import { clearActivity } from '../actions/activityActions';
 import { clearGithub } from '../actions/githubActions';
@@ -143,10 +143,21 @@ const ProjectContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 50px 20px;
+
+  @media ${media.lg} {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media ${media.sm} {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media ${media.xs} {
+    grid-template-columns: repeat(1, 1fr);
+  }
 `;
 
 const CardLink = styled.div`
   position: relative;
+  width: 250px;
 `;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Project);

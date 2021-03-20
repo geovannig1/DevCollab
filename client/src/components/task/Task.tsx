@@ -136,6 +136,7 @@ const ContentContainer = styled.div`
   justify-content: space-between;
   span {
     font-weight: 500;
+    white-space: pre-wrap;
   }
 `;
 

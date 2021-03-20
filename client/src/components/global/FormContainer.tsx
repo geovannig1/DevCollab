@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { setColor, setRem } from '../../styles';
+import { media, setColor, setRem } from '../../styles';
 
 export const Form = styled.form`
   word-wrap: break-word;
@@ -31,6 +31,9 @@ export const InputContainer = styled.div<{ width?: string }>`
     &:focus {
       border-color: ${setColor.primary};
     }
+    @media ${media.xs} {
+      width: 200px;
+    }
   }
   textarea {
     border-radius: 5px;
@@ -40,6 +43,9 @@ export const InputContainer = styled.div<{ width?: string }>`
     outline: none;
     &:focus {
       border-color: ${setColor.primary};
+    }
+    @media ${media.xs} {
+      width: 200px;
     }
   }
 `;

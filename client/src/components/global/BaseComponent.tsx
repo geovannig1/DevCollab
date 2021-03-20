@@ -12,6 +12,8 @@ import { ProjectInitialState } from '../../reducers/projectReducer';
 import Navbar from '../global/Navbar';
 import { MeetingInitialState } from '../../reducers/meetingReducer';
 import { DisplayInitialState } from '../../reducers/displayReducer';
+import BottomNavigation from '../global/BottomNavigation';
+import Hidden from '@material-ui/core/Hidden';
 
 interface BaseComponentProps {
   auth: AuthInitialState;
@@ -42,10 +44,17 @@ const BaseComponent: React.FC<BaseComponentProps> = ({
                   </Previous>
                   <Title>{selectedProject.name}</Title>
                 </Header>
-                <Navbar />
+                <Hidden smDown implementation='css'>
+                  <Navbar />
+                </Hidden>
               </Fragment>
             )}
             {children}
+            {selectedProject && (
+              <Hidden mdUp implementation='css'>
+                <BottomNavigation />
+              </Hidden>
+            )}
           </ChildrenContainer>
         </Container>
       ) : (
@@ -70,7 +79,6 @@ const Container = styled.div`
 
 const ChildrenContainer = styled.div`
   padding: 25px 30px;
-  margin-left: 23%;
   width: 100%;
   overflow: hidden;
 `;
@@ -79,6 +87,7 @@ const Header = styled.div`
   color: ${setColor.primary};
   display: flex;
   align-items: center;
+  margin-bottom: 20px;
 `;
 
 const Previous = styled(Link)`

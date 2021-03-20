@@ -1,7 +1,7 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { setRem, setColor, setGradient } from '../../styles';
+import { setRem, setColor, setGradient, media } from '../../styles';
 import { ReactComponent as Monitoring } from '../../assets/monitoring.svg';
 import { ReactComponent as Task } from '../../assets/task.svg';
 import { ReactComponent as Meeting } from '../../assets/meeting.svg';
@@ -12,7 +12,7 @@ const About: React.FC = () => {
   return (
     <Container>
       <Header>
-        <h1>About DevCollab</h1>
+        <h2>About DevCollab</h2>
         <p>Donec finibus eros diam, lacinia dignissim lacus sagittis eget.</p>
       </Header>
       <Features>
@@ -63,23 +63,32 @@ const About: React.FC = () => {
 
 const Container = styled.div`
   min-height: 110vh;
+  min-width: 100%;
   background: ${setGradient(['right', 'bottom'])};
 `;
 
 const Header = styled.div`
   padding: 50px 0;
   text-align: center;
-  h1 {
+  h2 {
     color: ${setColor.mainWhite};
     font-weight: 600;
     font-size: ${setRem(40)};
     margin-bottom: 10px;
+
+    @media ${media.sm} {
+      font-size: ${setRem(30)};
+    }
   }
   p {
     color: ${setColor.mainGrey};
     font-size: ${setRem(20)};
     font-weight: 400;
     margin: 0 35%;
+
+    @media ${media.sm} {
+      margin: 0;
+    }
   }
 `;
 
@@ -94,12 +103,26 @@ const Features = styled.div`
   justify-content: center;
   text-align: center;
   padding-bottom: 50px;
+
+  @media ${media.sm} {
+    grid-template-areas:
+      'monitoring'
+      'discussion'
+      'task'
+      'meeting'
+      'github';
+    grid-template-columns: 1fr;
+  }
 `;
 
 const Item = styled.div`
   margin: 10px 0;
   svg {
     width: 100px;
+
+    @media ${media.sm} {
+      width: 120px;
+    }
   }
   h2 {
     color: ${setColor.mainWhite};
@@ -116,6 +139,10 @@ const Item = styled.div`
   &:nth-child(2) {
     grid-area: discussion;
     padding: 0px 120px;
+
+    @media ${media.sm} {
+      padding: 0;
+    }
   }
   &:nth-child(3) {
     grid-area: task;
@@ -123,10 +150,18 @@ const Item = styled.div`
   &:nth-child(4) {
     grid-area: meeting;
     padding: 0px 120px;
+
+    @media ${media.sm} {
+      padding: 0;
+    }
   }
   &:nth-child(5) {
     grid-area: github;
     padding: 0px 120px;
+
+    @media ${media.sm} {
+      padding: 0;
+    }
   }
 `;
 

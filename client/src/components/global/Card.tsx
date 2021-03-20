@@ -101,6 +101,7 @@ const Title = styled.h4`
   color: ${setColor.mainBlack};
   font-weight: 600;
   margin-bottom: 15px;
+  width: 170px;
 `;
 
 const MenuContainer = styled.div`

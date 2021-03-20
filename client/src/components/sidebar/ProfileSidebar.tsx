@@ -54,13 +54,14 @@ const useStyles = makeStyles(() =>
 
 const Container = styled.div`
   width: 100%;
-  height: 100px;
+  min-height: 100px;
   background: ${setGradient()};
   color: ${setColor.mainWhite};
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
   user-select: none;
+  padding: 0 20px;
 `;
 
 const Img = styled.img`

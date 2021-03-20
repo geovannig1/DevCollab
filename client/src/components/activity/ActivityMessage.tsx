@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import ReactMarkdown from 'react-markdown';
 
-import { setColor, setRem, setShadow } from '../../styles';
+import { media, setColor, setRem, setShadow } from '../../styles';
 import Avatar from '../global/Avatar';
 import AlertDialog from '../global/AlertDialog';
 import { ActivityAvatar, Message } from '../../actions/activityTypes';
@@ -128,8 +128,22 @@ const Text = styled.div`
   align-self: flex-start;
   font-size: ${setRem(15)};
   max-width: 900px;
+  word-wrap: break-word;
   strong {
     font-weight: 600;
+  }
+
+  @media ${media.lg} {
+    max-width: 700px;
+  }
+  @media ${media.md} {
+    max-width: 500px;
+  }
+  @media ${media.sm} {
+    max-width: 300px;
+  }
+  @media ${media.xs} {
+    max-width: 200px;
   }
 `;
 

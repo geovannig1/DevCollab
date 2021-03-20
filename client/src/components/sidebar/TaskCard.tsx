@@ -37,7 +37,7 @@ const Container = styled.div`
   box-shadow: ${setShadow.main};
   transition: 0.2s ease-in-out;
   span {
-    font-weight: 600;
+    font-weight: 500;
   }
 `;
 
@@ -47,8 +47,8 @@ const IconContainer = styled.div`
   align-items: center;
   background-color: ${setColor.primary};
   border-radius: 100%;
-  height: 30px;
-  width: 30px;
+  min-height: 30px;
+  min-width: 30px;
   margin-right: 10px;
 `;
 

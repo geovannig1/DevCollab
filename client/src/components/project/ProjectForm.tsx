@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
 
-import HelpIcon from '@material-ui/icons/Help';
 import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import { setColor, setRem } from '../../styles';
@@ -168,10 +167,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
               </RoundedButton>
             </AddMemberContainer>
           </InputContainer>
-          <label htmlFor='members'>
-            Project Access Permission
-            <HelpIcon fontSize='small' />
-          </label>
+          <label htmlFor='members'>Project Access Permission</label>
 
           <InputContainer id='members'>
             <MemberEmail>{user?.email}</MemberEmail>
@@ -243,7 +239,7 @@ const StyledButton = styled(Button)`
 `;
 
 const Select = styled.select`
-  width: 15vw;
+  width: 200px;
   padding: 5px;
   height: 30px;
   border-radius: 5px;

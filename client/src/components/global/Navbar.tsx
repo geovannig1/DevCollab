@@ -20,16 +20,16 @@ import { SelectedType } from '../../actions/navbarTypes';
 import { ProjectInitialState } from '../../reducers/projectReducer';
 import { AuthInitialState } from '../../reducers/authReducer';
 import { AccessPermission } from '../../actions/projectTypes';
+import { ActivityInitialState } from '../../reducers/activityReducer';
+import { GithubInitialState } from '../../reducers/githubReducer';
 import {
   loadRepo,
   setCommitNotification,
   setPullNotification,
   loadEvents,
 } from '../../actions/githubActions';
-import { GithubInitialState } from '../../reducers/githubReducer';
 import socket from '../../utils/socketio';
 import Badge from '@material-ui/core/Badge';
-import { ActivityInitialState } from '../../reducers/activityReducer';
 import { loadActivity, receiveActivity } from '../../actions/activityActions';
 import { ActivityTypes } from '../../actions/activityTypes';
 
@@ -289,7 +289,7 @@ const Container = styled.nav`
   background-color: ${setColor.mainWhite};
   box-shadow: ${setShadow.main};
   width: 100%;
-  margin: 20px 0;
+  margin-bottom: 20px;
   border-radius: 10px;
 
   ul {

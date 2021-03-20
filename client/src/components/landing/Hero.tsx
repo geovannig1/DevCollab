@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-import { setColor, setRem } from '../../styles';
+import { setColor, setRem, media } from '../../styles';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 import { ReactComponent as CollabVector } from '../../assets/collab-vector.svg';
 import { Button } from '../global/Button';
@@ -43,20 +43,39 @@ const StyledLogo = styled(Logo)`
 const StyledVector = styled(CollabVector)`
   height: 100%;
   width: 1500px;
+
+  @media ${media.sm} {
+    width: 350px;
+  }
 `;
 
 const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 5%;
+  padding: 0 5%;
   min-height: 100vh;
+  min-width: 100%;
+
+  @media ${media.sm} {
+    flex-direction: column-reverse;
+  }
 `;
 
 const LeftContainer = styled.div`
+  @media ${media.sm} {
+    text-align: center;
+  }
+
   h1 {
     color: ${setColor.primary};
     font-size: ${setRem(60)};
+
+    @media ${media.sm} {
+      font-size: ${setRem(45)};
+      text-align: center;
+      margin: 20px 0;
+    }
   }
   p {
     color: ${setColor.primary};
@@ -64,6 +83,11 @@ const LeftContainer = styled.div`
     margin: 20px 0;
     padding-right: 100px;
     font-size: ${setRem(20)};
+
+    @media ${media.sm} {
+      font-size: ${setRem(20)};
+      padding: 0;
+    }
   }
   a:last-child {
     margin: 0 10px;

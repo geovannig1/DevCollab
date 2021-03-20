@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-import { setColor, setRem, setGradient } from '../../styles';
+import { setColor, setRem, setGradient, media } from '../../styles';
 import { ReactComponent as Logo } from '../../assets/logo-white.svg';
 import { ReactComponent as CollaborationVector } from '../../assets/collaboration.svg';
 import ScrollToTop from '../global/ScrollToTop';
@@ -58,6 +58,10 @@ const BaseAuth: React.FC<BaseAuthProps> = ({
 const Container = styled.div`
   display: flex;
   position: relative;
+
+  @media ${media.sm} {
+    flex-direction: column;
+  }
 `;
 
 const LeftContainer = styled.div`
@@ -67,12 +71,27 @@ const LeftContainer = styled.div`
   background: ${setGradient(['left', ''])};
   display: grid;
   position: relative;
+  a {
+    width: 150px;
+    height: 50px;
+  }
+
+  @media ${media.sm} {
+    min-width: 100vw;
+    min-height: 100%;
+  }
 `;
 
 const StyledLogo = styled(Logo)`
   width: 150px;
   margin: 10px 20px;
   position: absolute;
+
+  @media ${media.sm} {
+    width: 100px;
+    margin: 0 20px;
+    height: 100%;
+  }
 `;
 
 const StyledVector = styled(CollaborationVector)`
@@ -80,6 +99,13 @@ const StyledVector = styled(CollaborationVector)`
   justify-self: center;
   position: absolute;
   top: 200px;
+
+  @media ${media.md} {
+    width: 350px;
+  }
+  @media ${media.sm} {
+    display: none;
+  }
 `;
 
 const Content = styled.div`
@@ -92,6 +118,10 @@ const Content = styled.div`
     font-weight: 600;
     font-size: ${setRem(30)};
     margin: 25px 0;
+  }
+
+  @media ${media.sm} {
+    margin-top: 4%;
   }
 `;
 

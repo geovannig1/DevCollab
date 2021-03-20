@@ -286,6 +286,7 @@ const Task: React.FC<TaskProps> = ({
               );
             })}
             {provided.placeholder}
+
             {signedInMember?.accessPermission !== AccessPermission.ReadOnly && (
               <AddListMenu setProgress={setProgress} user={user}>
                 <AddIcon />
@@ -316,7 +317,7 @@ const Container = styled.div<{ cursorProgress: boolean }>`
   white-space: nowrap;
   position: relative;
   overflow-x: auto;
-  margin-top: 30px;
+  margin-top: 15px;
   width: 103%;
   height: 80%;
   background-color: ${setColor.mainGrey};

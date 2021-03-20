@@ -71,7 +71,10 @@ const SelectMembers: React.FC<SelectMembersProps> = ({
       defaultValue={selectData?.map((member: Member) => ({
         label: (
           <LabelContainer style={{ display: 'flex', alignItems: 'center' }}>
-            <Avatar src={member.user.avatar.url ?? avatar} alt='user profile' />
+            <Avatar
+              src={member.user.avatar?.url ?? avatar}
+              alt='user profile'
+            />
             <label>{member.user.email}</label>
           </LabelContainer>
         ),
