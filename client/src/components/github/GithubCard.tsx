@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
-import { setColor, setRem, setShadow } from '../../styles';
+import { media, setColor, setRem, setShadow } from '../../styles';
 import Avatar from '../global/Avatar';
 import avatar from '../../assets/profile-picture.png';
 import MessageOutlinedIcon from '@material-ui/icons/MessageOutlined';
@@ -88,11 +88,26 @@ const Container = styled.a`
 
 const Title = styled.div`
   display: flex;
+  word-wrap: break-word;
   span {
     color: ${setColor.mediumBlack};
     margin-left: 10px;
     font-weight: 400;
     font-size: ${setRem(13)};
+
+    @media ${media.xs} {
+      margin-left: 0;
+      font-size: ${setRem(10)};
+    }
+  }
+
+  h4 {
+    @media ${media.sm} {
+      width: 400px;
+    }
+    @media ${media.xs} {
+      width: 150px;
+    }
   }
 `;
 
@@ -115,6 +130,10 @@ const BottomContainer = styled.div`
     margin-left: 5px;
     font-weight: 400;
     font-size: ${setRem(13)};
+
+    @media ${media.xs} {
+      font-size: ${setRem(9)};
+    }
   }
 `;
 

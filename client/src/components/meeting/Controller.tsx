@@ -1,13 +1,14 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
 
-import { setColor, setRem } from '../../styles';
+import { media, setColor, setRem } from '../../styles';
 import MicIcon from '@material-ui/icons/Mic';
 import MicOffIcon from '@material-ui/icons/MicOff';
 import VideocamIcon from '@material-ui/icons/Videocam';
 import CallIcon from '@material-ui/icons/Call';
 import VideocamOffIcon from '@material-ui/icons/VideocamOff';
 import ScreenShareIcon from '@material-ui/icons/ScreenShare';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 interface ControllerProps {
   projectId: string;
@@ -26,6 +27,8 @@ const Controller: React.FC<ControllerProps> = ({
   setVideo,
   shareScreen,
 }) => {
+  const classes = useStyles();
+
   const handleMute = () => {
     setAudio();
   };
@@ -40,12 +43,12 @@ const Controller: React.FC<ControllerProps> = ({
         <IconContainer onClick={handleMute}>
           {mute ? (
             <Fragment>
-              <MicOffIcon fontSize='large' />
+              <MicOffIcon className={classes.icon} />
               <span>Unmute</span>
             </Fragment>
           ) : (
             <Fragment>
-              <MicIcon fontSize='large' />
+              <MicIcon className={classes.icon} />
               <span>Mute</span>
             </Fragment>
           )}
@@ -53,12 +56,12 @@ const Controller: React.FC<ControllerProps> = ({
         <IconContainer onClick={handleCamera}>
           {cameraDisable ? (
             <Fragment>
-              <VideocamOffIcon fontSize='large' />
+              <VideocamOffIcon className={classes.icon} />
               <span>Start Video</span>
             </Fragment>
           ) : (
             <Fragment>
-              <VideocamIcon fontSize='large' />
+              <VideocamIcon className={classes.icon} />
               <span>Stop Video</span>
             </Fragment>
           )}
@@ -66,19 +69,30 @@ const Controller: React.FC<ControllerProps> = ({
       </LeftContainer>
 
       <IconContainer color={setColor.secondary} onClick={shareScreen}>
-        <ScreenShareIcon fontSize='large' />
+        <ScreenShareIcon className={classes.icon} />
         <span>Share Screen</span>
       </IconContainer>
 
       <StyledLink href={`/projects/${projectId}/meeting-rooms`}>
         <IconContainer color={setColor.mainRed}>
-          <CallIcon fontSize='large' />
+          <CallIcon className={classes.icon} />
           <span>Leave Meeting</span>
         </IconContainer>
       </StyledLink>
     </Container>
   );
 };
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    icon: {
+      fontSize: 30,
+      [theme.breakpoints.down('xs')]: {
+        fontSize: 25,
+      },
+    },
+  })
+);
 
 const Container = styled.div`
   display: flex;
@@ -97,6 +111,7 @@ const LeftContainer = styled.div`
 
 const IconContainer = styled.div<{ color?: string }>`
   display: flex;
+  text-align: center;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -111,9 +126,17 @@ const IconContainer = styled.div<{ color?: string }>`
   span {
     font-weight: 400;
     font-size: ${setRem(14)};
+
+    @media ${media.sm} {
+      font-size: ${setRem(10)};
+    }
   }
   &:hover {
     background-color: ${setColor.mediumBlack};
+  }
+
+  @media ${media.sm} {
+    width: 100px;
   }
 `;
 

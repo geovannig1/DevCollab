@@ -46,6 +46,7 @@ export const InputContainer = styled.div<{ width?: string }>`
     }
     @media ${media.xs} {
       width: 200px;
+      height: 100px;
     }
   }
 `;
@@ -56,6 +57,10 @@ export const FileContainer = styled.div`
   width: 30%;
   input {
     outline: none;
+  }
+
+  @media ${media.sm} {
+    width: 200px;
   }
 `;
 
@@ -71,5 +76,9 @@ export const DateContaiener = styled.div`
     &:focus {
       border-color: ${setColor.primary};
     }
+  }
+
+  @media ${media.sm} {
+    width: 200px;
   }
 `;

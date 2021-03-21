@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { setColor } from '../../styles';
+import { media, setColor } from '../../styles';
 
 export const StyledVideo = styled.video`
   margin: 0 10px;
@@ -36,4 +36,8 @@ export const StyledShareScreen = styled.video`
   position: absolute;
   left: 20px;
   bottom: 80px;
+
+  @media ${media.sm} {
+    height: 20%;
+  }
 `;

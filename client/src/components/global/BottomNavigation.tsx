@@ -75,6 +75,9 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
       case 'files':
         history.push(`/projects/${selectedProject?._id}/files`);
         break;
+      case 'settings':
+        history.push(`/projects/${selectedProject?._id}/edit`);
+        break;
     }
   };
 
@@ -161,7 +164,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             </ListItemIcon>
             <ListItemText primary='Files' />
           </ListItem>
-          <ListItem button>
+          <ListItem button id='settings' onClick={handleSidebarClick}>
             <ListItemIcon>
               <SettingsIcon />
             </ListItemIcon>

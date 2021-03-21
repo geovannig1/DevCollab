@@ -10,6 +10,7 @@ import SelectMembers from '../global/SelectMembers';
 import { ProjectType } from '../../actions/projectTypes';
 import socket from '../../utils/socketio';
 import { UserType } from '../../actions/authTypes';
+import { media } from '../../styles';
 
 interface MeetingFormProps {
   projectId: string;
@@ -122,6 +123,10 @@ const StyledButton = styled(Button)`
 
 const SelectContainer = styled.div`
   width: 45vw;
+
+  @media ${media.sm} {
+    width: 55vw;
+  }
 `;
 
 export default MeetingForm;

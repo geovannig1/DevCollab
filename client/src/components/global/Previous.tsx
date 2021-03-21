@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import { setColor } from '../../styles';
+import { media, setColor } from '../../styles';
 
 interface PreviousProps {
   link: string;
@@ -51,6 +51,15 @@ const Title = styled.h3`
   margin: 0 15px;
   color: ${setColor.mainBlack};
   font-weight: 500;
+  width: 500px;
+  word-wrap: break-word;
+
+  @media ${media.sm} {
+    width: 400px;
+  }
+  @media ${media.xs} {
+    width: 150px;
+  }
 `;
 
 export default Previous;

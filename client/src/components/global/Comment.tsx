@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import ReactMarkdown from 'react-markdown';
 
-import { setColor, setRem, setShadow } from '../../styles';
+import { media, setColor, setRem, setShadow } from '../../styles';
 import avatar from '../../assets/profile-picture.png';
 import Avatar from './Avatar';
 import AlertDialog from './AlertDialog';
@@ -111,6 +111,19 @@ const Text = styled.div`
   background-color: ${setColor.lightGrey};
   box-shadow: ${setShadow.light};
   align-self: flex-start;
+  word-wrap: break-word;
+  @media ${media.lg} {
+    max-width: 700px;
+  }
+  @media ${media.md} {
+    max-width: 500px;
+  }
+  @media ${media.sm} {
+    max-width: 300px;
+  }
+  @media ${media.xs} {
+    max-width: 200px;
+  }
 `;
 
 const DeleteButton = styled.span`

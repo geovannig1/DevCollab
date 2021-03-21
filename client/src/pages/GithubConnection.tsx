@@ -26,6 +26,7 @@ import Autocomplete, {
 import Alert from '../components/global/Alert';
 import { AccessPermission } from '../actions/projectTypes';
 import { AuthInitialState } from '../reducers/authReducer';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 interface GithubConnectionProps {
   loadProject: (projectId: string) => Promise<void>;
@@ -52,6 +53,7 @@ const GithubConnection: React.FC<GithubConnectionProps> = ({
   github: { repos },
   auth: { user },
 }) => {
+  const classes = useStyles();
   const { projectId } = useParams<{ projectId: string }>();
   const history = useHistory();
 
@@ -124,7 +126,7 @@ const GithubConnection: React.FC<GithubConnectionProps> = ({
             id='combo-box-demo'
             options={repos?.map((repo) => repo.name) ?? []}
             getOptionLabel={(option) => option}
-            style={{ width: 300 }}
+            className={classes.autoComplete}
             size='small'
             color={setColor.primary}
             onChange={handleChange}
@@ -168,6 +170,17 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   storeRepo: (projectId: string, repositoryName: string, history: History) =>
     dispatch(storeRepo(projectId, repositoryName, history)),
 });
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    autoComplete: {
+      width: 300,
+      [theme.breakpoints.down('xs')]: {
+        width: 200,
+      },
+    },
+  })
+);
 
 const Container = styled.div`
   margin: 10px 0;

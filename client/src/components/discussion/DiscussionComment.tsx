@@ -121,7 +121,6 @@ const InputComment = styled.div`
   display: flex;
   align-items: center;
   textarea {
-    width: 400px;
     border: 1px solid ${setColor.lightBlack};
     height: 50px;
     outline: none;

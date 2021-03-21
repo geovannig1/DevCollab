@@ -17,6 +17,7 @@ import { loadMeetings } from '../actions/meetingActions';
 import { MeetingInitialState } from '../reducers/meetingReducer';
 import { AuthInitialState } from '../reducers/authReducer';
 import { AccessPermission } from '../actions/projectTypes';
+import { media } from '../styles';
 
 interface MeetingRoomsProps {
   loadProject: (projectId: string) => Promise<void>;
@@ -125,6 +126,16 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 50px 20px;
+
+  @media ${media.lg} {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media ${media.sm} {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media ${media.xs} {
+    grid-template-columns: repeat(1, 1fr);
+  }
 `;
 
 export default connect(mapStateToProps, mapDispatchToProps)(MeetingRooms);

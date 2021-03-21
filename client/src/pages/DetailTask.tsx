@@ -354,14 +354,15 @@ const Input = styled.input`
 `;
 
 const MembersContainer = styled.div`
-  display: flex;
+  display: inline-flex;
   align-items: center;
   background-color: ${setColor.lightGrey};
   margin-bottom: 10px;
   padding: 10px;
-  max-width: 30%;
+  justify-content: flex-start;
   border-radius: 10px;
   box-shadow: ${setShadow.main};
+  flex-shrink: 0;
 `;
 
 const DueDate = styled.span`

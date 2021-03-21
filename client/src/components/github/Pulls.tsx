@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
+import styled from 'styled-components';
 
 import { Store } from '../../store';
 import { GithubInitialState } from '../../reducers/githubReducer';
@@ -44,7 +45,7 @@ const Pulls: React.FC<PullsProps> = ({
             <GithubCard key={pull.id} pull={pull} />
           ))}
 
-          <Pagination
+          <StyledPagination
             onChange={(e, page) => setPage(page)}
             count={parseInt(lastPage ?? '')}
             variant='outlined'
@@ -66,5 +67,9 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => ({
   removeEvent: (projectId: string, event: string) =>
     dispatch(removeEvent(projectId, event)),
 });
+
+const StyledPagination = styled(Pagination)`
+  margin-bottom: 50px;
+`;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Pulls);
