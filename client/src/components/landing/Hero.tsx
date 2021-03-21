@@ -17,8 +17,8 @@ const Hero: React.FC = () => {
         <LeftContainer>
           <h1>DevCollab</h1>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-            finibus eros diam, lacinia dignissim lacus sagittis eget.
+            Project Management and Collaboration Application for Virtual
+            Software Development Team
           </p>
           <Button as={Link} to='/signup'>
             Sign Up
