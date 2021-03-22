@@ -244,15 +244,17 @@ const DetailTask: React.FC<DetailTaskProps> = ({
             )}
             <Label>Members</Label>
             {!editData ? (
-              taskDataMembers?.map((member) => (
-                <MembersContainer key={member.user._id}>
-                  <Avatar
-                    src={member.user?.avatar?.url ?? avatar}
-                    alt='profile'
-                  />
-                  <Text>{member.user.email}</Text>
-                </MembersContainer>
-              ))
+              <MembersContainer>
+                {taskDataMembers?.map((member) => (
+                  <Members key={member.user._id}>
+                    <Avatar
+                      src={member.user?.avatar?.url ?? avatar}
+                      alt='profile'
+                    />
+                    <Text>{member.user.email}</Text>
+                  </Members>
+                ))}
+              </MembersContainer>
             ) : (
               <SelectContainer>
                 <SelectMembers
@@ -354,6 +356,12 @@ const Input = styled.input`
 `;
 
 const MembersContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+
+const Members = styled.div`
   display: inline-flex;
   align-items: center;
   background-color: ${setColor.lightGrey};
