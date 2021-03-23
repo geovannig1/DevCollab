@@ -18,7 +18,7 @@ const Hero: React.FC = () => {
           <h1>DevCollab</h1>
           <p>
             Project Management and Collaboration Application for Virtual
-            Software Development Team
+            Software Development Teams
           </p>
           <Button as={Link} to='/signup'>
             Sign Up
