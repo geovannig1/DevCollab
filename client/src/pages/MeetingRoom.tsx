@@ -84,7 +84,7 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
       (async () => {
         socketRef.current = socket;
 
-        const stream = await navigator.mediaDevices.getUserMedia({
+        const stream = await navigator.mediaDevices?.getUserMedia({
           video: videoConstraints,
           audio: true,
         });
@@ -127,7 +127,7 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
             peer,
           };
 
-          setVideoPeers([...videoPeers, peerObj]);
+          setVideoPeers((prevData) => [...prevData, peerObj]);
         });
 
         //Receive share screen signal offer from other user
@@ -234,8 +234,8 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
     const mediaDevices: any = navigator.mediaDevices;
 
     //Get the user screen display
-    const stream = await mediaDevices.getDisplayMedia({ cursor: true });
-    const screenTrack = stream.getVideoTracks()[0];
+    const stream = await mediaDevices?.getDisplayMedia({ cursor: true });
+    const screenTrack = stream?.getVideoTracks()[0];
     if (screenVideo.current) screenVideo.current.srcObject = stream;
 
     videoPeers.forEach((userPeer) => {
@@ -263,6 +263,17 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
     };
   };
 
+  //Remove duplicated video peers
+  const uniqueVideoPeers = videoPeers.reduce(
+    (accumulator: IPeers[], current) => {
+      if (!accumulator.some((acc) => acc.peerId === current.peerId)) {
+        accumulator.push(current);
+      }
+      return accumulator;
+    },
+    []
+  );
+
   return (
     <Fragment>
       {selectedMeeting && (
@@ -285,7 +296,7 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
                 {user?.firstName} {user?.lastName}
               </span>
             </StyledVideoContainer>
-            {videoPeers.map((peer) => (
+            {uniqueVideoPeers.map((peer: any) => (
               <Video
                 key={peer.peerId}
                 selectedMeeting={selectedMeeting}
