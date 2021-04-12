@@ -36,7 +36,7 @@ router.get(
 );
 
 /**
- *  @route PUT api/projects/:projectId/github/events
+ *  @route PATCH api/projects/:projectId/github/events
  *  @desc Reset event
  *  @access Private
  */
@@ -77,7 +77,7 @@ router.put(
 
 /**
  *  @route GET api/projects/:projectId/github/repo
- *  @desc Get a user repository
+ *  @desc Get a repository
  *  @access Private
  */
 router.get(

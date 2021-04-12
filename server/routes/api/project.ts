@@ -42,8 +42,8 @@ router.get('/', auth, getProjects);
 router.get('/:projectId', auth, checkObjectId('projectId'), getProject);
 
 /**
- *  @route GET api/projects/:projectId
- *  @desc Get signed in user projects
+ *  @route PATCH api/projects/:projectId
+ *  @desc update a project
  *  @access Private
  */
 router.patch(
@@ -63,7 +63,7 @@ router.patch(
 router.delete('/:projectId', auth, checkObjectId('projectId'), deleteProject);
 
 /**
- *  @route GET api/projects/invitation/token
+ *  @route GET api/projects/invitation/:token
  *  @desc Confirm project invitation
  *  @access Public
  */

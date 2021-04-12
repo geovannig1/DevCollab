@@ -141,15 +141,16 @@ export const updateDiscussion = async (req: Request, res: Response) => {
 
     //Update attachment
     if (req.file) {
-      await cloudinary.uploader.destroy(discussion.attachment?.publicId ?? '');
+      if (discussion.attachment?.publicId) {
+        await cloudinary.uploader.destroy(discussion.attachment?.publicId);
+      }
 
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'attachment',
       });
 
-      if (discussion.attachment) discussion.attachment.url = result?.secure_url;
-      if (discussion.attachment)
-        discussion.attachment.publicId = result?.public_id;
+      discussion.attachment!.url = result?.secure_url;
+      discussion.attachment!.publicId = result?.public_id;
 
       await discussion.save();
 

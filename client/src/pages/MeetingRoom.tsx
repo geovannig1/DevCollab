@@ -97,7 +97,7 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
           userId: user?._id,
         });
 
-        //Get the other user data for the current user
+        //Get the other users data for the user that currently join the room
         socketRef.current?.on('all users', (users: any) => {
           const peers: IPeers[] = [];
 

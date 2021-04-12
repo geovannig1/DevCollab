@@ -19,7 +19,7 @@ export const githubHook = async (req: Request, res: Response) => {
         .update(JSON.stringify(req.body))
         .digest('hex');
 
-    // compare the signature against the one in the request
+    // compare the signature with the signature in the headers
     const signature = req.headers['x-hub-signature-256'];
     if (signature !== expectedSignature) {
       return res.status(401).json({ msg: 'Unauthorized request' });

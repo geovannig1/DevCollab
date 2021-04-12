@@ -54,7 +54,7 @@ router.post(
 );
 
 /**
- *  @route POST api/projects/:projectId/discussions/:discussionId
+ *  @route PATCH api/projects/:projectId/discussions/:discussionId
  *  @desc Update a discussion
  *  @access Private
  */
