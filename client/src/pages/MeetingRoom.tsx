@@ -315,6 +315,7 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
             setAudio={setAudio}
             setVideo={setVideo}
             shareScreen={shareScreen}
+            screenPeers={screenPeers}
           />
         </Container>
       )}

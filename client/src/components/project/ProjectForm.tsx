@@ -172,7 +172,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
           <InputContainer id='members'>
             <MemberEmail>{user?.email}</MemberEmail>
             <Select disabled style={{ cursor: 'not-allowed' }}>
-              <option value={AccessPermission.Admin}>Admin</option>
+              <option value={AccessPermission.Admin}>Owner</option>
             </Select>
             {projectData.members.map((member, index) => (
               <Fragment key={index}>
@@ -185,11 +185,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                     }
                     onChange={handleChangeEditPermission}
                   >
-                    <option value={AccessPermission.Admin}>Admin</option>
+                    <option value={AccessPermission.Admin}>Owner</option>
                     <option value={AccessPermission.ReadWriteDelete}>
-                      Read/Write/Delete
+                      Member
                     </option>
-                    <option value={AccessPermission.ReadOnly}>Read Only</option>
+                    <option value={AccessPermission.ReadOnly}>Client</option>
                   </Select>
                   <RoundedButton
                     id={member.email}

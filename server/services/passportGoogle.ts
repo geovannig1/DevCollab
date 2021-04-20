@@ -24,8 +24,8 @@ passport.use(
         if (name?.familyName && name.givenName && emails?.[0].value) {
           const user = await User.create({
             googleId: id,
-            firstName: name?.givenName,
-            lastName: name?.familyName,
+            firstName: name?.givenName ?? '',
+            lastName: name?.familyName ?? '',
             email: emails?.[0].value,
             avatar: { url: photos?.[0].value ?? '' },
             havePassword: false,

@@ -9,6 +9,7 @@ import CallIcon from '@material-ui/icons/Call';
 import VideocamOffIcon from '@material-ui/icons/VideocamOff';
 import ScreenShareIcon from '@material-ui/icons/ScreenShare';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { IPeers } from './PeerTypes';
 
 interface ControllerProps {
   projectId: string;
@@ -17,6 +18,7 @@ interface ControllerProps {
   setAudio: () => void;
   setVideo: () => void;
   shareScreen: () => Promise<void>;
+  screenPeers: IPeers[];
 }
 
 const Controller: React.FC<ControllerProps> = ({
@@ -26,6 +28,7 @@ const Controller: React.FC<ControllerProps> = ({
   setAudio,
   setVideo,
   shareScreen,
+  screenPeers,
 }) => {
   const classes = useStyles();
 
@@ -68,7 +71,12 @@ const Controller: React.FC<ControllerProps> = ({
         </IconContainer>
       </LeftContainer>
 
-      <IconContainer color={setColor.secondary} onClick={shareScreen}>
+      <IconContainer
+        color={setColor.secondary}
+        onClick={() => {
+          if (screenPeers.length === 0) shareScreen();
+        }}
+      >
         <ScreenShareIcon className={classes.icon} />
         <span>Share Screen</span>
       </IconContainer>

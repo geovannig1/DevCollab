@@ -13,6 +13,17 @@ export const createPeer = (
     initiator: true,
     trickle: false,
     stream,
+    config: {
+      iceServers: [
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        {
+          url: 'turn:numb.viagenie.ca',
+          credential: 'muazkh',
+          username: 'webrtc@live.com',
+        },
+      ],
+    },
   });
 
   peer.on('signal', (signal) => {
@@ -39,6 +50,17 @@ export const addPeer = (
     initiator: false,
     trickle: false,
     stream,
+    config: {
+      iceServers: [
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        {
+          url: 'turn:numb.viagenie.ca',
+          credential: 'muazkh',
+          username: 'webrtc@live.com',
+        },
+      ],
+    },
   });
 
   peer.on('signal', (signal) => {
@@ -65,6 +87,17 @@ export const createPeerScreen = (
     initiator: true,
     trickle: false,
     stream,
+    config: {
+      iceServers: [
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        {
+          url: 'turn:numb.viagenie.ca',
+          credential: 'muazkh',
+          username: 'webrtc@live.com',
+        },
+      ],
+    },
   });
 
   peer.on('signal', (signal) => {
@@ -86,7 +119,21 @@ export const addPeerScreen = (
   socketRef: React.MutableRefObject<Socket | undefined>,
   user?: UserType
 ) => {
-  const peer = new Peer({ initiator: false, trickle: false });
+  const peer = new Peer({
+    initiator: false,
+    trickle: false,
+    config: {
+      iceServers: [
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        {
+          url: 'turn:numb.viagenie.ca',
+          credential: 'muazkh',
+          username: 'webrtc@live.com',
+        },
+      ],
+    },
+  });
 
   peer.on('signal', (signal) => {
     socketRef.current?.emit('returning screen signal', {
