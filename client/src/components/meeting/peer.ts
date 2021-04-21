@@ -17,12 +17,11 @@ export const createPeer = (
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
         { urls: 'stun:global.stun.twilio.com:3478?transport=udp' },
         {
           url: 'turn:numb.viagenie.ca',
-          credential: 'muazkh',
           username: 'webrtc@live.com',
+          credential: 'muazkh',
         },
       ],
     },
@@ -56,12 +55,11 @@ export const addPeer = (
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
         { urls: 'stun:global.stun.twilio.com:3478?transport=udp' },
         {
           url: 'turn:numb.viagenie.ca',
-          credential: 'muazkh',
           username: 'webrtc@live.com',
+          credential: 'muazkh',
         },
       ],
     },
@@ -95,13 +93,7 @@ export const createPeerScreen = (
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
         { urls: 'stun:global.stun.twilio.com:3478?transport=udp' },
-        {
-          url: 'turn:numb.viagenie.ca',
-          credential: 'muazkh',
-          username: 'webrtc@live.com',
-        },
       ],
     },
   });
@@ -132,13 +124,7 @@ export const addPeerScreen = (
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
         { urls: 'stun:global.stun.twilio.com:3478?transport=udp' },
-        {
-          url: 'turn:numb.viagenie.ca',
-          credential: 'muazkh',
-          username: 'webrtc@live.com',
-        },
       ],
     },
   });
