@@ -15,19 +15,8 @@ export const createPeer = (
     stream,
     config: {
       iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
         {
           urls: 'stun:global.stun.twilio.com:3478?transport=udp',
-        },
-        {
-          username: process.env.REACT_APP_TURN_USERNAME,
-          credential: process.env.REACT_APP_TURN_CREDENTIAL,
-          urls: 'turn:global.turn.twilio.com:3478?transport=udp',
-        },
-        {
-          username: process.env.REACT_APP_TURN_USERNAME,
-          credential: process.env.REACT_APP_TURN_CREDENTIAL,
-          urls: 'turn:global.turn.twilio.com:3478?transport=tcp',
         },
         {
           username: process.env.REACT_APP_TURN_USERNAME,
@@ -65,19 +54,8 @@ export const addPeer = (
     stream,
     config: {
       iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
         {
           urls: 'stun:global.stun.twilio.com:3478?transport=udp',
-        },
-        {
-          username: process.env.REACT_APP_TURN_USERNAME,
-          credential: process.env.REACT_APP_TURN_CREDENTIAL,
-          urls: 'turn:global.turn.twilio.com:3478?transport=udp',
-        },
-        {
-          username: process.env.REACT_APP_TURN_USERNAME,
-          credential: process.env.REACT_APP_TURN_CREDENTIAL,
-          urls: 'turn:global.turn.twilio.com:3478?transport=tcp',
         },
         {
           username: process.env.REACT_APP_TURN_USERNAME,
@@ -115,19 +93,8 @@ export const createPeerScreen = (
     stream,
     config: {
       iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
         {
           urls: 'stun:global.stun.twilio.com:3478?transport=udp',
-        },
-        {
-          username: process.env.REACT_APP_TURN_USERNAME,
-          credential: process.env.REACT_APP_TURN_CREDENTIAL,
-          urls: 'turn:global.turn.twilio.com:3478?transport=udp',
-        },
-        {
-          username: process.env.REACT_APP_TURN_USERNAME,
-          credential: process.env.REACT_APP_TURN_CREDENTIAL,
-          urls: 'turn:global.turn.twilio.com:3478?transport=tcp',
         },
         {
           username: process.env.REACT_APP_TURN_USERNAME,
@@ -162,19 +129,8 @@ export const addPeerScreen = (
     trickle: false,
     config: {
       iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
         {
           urls: 'stun:global.stun.twilio.com:3478?transport=udp',
-        },
-        {
-          username: process.env.REACT_APP_TURN_USERNAME,
-          credential: process.env.REACT_APP_TURN_CREDENTIAL,
-          urls: 'turn:global.turn.twilio.com:3478?transport=udp',
-        },
-        {
-          username: process.env.REACT_APP_TURN_USERNAME,
-          credential: process.env.REACT_APP_TURN_CREDENTIAL,
-          urls: 'turn:global.turn.twilio.com:3478?transport=tcp',
         },
         {
           username: process.env.REACT_APP_TURN_USERNAME,
