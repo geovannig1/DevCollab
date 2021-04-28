@@ -27,6 +27,7 @@ export const createPeer = (
   });
 
   peer.on('signal', (signal) => {
+    console.log(signal);
     //sending offer
     socketRef.current?.emit('sending signal', {
       userToSignal,
@@ -64,6 +65,7 @@ export const addPeer = (
   });
 
   peer.on('signal', (signal) => {
+    console.log(signal);
     socketRef.current?.emit('returning signal', {
       signal,
       callerId,
