@@ -11,13 +11,17 @@ export const createPeer = (
 ) => {
   const peer = new Peer({
     initiator: true,
-    trickle: false,
+    trickle: true,
     stream,
     config: {
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:global.stun.twilio.com:3478?transport=udp' },
+        {
+          urls: 'turn:numb.viagenie.ca',
+          credential: 'muazkh',
+          username: 'webrtc@live.com',
+        },
       ],
     },
   });
@@ -44,13 +48,17 @@ export const addPeer = (
 ) => {
   const peer = new Peer({
     initiator: false,
-    trickle: false,
+    trickle: true,
     stream,
     config: {
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:global.stun.twilio.com:3478?transport=udp' },
+        {
+          urls: 'turn:numb.viagenie.ca',
+          credential: 'muazkh',
+          username: 'webrtc@live.com',
+        },
       ],
     },
   });
@@ -83,7 +91,6 @@ export const createPeerScreen = (
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:global.stun.twilio.com:3478?transport=udp' },
       ],
     },
   });
@@ -114,7 +121,6 @@ export const addPeerScreen = (
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:global.stun.twilio.com:3478?transport=udp' },
       ],
     },
   });
