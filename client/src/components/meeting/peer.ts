@@ -18,6 +18,11 @@ export const createPeer = (
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
         { urls: 'stun:global.stun.twilio.com:3478?transport=udp' },
+        {
+          url: 'turn:numb.viagenie.ca',
+          username: 'webrtc@live.com',
+          credential: 'muazkh',
+        },
       ],
     },
   });
@@ -51,6 +56,11 @@ export const addPeer = (
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
         { urls: 'stun:global.stun.twilio.com:3478?transport=udp' },
+        {
+          url: 'turn:numb.viagenie.ca',
+          username: 'webrtc@live.com',
+          credential: 'muazkh',
+        },
       ],
     },
   });
