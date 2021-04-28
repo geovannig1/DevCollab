@@ -102,7 +102,13 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
           const peers: IPeers[] = [];
 
           users.forEach((userId: string) => {
-            const peer = createPeer(socketRef, userId, user?._id ?? '', stream);
+            const peer = createPeer(
+              socketRef,
+              userId,
+              user?._id ?? '',
+              stream,
+              selectedMeeting.iceServer ?? []
+            );
 
             peersRef.current.push({ peerId: userId, peer });
 
@@ -119,6 +125,7 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
             data.callerId,
             stream,
             socketRef,
+            selectedMeeting.iceServer ?? [],
             user
           );
           peersRef.current.push({ peerId: data.callerId, peer });
@@ -136,6 +143,7 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
             data.signal,
             data.callerId,
             socketRef,
+            selectedMeeting.iceServer ?? [],
             user
           );
 
@@ -254,7 +262,8 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
         socketRef,
         userPeer.peerId,
         user?._id ?? '',
-        stream
+        stream,
+        selectedMeeting?.iceServer ?? []
       );
 
       screenPeersRef.current.push({ peerId: userPeer.peerId, peer });

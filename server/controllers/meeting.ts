@@ -35,9 +35,10 @@ export const getRooms = async (req: Request, res: Response) => {
 //Get a room
 export const getRoom = async (req: Request, res: Response) => {
   try {
-    const meeting = await Meeting.findById(
-      req.params.meetingId
-    ).populate('members.user', ['firstName', 'lastName']);
+    const meeting = await Meeting.findById(req.params.meetingId)
+      .select('-iceServer._id')
+      .select('-iceServer.url')
+      .populate('members.user', ['firstName', 'lastName']);
 
     //Only invited user can access
     const userExist = meeting?.members.filter(
@@ -74,10 +75,17 @@ export const createRoom = async (req: Request, res: Response) => {
       user: member.user._id,
     }));
 
+    //Request ice servers
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
+    const client = require('twilio')(accountSid, authToken);
+    const token = await client.tokens.create();
+
     const newMeetingRoom = await Meeting.create({
       project: req.params.projectId,
       name,
       members: userMembers,
+      iceServer: token.iceServers,
     });
 
     res.status(201).json(newMeetingRoom);

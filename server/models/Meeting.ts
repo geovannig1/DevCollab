@@ -13,6 +13,12 @@ export interface IMeeting extends Document {
     avatar: string;
   }[];
   usersInRoom?: string[];
+  iceServer: {
+    url: string;
+    username: string;
+    urls: string;
+    credential: string;
+  }[];
 }
 
 const meetingSchema = new Schema<IMeeting>({
@@ -35,7 +41,14 @@ const meetingSchema = new Schema<IMeeting>({
   usersInRoom: {
     type: [String],
   },
-
+  iceServer: [
+    {
+      url: String,
+      username: String,
+      urls: String,
+      credential: String,
+    },
+  ],
   date: {
     type: Date,
     default: Date.now,

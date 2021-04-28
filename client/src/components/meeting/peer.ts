@@ -7,25 +7,15 @@ export const createPeer = (
   socketRef: React.MutableRefObject<Socket | undefined>,
   userToSignal: string,
   callerId: string,
-  stream: MediaStream
+  stream: MediaStream,
+  iceServers: any[]
 ) => {
   const peer = new Peer({
     initiator: true,
     trickle: true,
     stream,
     config: {
-      iceServers: [
-        {
-          urls: 'stun:global.stun.twilio.com:3478?transport=udp',
-          url: 'stun:global.stun.twilio.com:3478?transport=udp',
-        },
-        {
-          username: process.env.REACT_APP_TURN_USERNAME,
-          credential: process.env.REACT_APP_TURN_CREDENTIAL,
-          urls: 'turn:global.turn.twilio.com:443?transport=tcp',
-          url: 'turn:global.turn.twilio.com:443?transport=tcp',
-        },
-      ],
+      iceServers: iceServers,
     },
   });
 
@@ -48,6 +38,7 @@ export const addPeer = (
   callerId: string,
   stream: MediaStream,
   socketRef: React.MutableRefObject<Socket | undefined>,
+  iceServers: any[],
   user?: UserType
 ) => {
   const peer = new Peer({
@@ -55,18 +46,7 @@ export const addPeer = (
     trickle: true,
     stream,
     config: {
-      iceServers: [
-        {
-          urls: 'stun:global.stun.twilio.com:3478?transport=udp',
-          url: 'stun:global.stun.twilio.com:3478?transport=udp',
-        },
-        {
-          username: process.env.REACT_APP_TURN_USERNAME,
-          credential: process.env.REACT_APP_TURN_CREDENTIAL,
-          urls: 'turn:global.turn.twilio.com:443?transport=tcp',
-          url: 'turn:global.turn.twilio.com:443?transport=tcp',
-        },
-      ],
+      iceServers: iceServers,
     },
   });
 
@@ -89,25 +69,15 @@ export const createPeerScreen = (
   socketRef: React.MutableRefObject<Socket | undefined>,
   userToSignal: string,
   callerId: string,
-  stream: MediaStream
+  stream: MediaStream,
+  iceServers: any[]
 ) => {
   const peer = new Peer({
     initiator: true,
     trickle: false,
     stream,
     config: {
-      iceServers: [
-        {
-          urls: 'stun:global.stun.twilio.com:3478?transport=udp',
-          url: 'stun:global.stun.twilio.com:3478?transport=udp',
-        },
-        {
-          username: process.env.REACT_APP_TURN_USERNAME,
-          credential: process.env.REACT_APP_TURN_CREDENTIAL,
-          urls: 'turn:global.turn.twilio.com:443?transport=tcp',
-          url: 'turn:global.turn.twilio.com:443?transport=tcp',
-        },
-      ],
+      iceServers: iceServers,
     },
   });
 
@@ -128,24 +98,14 @@ export const addPeerScreen = (
   incomingSignal: string,
   callerId: string,
   socketRef: React.MutableRefObject<Socket | undefined>,
+  iceServers: any[],
   user?: UserType
 ) => {
   const peer = new Peer({
     initiator: false,
     trickle: false,
     config: {
-      iceServers: [
-        {
-          urls: 'stun:global.stun.twilio.com:3478?transport=udp',
-          url: 'stun:global.stun.twilio.com:3478?transport=udp',
-        },
-        {
-          username: process.env.REACT_APP_TURN_USERNAME,
-          credential: process.env.REACT_APP_TURN_CREDENTIAL,
-          urls: 'turn:global.turn.twilio.com:443?transport=tcp',
-          url: 'turn:global.turn.twilio.com:443?transport=tcp',
-        },
-      ],
+      iceServers: iceServers,
     },
   });
 

@@ -24,6 +24,7 @@ export interface MeetingTypes {
   name: string;
   members: Member[];
   usersInRoom?: string[];
+  iceServer?: any[];
 }
 
 export interface MeetingsLoaded {
