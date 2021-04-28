@@ -17,11 +17,13 @@ export const createPeer = (
       iceServers: [
         {
           urls: 'stun:global.stun.twilio.com:3478?transport=udp',
+          url: 'stun:global.stun.twilio.com:3478?transport=udp',
         },
         {
           username: process.env.REACT_APP_TURN_USERNAME,
           credential: process.env.REACT_APP_TURN_CREDENTIAL,
           urls: 'turn:global.turn.twilio.com:443?transport=tcp',
+          url: 'turn:global.turn.twilio.com:443?transport=tcp',
         },
       ],
     },
@@ -56,11 +58,13 @@ export const addPeer = (
       iceServers: [
         {
           urls: 'stun:global.stun.twilio.com:3478?transport=udp',
+          url: 'stun:global.stun.twilio.com:3478?transport=udp',
         },
         {
           username: process.env.REACT_APP_TURN_USERNAME,
           credential: process.env.REACT_APP_TURN_CREDENTIAL,
           urls: 'turn:global.turn.twilio.com:443?transport=tcp',
+          url: 'turn:global.turn.twilio.com:443?transport=tcp',
         },
       ],
     },
@@ -95,11 +99,13 @@ export const createPeerScreen = (
       iceServers: [
         {
           urls: 'stun:global.stun.twilio.com:3478?transport=udp',
+          url: 'stun:global.stun.twilio.com:3478?transport=udp',
         },
         {
           username: process.env.REACT_APP_TURN_USERNAME,
           credential: process.env.REACT_APP_TURN_CREDENTIAL,
           urls: 'turn:global.turn.twilio.com:443?transport=tcp',
+          url: 'turn:global.turn.twilio.com:443?transport=tcp',
         },
       ],
     },
@@ -131,11 +137,13 @@ export const addPeerScreen = (
       iceServers: [
         {
           urls: 'stun:global.stun.twilio.com:3478?transport=udp',
+          url: 'stun:global.stun.twilio.com:3478?transport=udp',
         },
         {
           username: process.env.REACT_APP_TURN_USERNAME,
           credential: process.env.REACT_APP_TURN_CREDENTIAL,
           urls: 'turn:global.turn.twilio.com:443?transport=tcp',
+          url: 'turn:global.turn.twilio.com:443?transport=tcp',
         },
       ],
     },
