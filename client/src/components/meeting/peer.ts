@@ -11,7 +11,7 @@ export const createPeer = (
 ) => {
   const peer = new Peer({
     initiator: true,
-    trickle: false,
+    trickle: true,
     stream,
     config: {
       iceServers: [
@@ -48,7 +48,7 @@ export const addPeer = (
 ) => {
   const peer = new Peer({
     initiator: false,
-    trickle: false,
+    trickle: true,
     stream,
     config: {
       iceServers: [
