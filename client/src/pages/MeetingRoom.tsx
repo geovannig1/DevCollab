@@ -229,6 +229,17 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
     }
   };
 
+  //Remove duplicated video peers
+  const uniqueVideoPeers = videoPeers.reduce(
+    (accumulator: IPeers[], current) => {
+      if (!accumulator.some((acc) => acc.peerId === current.peerId)) {
+        accumulator.push(current);
+      }
+      return accumulator;
+    },
+    []
+  );
+
   //Function to share the screen
   const shareScreen = async () => {
     const mediaDevices: any = navigator.mediaDevices;
@@ -238,7 +249,7 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
     const screenTrack = stream?.getVideoTracks()[0];
     if (screenVideo.current) screenVideo.current.srcObject = stream;
 
-    videoPeers.forEach((userPeer) => {
+    uniqueVideoPeers.forEach((userPeer) => {
       const peer = createPeerScreen(
         socketRef,
         userPeer.peerId,
@@ -262,17 +273,6 @@ const MeetingRoom: React.FC<MeetingRoomProps> = ({
       if (screenVideo.current) screenVideo.current.srcObject = null;
     };
   };
-
-  //Remove duplicated video peers
-  const uniqueVideoPeers = videoPeers.reduce(
-    (accumulator: IPeers[], current) => {
-      if (!accumulator.some((acc) => acc.peerId === current.peerId)) {
-        accumulator.push(current);
-      }
-      return accumulator;
-    },
-    []
-  );
 
   return (
     <Fragment>
