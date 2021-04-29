@@ -9,6 +9,8 @@ import Note from '../models/Note';
 import File from '../models/File';
 import Github from '../models/Github';
 import Meeting from '../models/Meeting';
+import Activity from '../models/Activity';
+import Task from '../models/Task';
 
 //Create a new project
 export const createProject = async (req: Request, res: Response) => {
@@ -250,6 +252,10 @@ export const deleteProject = async (req: Request, res: Response) => {
       return res.status(401).json({ errors: { msg: 'Unauthorized user' } });
     }
 
+    //Delete activity
+    await Activity.deleteOne({ project: req.params.projectId });
+    //Delete task
+    await Task.deleteOne({ project: req.params.projectId });
     //Delete discussions
     await Discussion.deleteMany({
       project: req.params.projectId,
