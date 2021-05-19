@@ -47,11 +47,12 @@ const DetailTask: React.FC<DetailTaskProps> = ({
   project: { selectedProject, projectError },
   auth: { user },
 }) => {
-  const { projectId, taskId, columnId } = useParams<{
-    projectId: string;
-    taskId: string;
-    columnId: string;
-  }>();
+  const { projectId, taskId, columnId } =
+    useParams<{
+      projectId: string;
+      taskId: string;
+      columnId: string;
+    }>();
   const history = useHistory();
 
   //Load the task data
@@ -310,7 +311,6 @@ const DetailTask: React.FC<DetailTaskProps> = ({
             taskId={taskId}
             projectId={projectId}
             comments={taskData.comments}
-            signedInMember={signedInMember}
           />
         </Paper>
       )}

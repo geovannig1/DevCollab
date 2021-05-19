@@ -14,7 +14,7 @@ import socket from '../../utils/socketio';
 import { receiveComment } from '../../actions/discussionActions';
 import { DiscussionType } from '../../actions/discussionTypes';
 import Comment from '../global/Comment';
-import { AccessPermission, ProjectType } from '../../actions/projectTypes';
+import { ProjectType } from '../../actions/projectTypes';
 
 interface DiscussionCommentProps {
   user?: UserType;
@@ -70,31 +70,24 @@ const DiscussionComment: React.FC<DiscussionCommentProps> = ({
     }
   };
 
-  //Find user in the project
-  const findUser = selectedProject?.members?.find(
-    (member) => member.user._id === user?._id
-  );
-
   return (
     <Fragment>
-      {findUser?.accessPermission !== AccessPermission.ReadOnly && (
-        <form onSubmit={handleSubmit}>
-          <InputComment>
-            <Avatar size='40' src={user?.avatar?.url ?? avatar} alt='profile' />
-            <textarea
-              name='comment'
-              placeholder='Write a comment...'
-              autoComplete='off'
-              onChange={handleChange}
-              value={commentData}
-              onKeyPress={handleUserKeyPress}
-            />
-            <RoundedButton size='45'>
-              <SendIcon fontSize='small' />
-            </RoundedButton>
-          </InputComment>
-        </form>
-      )}
+      <form onSubmit={handleSubmit}>
+        <InputComment>
+          <Avatar size='40' src={user?.avatar?.url ?? avatar} alt='profile' />
+          <textarea
+            name='comment'
+            placeholder='Write a comment...'
+            autoComplete='off'
+            onChange={handleChange}
+            value={commentData}
+            onKeyPress={handleUserKeyPress}
+          />
+          <RoundedButton size='45'>
+            <SendIcon fontSize='small' />
+          </RoundedButton>
+        </InputComment>
+      </form>
 
       <CommentContainer>
         {selectedDiscussion.comments?.map((comment) => (

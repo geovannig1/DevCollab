@@ -10,14 +10,12 @@ import socket from '../../utils/socketio';
 import { UserType } from '../../actions/authTypes';
 import { Comment as IComment, Member } from '../../actions/taskTypes';
 import Comment from '../global/Comment';
-import { AccessPermission } from '../../actions/projectTypes';
 
 interface CommentTaskProps {
   user?: UserType;
   taskId: string;
   projectId: string;
   comments?: IComment[];
-  signedInMember?: Member;
 }
 
 const CommentTask: React.FC<CommentTaskProps> = ({
@@ -25,7 +23,6 @@ const CommentTask: React.FC<CommentTaskProps> = ({
   taskId,
   projectId,
   comments,
-  signedInMember,
 }) => {
   const [commentData, setCommentData] = useState('');
 
@@ -65,24 +62,22 @@ const CommentTask: React.FC<CommentTaskProps> = ({
 
   return (
     <Fragment>
-      {signedInMember?.accessPermission !== AccessPermission.ReadOnly && (
-        <form onSubmit={handleSubmit}>
-          <InputComment>
-            <Avatar size='40' src={user?.avatar?.url ?? avatar} alt='profile' />
-            <textarea
-              name='comment'
-              placeholder='Write a comment...'
-              autoComplete='off'
-              onChange={handleChange}
-              value={commentData}
-              onKeyPress={handleUserKeyPress}
-            />
-            <RoundedButton size='45'>
-              <SendIcon fontSize='small' />
-            </RoundedButton>
-          </InputComment>
-        </form>
-      )}
+      <form onSubmit={handleSubmit}>
+        <InputComment>
+          <Avatar size='40' src={user?.avatar?.url ?? avatar} alt='profile' />
+          <textarea
+            name='comment'
+            placeholder='Write a comment...'
+            autoComplete='off'
+            onChange={handleChange}
+            value={commentData}
+            onKeyPress={handleUserKeyPress}
+          />
+          <RoundedButton size='45'>
+            <SendIcon fontSize='small' />
+          </RoundedButton>
+        </InputComment>
+      </form>
 
       <CommentContainer>
         {comments?.map((comment) => (
