@@ -17,11 +17,13 @@ export default (io: Server, socket: Socket) => {
 
         taskProject.set(`columns.${data.columnId}`, {
           id: data.columnId,
-          title: data.taskTitle,
+          title: columns.title,
           taskIds: newTaskIds,
         });
 
-        const updatedTaskProject = await (await taskProject.save())
+        const updatedTaskProject = await (
+          await taskProject.save()
+        )
           .populate({
             path: 'tasks.$*.comments.user',
             select: ['firstName', 'lastName', 'avatar'],
