@@ -13,48 +13,33 @@ const About: React.FC = () => {
     <Container>
       <Header>
         <h2>About DevCollab</h2>
-        <p>Donec finibus eros diam, lacinia dignissim lacus sagittis eget.</p>
+        <p>A Single App for Your Project.</p>
       </Header>
       <Features>
         <Item>
           <Monitoring />
           <h2>Activity Monitoring</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-            finibus eros diam.
-          </p>
+          <p>Always aware of your co-worker activities.</p>
         </Item>
         <Item>
           <Discussion />
           <h2>Group Discussion</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-            finibus eros diam.
-          </p>
+          <p>Easily discuss project-related topics.</p>
         </Item>
         <Item>
           <Task />
           <h2>Task Management</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-            finibus eros diam.
-          </p>
+          <p>Manage and organize your tasks.</p>
         </Item>
         <Item>
           <Meeting />
           <h2>Meeting Room</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-            finibus eros diam.
-          </p>
+          <p>Hold a virtual meeting with your team.</p>
         </Item>
         <Item>
           <Github />
           <h2>GitHub Integration</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-            finibus eros diam.
-          </p>
+          <p>Always aware of activities in your project repository.</p>
         </Item>
       </Features>
     </Container>
