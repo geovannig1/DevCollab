@@ -1,0 +1,3 @@
+# DevCollab
+
+DevCollab is a project management and collaboration application for virtual software development teams. The purpose develops this project is to create a single app that can help the virtual software development teams do their job. This app can be used to manage projects and tasks, monitor project activities and GitHub repository activities, instant messaging for team communication, discussions, video conferencing, and store notes and files. I created this app with typescript, react.js, and node.js.
