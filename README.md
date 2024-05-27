@@ -31,3 +31,12 @@ DevCollab is a project management and collaboration application for virtual soft
    - Store project-related notes, documentation, and meeting minutes.
    - Upload and organize files (e.g., design mockups, requirements documents).
 
+## Tech Stack
+
+- **Frontend**:
+  - TypeScript
+  - React.js
+  - Redux (for state management)
+  - Material-UI (for UI components)
+
+
