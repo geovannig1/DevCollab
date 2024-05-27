@@ -38,5 +38,11 @@ DevCollab is a project management and collaboration application for virtual soft
   - React.js
   - Redux (for state management)
   - Material-UI (for UI components)
+- **Backend**:
+  - Node.js
+  - Express.js
+  - MongoDB (or any preferred database)
+  - WebSockets (for real-time messaging)
+
 
 
